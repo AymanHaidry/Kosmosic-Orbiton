@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 
 def test_open_known_project(engine):
-    with patch('kosmosic_orbiton.subprocess.Popen') as mock_popen:
+    with patch('kosmosic_orbiton.subprocess.Popen') as mock_popen,          patch('kosmosic_orbiton.os.path.exists', return_value=True):
         engine.handle_project("hex link")
         mock_popen.assert_called_once()
         args = mock_popen.call_args[0][0]

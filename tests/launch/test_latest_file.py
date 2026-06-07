@@ -11,19 +11,19 @@ def test_latest_pdf(engine):
 
 
 def test_latest_word(engine):
-    with patch.object(engine, 'find_latest_file', return_value=Path.home() / "test.docx") as mock_find:
+    with patch.object(engine, 'find_latest_file', return_value=Path.home() / "test.docx") as mock_find,          patch.object(engine, 'open_path') as mock_open:
         engine.handle_open_file("latest word")
         mock_find.assert_called_once()
 
 
 def test_latest_python(engine):
-    with patch.object(engine, 'find_latest_file', return_value=Path.home() / "test.py") as mock_find:
+    with patch.object(engine, 'find_latest_file', return_value=Path.home() / "test.py") as mock_find,          patch.object(engine, 'open_path') as mock_open:
         engine.handle_open_file("latest python")
         mock_find.assert_called_once()
 
 
 def test_latest_excel(engine):
-    with patch.object(engine, 'find_latest_file', return_value=Path.home() / "test.xlsx") as mock_find:
+    with patch.object(engine, 'find_latest_file', return_value=Path.home() / "test.xlsx") as mock_find,          patch.object(engine, 'open_path') as mock_open:
         engine.handle_open_file("latest excel")
         mock_find.assert_called_once()
 

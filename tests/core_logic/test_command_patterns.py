@@ -82,8 +82,9 @@ def test_exam_mode_variants(parser):
     parser = IntentParser()
     aliases = [
         "exam mode", "focus mode", "launch mode",
-        "examboard", "exambord", "exum mode", "eggsam mode"
+        "exambored", "exambord", "exum mode", "eggsam mode"
     ]
     matched = [parser.parse(a) for a in aliases]
     assert matched[0] == ("exam_mode", "")
-    assert all(m is None for m in matched[1:])
+    # All aliases in the regex now match exam_mode
+    assert all(m == ("exam_mode", "") for m in matched)

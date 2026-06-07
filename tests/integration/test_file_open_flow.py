@@ -5,13 +5,13 @@ from unittest.mock import patch
 
 def test_open_folder_flow(engine, parser, mock_ui, mock_voice, mock_memory, mock_intel):
     from kosmosic_orbiton import process_text
-    with patch('kosmosic_orbiton.subprocess.Popen') as mock_popen:
+    with patch('kosmosic_orbiton.subprocess.run') as mock_run:
         success, action = process_text(
             "open downloads",
             engine, parser, mock_memory, mock_voice, mock_ui, mock_intel
         )
         assert success is True
-        mock_popen.assert_called_once()
+        mock_run.assert_called_once()
 
 
 def test_open_file_flow(engine, parser, mock_ui, mock_voice, mock_memory, mock_intel):
