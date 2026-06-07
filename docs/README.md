@@ -1,6 +1,14 @@
+![Core Logic](https://github.com/AymanHaidry/Kosmosic-Orbiton/workflows/Core%20Logic%20Tests/badge.svg)
+![URL Engine](https://github.com/AymanHaidry/Kosmosic-Orbiton/workflows/URL%20Engine%20Tests/badge.svg)
+![Compute](https://github.com/AymanHaidry/Kosmosic-Orbiton/workflows/Compute%20Tests/badge.svg)
+![Launch](https://github.com/AymanHaidry/Kosmosic-Orbiton/workflows/Launch%20Tests/badge.svg)
+![System](https://github.com/AymanHaidry/Kosmosic-Orbiton/workflows/System%20Tests/badge.svg)
+![Integration](https://github.com/AymanHaidry/Kosmosic-Orbiton/workflows/Integration%20Tests/badge.svg)
+![Pylint](https://github.com/AymanHaidry/Kosmosic-Orbiton/workflows/Pylint/badge.svg)
 # 🎧 Orbiton — Voice Command Terminal
 
 > *"We put the world around your head."*
+
 
 **Company:** Kosmosic  
 **Product:** Orbiton  
