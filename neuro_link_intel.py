@@ -205,16 +205,7 @@ class KnowledgeEngine:
 
     # Built-in mini knowledge bases
     BUILTIN_INTEL = {
-        "constellations": {
-            "orion": "Orion is a prominent constellation located on the celestial equator. Its brightest stars are Betelgeuse and Rigel. The Orion Nebula (M42) is visible to the naked eye.",
-            "ursa major": "Ursa Major, the Great Bear, contains the Big Dipper asterism. The two stars at the end of the bowl point to Polaris, the North Star.",
-            "cassiopeia": "Cassiopeia is named after the vain queen in Greek mythology. It resembles a W or M shape and is visible year-round in the Northern Hemisphere.",
-            "scorpius": "Scorpius is a large constellation near the center of the Milky Way. Its brightest star is Antares, a red supergiant often called the heart of the scorpion.",
-            "cygnus": "Cygnus, the Swan, flies along the Milky Way. Its brightest star Deneb forms the Summer Triangle with Vega and Altair.",
-            "leo": "Leo, the Lion, is a zodiac constellation. Its brightest star is Regulus. The Leonid meteor shower radiates from here every November.",
-            "andromeda": "Andromeda contains the Andromeda Galaxy (M31), the nearest major galaxy to the Milky Way, 2.5 million light-years away.",
-            "crux": "Crux, the Southern Cross, is the smallest constellation. It appears on the flags of Australia, New Zealand, Brazil, Papua New Guinea, and Samoa.",
-        },
+        
         "moon_phases": {
             "new moon": "The New Moon occurs when the Moon is between Earth and the Sun. The side facing Earth is not illuminated. Best for deep sky observing.",
             "waxing crescent": "Waxing Crescent: A sliver of the Moon becomes visible, growing larger each night. 'Waxing' means growing.",
