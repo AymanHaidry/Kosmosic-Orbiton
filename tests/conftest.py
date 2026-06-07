@@ -1,10 +1,10 @@
-"""Shared fixtures for Neuro-Link test suite."""
+"""Shared fixtures for Orbiton test suite."""
 import sys
 import os
 import pytest
 from unittest.mock import MagicMock, patch
 
-# Ensure neuro_link is importable
+# Ensure kosmosic_orbiton is importable
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 
@@ -49,12 +49,12 @@ def mock_intel():
 @pytest.fixture
 def engine(mock_ui, mock_voice, mock_memory, mock_intel):
     """CommandEngine with fully mocked dependencies."""
-    from neuro_link import CommandEngine
+    from kosmosic_orbiton import CommandEngine
     return CommandEngine(mock_ui, mock_voice, mock_memory, mock_intel)
 
 
 @pytest.fixture
 def parser():
     """Fresh IntentParser instance."""
-    from neuro_link import IntentParser
+    from kosmosic_orbiton import IntentParser
     return IntentParser()
