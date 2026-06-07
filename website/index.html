@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbiton — Your Headset, Your Command Terminal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #FAF9F7;
+            --bg-secondary: #F3F1EE;
+            --bg-dark: #1A1A1A;
+            --bg-terminal: #0D0D0D;
+            --text-primary: #1A1A1A;
+            --text-secondary: #6B6560;
+            --text-muted: #9B9590;
+            --text-light: #FAF9F7;
+            --accent: #D4A574;
+            --accent-soft: #E8D5C4;
+            --accent-glow: rgba(212, 165, 116, 0.15);
+            --border: rgba(26, 26, 26, 0.08);
+            --border-strong: rgba(26, 26, 26, 0.15);
+            --success: #5A8F6E;
+            --error: #B85C5C;
+            --warning: #C9A227;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
+            --shadow-glow: 0 0 40px var(--accent-glow);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ─── NAVIGATION ─── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(250, 249, 247, 0.85);
+            backdrop-filter: blur(20px) saturate(1.2);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            font-size: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1.5px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            background: var(--bg-dark);
+            color: var(--text-light) !important;
+            padding: 8px 18px;
+            border-radius: 100px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .nav-cta:hover {
+            background: var(--accent);
+            color: var(--text-primary) !important;
+            transform: translateY(-1px);
+        }
+
+        .nav-cta::after {
+            display: none !important;
+        }
+
+        /* ─── HERO ─── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 24px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .hero-bg::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(90, 143, 110, 0.08) 0%, transparent 70%);
+            animation: float 10s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -30px) scale(1.05); }
+        }
+
+        .hero-content {
+            max-width: 900px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .hero-badge .pulse {
+            width: 6px;
+            height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 600;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.8s ease 0.1s both;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--accent);
+            position: relative;
+        }
+
+        .hero h1 em::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: var(--accent-soft);
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            font-weight: 400;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 100px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--bg-dark);
+            color: var(--text-light);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1.5px solid var(--border-strong);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+            transform: translateY(-2px);
+        }
+
+        .hero-meta {
+            margin-top: 32px;
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .hero-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ─── TERMINAL SECTION ─── */
+        .terminals {
+            padding: 100px 24px;
+            background: var(--bg-secondary);
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 60px;
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .terminals-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+        }
+
+        .terminal {
+            background: var(--bg-terminal);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .terminal:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .terminal-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #FF5F57; }
+        .dot-yellow { background: #FFBD2E; }
+        .dot-green { background: #28C840; }
+
+        .terminal-title {
+            margin-left: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .terminal-body {
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8125rem;
+            line-height: 1.7;
+            min-height: 280px;
+            color: #E8E6E3;
+        }
+
+        .terminal-line {
+            opacity: 0;
+            animation: typeIn 0.5s ease forwards;
+        }
+
+        .term-prompt {
+            color: var(--accent);
+        }
+
+        .term-user {
+            color: var(--success);
+        }
+
+        .term-cmd {
+            color: #E8E6E3;
+        }
+
+        .term-response {
+            color: var(--text-muted);
+            margin-left: 20px;
+            display: block;
+        }
+
+        .term-highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .term-wake {
+            color: var(--warning);
+            font-weight: 700;
+            animation: glow 2s ease infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 5px rgba(201, 162, 39, 0.3); }
+            50% { text-shadow: 0 0 15px rgba(201, 162, 39, 0.6); }
+        }
+
+        @keyframes typeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─── FEATURES ─── */
+        .features {
+            padding: 100px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            margin-top: 60px;
+        }
+
+        .feature-card {
+            padding: 32px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-soft);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover .feature-icon {
+            background: var(--accent-soft);
+            transform: scale(1.1);
+        }
+
+        .feature-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            line-height: 1.6;
+        }
+
+        /* ─── DOWNLOADS ─── */
+        .downloads {
+            padding: 100px 24px;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .downloads::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at top, rgba(212, 165, 116, 0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .downloads .section-header h2,
+        .downloads .section-header p {
+            color: var(--text-light);
+        }
+
+        .downloads .section-header p {
+            opacity: 0.7;
+        }
+
+        .downloads-container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-top: 40px;
+        }
+
+        .download-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius);
+            padding: 28px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .download-card:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        }
+
+        .download-card .os-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            opacity: 0.9;
+        }
+
+        .download-card h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            margin-bottom: 6px;
+        }
+
+        .download-card .os-meta {
+            font-size: 0.8125rem;
+            opacity: 0.5;
+            margin-bottom: 16px;
+        }
+
+        .download-card .download-btn {
+            margin-top: auto;
+            background: var(--accent);
+            color: var(--text-primary);
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .download-card:hover .download-btn {
+            background: var(--text-light);
+            color: var(--bg-dark);
+        }
+
+        .download-loading {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.6;
+            font-style: italic;
+        }
+
+        .download-error {
+            text-align: center;
+            padding: 40px;
+            color: var(--error);
+            opacity: 0.8;
+        }
+
+        .download-all {
+            text-align: center;
+            margin-top: 32px;
+        }
+
+        .download-all a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-bottom: 1px solid var(--accent);
+            padding-bottom: 2px;
+            transition: opacity 0.2s;
+        }
+
+        .download-all a:hover {
+            opacity: 0.7;
+        }
+
+        /* ─── PHILOSOPHY ─── */
+        .philosophy {
+            padding: 100px 24px;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .philosophy blockquote {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.5rem, 3vw, 2.25rem);
+            font-style: italic;
+            line-height: 1.4;
+            color: var(--text-primary);
+            position: relative;
+            padding: 0 40px;
+        }
+
+        .philosophy blockquote::before {
+            content: '"';
+            position: absolute;
+            left: 0;
+            top: -20px;
+            font-size: 6rem;
+            color: var(--accent-soft);
+            line-height: 1;
+            font-family: 'Playfair Display', serif;
+            opacity: 0.6;
+        }
+
+        .philosophy cite {
+            display: block;
+            margin-top: 24px;
+            font-family: 'Inter', sans-serif;
+            font-style: normal;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* ─── FOOTER ─── */
+        footer {
+            padding: 48px 24px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        footer p {
+            color: var(--text-muted);
+            font-size: 0.8125rem;
+        }
+
+        footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        footer a:hover {
+            color: var(--accent);
+        }
+
+        /* ─── SCROLL ANIMATIONS ─── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ─── MOBILE ─── */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero { padding: 100px 20px 60px; }
+            .terminals-grid { grid-template-columns: 1fr; }
+            .features-grid { grid-template-columns: 1fr; }
+            .download-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <div class="logo-icon">🎧</div>
+                <span class="logo-text">Orbiton</span>
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#demo">Demo</a>
+                <a href="#download">Download</a>
+                <a href="https://github.com/AymanHaidry/Kosmosic-Orbiton" target="_blank">GitHub</a>
+                <a href="#download" class="nav-cta">Get Orbiton</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="pulse"></span>
+                v0.6.2 — Tokyo-class voice assistant
+            </div>
+            <h1>
+                We put the world<br>
+                <em>around your head.</em>
+            </h1>
+            <p class="hero-subtitle">
+                Orbiton turns your headset into a wireless command terminal. 
+                Launch apps, search the web, manage projects, and automate tasks 
+                — all with your voice. No cloud. No bloat. Just you and your machine.
+            </p>
+            <div class="hero-actions">
+                <a href="#download" class="btn btn-primary">
+                    <span>↓</span> Download Free
+                </a>
+                <a href="#demo" class="btn btn-secondary">
+                    <span>▶</span> See It In Action
+                </a>
+            </div>
+            <div class="hero-meta">
+                <span>🪟 Windows</span>
+                <span>🍎 macOS</span>
+                <span>🐧 Linux</span>
+                <span>⚡ Open Source</span>
+                <span>🔒 Private</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="terminals" id="demo">
+        <div class="section-header reveal">
+            <h2>Speak. It listens. It acts.</h2>
+            <p>Three live sessions showing Orbiton handling real commands — from wake word to execution.</p>
+        </div>
+        <div class="terminals-grid">
+            <!-- Terminal 1: Wake & Search -->
+            <div class="terminal reveal">
+                <div class="terminal-header">
+                    <div class="terminal-dot dot-red"></div>
+                    <div class="terminal-dot dot-yellow"></div>
+                    <div class="terminal-dot dot-green"></div>
+                    <span class="terminal-title">orbiton — session_001</span>
+                </div>
+                <div class="terminal-body" id="term1"></div>
+            </div>
+
+            <!-- Terminal 2: Productivity -->
+            <div class="terminal reveal">
+                <div class="terminal-header">
+                    <div class="terminal-dot dot-red"></div>
+                    <div class="terminal-dot dot-yellow"></div>
+                    <div class="terminal-dot dot-green"></div>
+                    <span class="terminal-title">orbiton — session_002</span>
+                </div>
+                <div class="terminal-body" id="term2"></div>
+            </div>
+
+            <!-- Terminal 3: The Roast -->
+            <div class="terminal reveal">
+                <div class="terminal-header">
+                    <div class="terminal-dot dot-red"></div>
+                    <div class="terminal-dot dot-yellow"></div>
+                    <div class="terminal-dot dot-green"></div>
+                    <span class="terminal-title">orbiton — session_003</span>
+                </div>
+                <div class="terminal-body" id="term3"></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="section-header reveal">
+            <h2>Everything within earshot.</h2>
+            <p>Orbiton is not a chatbot. It is a command layer between your voice and your operating system.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card reveal">
+                <div class="feature-icon">🎤</div>
+                <h3>Wake Word Activation</h3>
+                <p>Say <strong>"TOKYO"</strong> and Orbiton snaps to attention. No buttons. No clicks. Just your voice cutting through the noise.</p>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">🧠</div>
+                <h3>Neuro-Link Intelligence</h3>
+                <p>Built-in NLP handles homophones, spoken math, and context routing. "Exambored" becomes "exam mode." "Two times two" becomes <code>2*2</code>.</p>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">🔒</div>
+                <h3>Zero Cloud, Zero Telemetry</h3>
+                <p>Everything runs locally. Your voice never leaves your machine. No API keys to manage. No privacy policy to dread.</p>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">⚡</div>
+                <h3>System Native</h3>
+                <p>Open VS Code projects, launch Chrome searches, navigate files, check weather, track flights — all through OS-level integration.</p>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">🗣️</div>
+                <h3>Edge TTS Voices</h3>
+                <p>Orbiton talks back using neural text-to-speech. Aria, Jenny, or any Edge voice you prefer. It sounds human because it is.</p>
+            </div>
+            <div class="feature-card reveal">
+                <div class="feature-icon">🐍</div>
+                <h3>Python-Powered & Hackable</h3>
+                <p>Written in pure Python. Add commands in minutes. The entire architecture is a single file away from your next great idea.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="downloads" id="download">
+        <div class="downloads-container">
+            <div class="section-header reveal">
+                <h2>One headset. Every OS.</h2>
+                <p>Download the latest release for your platform. Orbiton auto-detects your system and optimizes voice pipelines accordingly.</p>
+            </div>
+            <div class="download-grid" id="download-grid">
+                <div class="download-loading">Fetching latest releases from GitHub...</div>
+            </div>
+            <div class="download-all reveal">
+                <a href="https://github.com/AymanHaidry/Kosmosic-Orbiton/releases" target="_blank">
+                    View all releases on GitHub →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="philosophy">
+        <blockquote class="reveal">
+            Your ancestors built empires. You can not even close 3 Chrome tabs.
+            <cite>— Orbiton, during "motivate me"</cite>
+        </blockquote>
+    </section>
+
+    <footer>
+        <p>
+            Built by <a href="https://github.com/AymanHaidry" target="_blank">Ayman Haidry</a> and contributors. 
+            Licensed under GPL-3.0. <a href="https://github.com/AymanHaidry/Kosmosic-Orbiton" target="_blank">Star us on GitHub</a>.
+        </p>
+    </footer>
+
+    <script>
+        // ─── NAVBAR SCROLL ───
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // ─── SCROLL REVEAL ───
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // ─── TERMINAL TYPING DEMO ───
+        const termData = {
+            term1: [
+                { delay: 0, html: '<span class="term-prompt">➜</span> <span class="term-user">~</span> <span class="term-cmd">orbiton</span>' },
+                { delay: 400, html: '<span class="term-response">🎧 Orbiton v0.6.2 — Voice Command Terminal</span>' },
+                { delay: 600, html: '<span class="term-response">Wake word: <span class="term-wake">TOKYO</span>  |  Say "wake" to activate</span>' },
+                { delay: 1200, html: '<span class="term-response" style="color:#6B6560">[listening...]</span>' },
+                { delay: 2000, html: '<span class="term-response"><span class="term-wake">TOKYO</span> detected → activating neuro-link...</span>' },
+                { delay: 800, html: '<span class="term-response" style="color:#6B6560">[listening...]</span>' },
+                { delay: 2500, html: '<span class="term-response">🎤 "search latest rust memory safety proposals"</span>' },
+                { delay: 600, html: '<span class="term-response">🔍 Routing to Google Search...</span>' },
+                { delay: 800, html: '<span class="term-response">🗣️  "Opening search results for latest rust memory safety proposals."</span>' },
+                { delay: 400, html: '<span class="term-response" style="color:var(--success)">✓ Chrome launched — 8 tabs ready</span>' },
+                { delay: 1000, html: '<span class="term-prompt">➜</span> <span class="term-user">~</span> <span class="term-cmd" style="opacity:0.4">_</span>' },
+            ],
+            term2: [
+                { delay: 0, html: '<span class="term-prompt">➜</span> <span class="term-user">~/projects</span> <span class="term-cmd">orbiton</span>' },
+                { delay: 500, html: '<span class="term-response">🎧 Orbiton v0.6.2 — Voice Command Terminal</span>' },
+                { delay: 700, html: '<span class="term-response">Wake word: <span class="term-wake">TOKYO</span></span>' },
+                { delay: 1500, html: '<span class="term-response"><span class="term-wake">TOKYO</span> → neuro-link active</span>' },
+                { delay: 800, html: '<span class="term-response" style="color:#6B6560">[listening...]</span>' },
+                { delay: 2200, html: '<span class="term-response">🎤 "open project hex link"</span>' },
+                { delay: 500, html: '<span class="term-response">📂 Resolved: hex-link → C:\Projects\hex-link</span>' },
+                { delay: 600, html: '<span class="term-response">🖥️  Launching VS Code...</span>' },
+                { delay: 800, html: '<span class="term-response" style="color:var(--success)">✓ VS Code opened — 14 files restored</span>' },
+                { delay: 1200, html: '<span class="term-response" style="color:#6B6560">[listening...]</span>' },
+                { delay: 2000, html: '<span class="term-response">🎤 "what time is it"</span>' },
+                { delay: 400, html: '<span class="term-response">🗣️  "It is 8:47 PM. Your sleep schedule is a war crime. Fix yourself."</span>' },
+                { delay: 800, html: '<span class="term-prompt">➜</span> <span class="term-user">~</span> <span class="term-cmd" style="opacity:0.4">_</span>' },
+            ],
+            term3: [
+                { delay: 0, html: '<span class="term-prompt">➜</span> <span class="term-user">~</span> <span class="term-cmd">orbiton --exam-mode</span>' },
+                { delay: 600, html: '<span class="term-response">🎓 Exam Mode activated — distractions neutralized</span>' },
+                { delay: 800, html: '<span class="term-response">🚫 Blocked: Twitter, Reddit, YouTube, Discord</span>' },
+                { delay: 1000, html: '<span class="term-response" style="color:#6B6560">[listening...]</span>' },
+                { delay: 1800, html: '<span class="term-response"><span class="term-wake">TOKYO</span> → exam-mode context loaded</span>' },
+                { delay: 800, html: '<span class="term-response" style="color:#6B6560">[listening...]</span>' },
+                { delay: 2500, html: '<span class="term-response">🎤 "motivate me"</span>' },
+                { delay: 500, html: '<span class="term-response">🧠 Toxic Roast Engine v2.1 — engaging...</span>' },
+                { delay: 700, html: '<span class="term-response" style="color:var(--accent)">🗣️  "The Doha apartment is not paying for itself. Get back to work, peasant."</span>' },
+                { delay: 1000, html: '<span class="term-response" style="color:var(--accent)">🗣️  "Your GitHub contribution graph looks like a deforestation map. Embarrassing."</span>' },
+                { delay: 1000, html: '<span class="term-response" style="color:var(--accent)">🗣️  "That idea you had 3 hours ago? Someone in Bangalore already shipped it."</span>' },
+                { delay: 800, html: '<span class="term-response" style="color:var(--success)">✓ Focus restored. Pain is temporary. GPA is forever.</span>' },
+                { delay: 600, html: '<span class="term-prompt">➜</span> <span class="term-user">~</span> <span class="term-cmd" style="opacity:0.4">_</span>' },
+            ]
+        };
+
+        function typeTerminal(id, lines) {
+            const container = document.getElementById(id);
+            let cumulativeDelay = 0;
+            lines.forEach((line, i) => {
+                cumulativeDelay += line.delay;
+                setTimeout(() => {
+                    const div = document.createElement('div');
+                    div.className = 'terminal-line';
+                    div.style.animationDelay = '0s';
+                    div.innerHTML = line.html;
+                    container.appendChild(div);
+                    // Auto-scroll
+                    container.scrollTop = container.scrollHeight;
+                }, cumulativeDelay);
+            });
+        }
+
+        // Start terminals with staggered delays
+        setTimeout(() => typeTerminal('term1', termData.term1), 800);
+        setTimeout(() => typeTerminal('term2', termData.term2), 2500);
+        setTimeout(() => typeTerminal('term3', termData.term3), 4500);
+
+        // ─── GITHUB RELEASES FETCH ───
+        async function fetchReleases() {
+            const grid = document.getElementById('download-grid');
+            try {
+                const response = await fetch('https://api.github.com/repos/AymanHaidry/Kosmosic-Orbiton/releases/latest');
+                if (!response.ok) throw new Error('No releases found');
+                const release = await response.json();
+
+                if (!release.assets || release.assets.length === 0) {
+                    grid.innerHTML = '<div class="download-error">No release assets yet. Check back soon or build from source.</div>';
+                    return;
+                }
+
+                const platformMap = {
+                    'windows': { icon: '🪟', name: 'Windows', ext: ['zip', 'exe'] },
+                    'macos': { icon: '🍎', name: 'macOS', ext: ['zip', 'dmg', 'pkg'] },
+                    'darwin': { icon: '🍎', name: 'macOS', ext: ['zip', 'dmg'] },
+                    'linux': { icon: '🐧', name: 'Linux', ext: ['tar.gz', 'tar', 'AppImage', 'deb'] },
+                };
+
+                const assets = release.assets;
+                let html = '';
+
+                // Group by platform
+                const platforms = [];
+
+                // Windows
+                const winAsset = assets.find(a => 
+                    a.name.toLowerCase().includes('win') || 
+                    a.name.toLowerCase().endsWith('.exe')
+                );
+                if (winAsset) platforms.push({ ...platformMap.windows, url: winAsset.browser_download_url, size: (winAsset.size / 1024 / 1024).toFixed(1) + ' MB' });
+
+                // macOS (ARM64)
+                const macArmAsset = assets.find(a => 
+                    (a.name.toLowerCase().includes('mac') && a.name.toLowerCase().includes('arm')) ||
+                    a.name.toLowerCase().includes('darwin-arm')
+                );
+                if (macArmAsset) platforms.push({ ...platformMap.macos, name: 'macOS (Apple Silicon)', url: macArmAsset.browser_download_url, size: (macArmAsset.size / 1024 / 1024).toFixed(1) + ' MB' });
+
+                // macOS (Intel)
+                const macIntelAsset = assets.find(a => 
+                    (a.name.toLowerCase().includes('mac') && a.name.toLowerCase().includes('intel')) ||
+                    (a.name.toLowerCase().includes('mac') && a.name.toLowerCase().includes('x86')) ||
+                    a.name.toLowerCase().includes('darwin-x86')
+                );
+                if (macIntelAsset) platforms.push({ ...platformMap.macos, name: 'macOS (Intel)', url: macIntelAsset.browser_download_url, size: (macIntelAsset.size / 1024 / 1024).toFixed(1) + ' MB' });
+
+                // Generic macOS fallback
+                if (!macArmAsset && !macIntelAsset) {
+                    const macGeneric = assets.find(a => a.name.toLowerCase().includes('mac') || a.name.toLowerCase().includes('darwin'));
+                    if (macGeneric) platforms.push({ ...platformMap.macos, url: macGeneric.browser_download_url, size: (macGeneric.size / 1024 / 1024).toFixed(1) + ' MB' });
+                }
+
+                // Linux
+                const linuxAsset = assets.find(a => 
+                    a.name.toLowerCase().includes('linux') || 
+                    a.name.toLowerCase().endsWith('.tar.gz') ||
+                    a.name.toLowerCase().endsWith('.AppImage')
+                );
+                if (linuxAsset) platforms.push({ ...platformMap.linux, url: linuxAsset.browser_download_url, size: (linuxAsset.size / 1024 / 1024).toFixed(1) + ' MB' });
+
+                // If no recognized platforms, show all assets
+                if (platforms.length === 0) {
+                    assets.slice(0, 4).forEach(asset => {
+                        const ext = asset.name.split('.').pop();
+                        const icon = ext === 'exe' ? '🪟' : ext === 'zip' ? '📦' : ext === 'tar.gz' ? '🐧' : '📎';
+                        platforms.push({
+                            icon,
+                            name: asset.name.replace(/\.[^/.]+$/, ""),
+                            url: asset.browser_download_url,
+                            size: (asset.size / 1024 / 1024).toFixed(1) + ' MB'
+                        });
+                    });
+                }
+
+                platforms.forEach(p => {
+                    html += `
+                        <a href="${p.url}" class="download-card" download>
+                            <div class="os-icon">${p.icon}</div>
+                            <h4>${p.name}</h4>
+                            <div class="os-meta">${p.size || 'Latest release'}</div>
+                            <div class="download-btn">Download</div>
+                        </a>
+                    `;
+                });
+
+                grid.innerHTML = html;
+            } catch (err) {
+                grid.innerHTML = `
+                    <div class="download-error">
+                        Could not fetch releases. <br>
+                        <a href="https://github.com/AymanHaidry/Kosmosic-Orbiton/releases" target="_blank" style="color:var(--accent)">View releases manually →</a>
+                    </div>
+                `;
+            }
+        }
+
+        fetchReleases();
+    </script>
+</body>
+</html>
