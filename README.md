@@ -1,6 +1,6 @@
 # 🎧 Orbiton — Voice Command Terminal
 
-> *"Your headphones are judging you."*
+> *"We put the world around your head."*
 
 **Company:** Kosmosic  
 **Product:** Orbiton  
