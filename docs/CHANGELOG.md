@@ -1,297 +1,141 @@
 # Changelog
 
-All notable changes to Neuro-Link will be documented in this file.
+All notable changes to Orbiton will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [Unreleased]
+
+### Planned
+- Genesis-class intelligence (local LLM integration)
+- Micron-class lite version (ROI-dependent)
+- Email, calls, calendar (post-Genesis / ~v4.0)
+- Wake word customization
+- Multi-language support
+- IoT integration
+- Auth system (online accounts)
+- Website for downloads and intel sharing
+
+---
+
+## [0.6.0] - 2026-06-07
+
+### Fixed
+- CI/CD pipeline now passes all 151 tests across 7 workflows
+- Platform-aware subprocess mocking for Windows/Linux/macOS
+- `Path.exists()` and `Path.is_dir()` mocking in launch tests
+- Self-listening bug partially mitigated (TTS output no longer triggers random intel)
+
+### Changed
+- Test suite reorganized into 6 categories: core_logic, url_engine, compute, launch, system, integration
+- Each category runs as separate CI job for visibility
+- Pylint workflow added for code quality
+
+---
+
+## [0.5.0] - 2026-06-07
+
+### Removed
+- **Constellations knowledge dataset** from built-in intelligence module
+  - Orion, Ursa Major, Cassiopeia, Scorpius, Cygnus, Leo, Andromeda, Crux
+  - Why: Reduces bundle size. Constellation queries now route to Wikimedia/Wikipedia REST API
+  - Still built-in: Moon Phases, Aviation Facts, Space Facts
+
+### Changed
+- Cleaner `BUILTIN_INTEL` structure with one fewer nested dictionary
+- Reduced memory footprint on startup
+- Backward compatibility maintained for all other lookups
 
 ---
 
 ## [0.4.0] - 2026-06-06
 
-### 🧠 Intelligence Module
+### Added
+- **Dedicated `neuro_link_intel.py` module** — separated NLP and knowledge processing from main application
+- **Natural Language Processor (NLP)** layer:
+  - Contraction expansion ("what's" → "what is")
+  - Homophone correction ("exambored" → "exam mode", "hell" → "help")
+  - Intent normalization and query cleanup
+- **File Explorer integration** — folders open directly in Windows Explorer with numbered file list
+- **Apple-style boot sequence** — minimalist "● → Loading → ✓ Ready" startup
+- **Built-in knowledge base**:
+  - Constellations (Orion, Ursa Major, Cassiopeia, Scorpius, Cygnus, Leo, Andromeda, Crux)
+  - Moon Phases (8 phases with descriptions)
+  - Aviation Facts (V1, V2, Mach, ICAO, Squawk, METAR, TAF, etc.)
+  - Space Facts (ISS, Mars, Black Holes, Light Years, Big Bang, etc.)
+- **Wikimedia integration** — Wikipedia REST API + caching for dynamic fact retrieval
+- **Manual sleep and wake controls**:
+  - Sleep: `sleep`, `go to sleep`, `shut down`
+  - Wake: `Tokyo`, `wake`, `wake up`, `start`, `online`
+- **Reboot system** — reliable relaunching via `subprocess.Popen` instead of `os.execl`
 
-* Added dedicated `neuro_link_intel.py` module.
-* Separated NLP and knowledge processing from the main application.
-* Improved maintainability and modularity.
+### Changed
+- Removed automatic sleep functionality (no more `wake_misses` / `sleep_after_misses`)
+- Orbiton remains active indefinitely until explicit sleep command
+- Help recognition expanded: `help`, `hell`, `hellp`, `halp`, `helf`, `elpe`
+- Exam mode recognition expanded: `exam mode`, `exambored`, `exambord`, `exum mode`, `eggsam mode`
 
----
-
-### 🗣 Natural Language Understanding
-
-Introduced a Natural Language Processor (NLP) layer capable of understanding conversational speech and common mistakes.
-
-#### Examples
-
-| User Input                 | Interpreted As              |
-| -------------------------- | --------------------------- |
-| what's the weather in doha | what is the weather in doha |
-| whats the time             | what is the time            |
-| tell me about orion        | knowledge lookup            |
-| i'm tired                  | memory event                |
-| how to cook rice           | Google search               |
-| exambored                  | exam mode                   |
-| hell / hellp / halp        | help                        |
-
-Features:
-
-* Contraction expansion
-* Homophone correction
-* Intent normalization
-* Query cleanup before processing
+### Fixed
+- Reboot reliability on Windows
+- Help command misheard variants now correctly routed
 
 ---
 
-### 📁 File Explorer Integration
+## [0.3.0] - 2026-06-06
 
-Folders now open directly in Windows Explorer.
-
-#### Example
-
-```text
-Voice: open downloads
-```
-
-Result:
-
-```text
-explorer.exe C:\Users\<user>\Downloads
-```
-
-Additional functionality:
-
-* Displays numbered file list in terminal
-* Opens actual Explorer window
-* Supports file browsing workflows
+### Added
+- Initial voice command framework
+- URL launcher system (Google, YouTube, Maps, FlightRadar24, etc.)
+- VS Code project launcher
+- Aviation utilities (METAR, TAF, airport search, flight tracking)
+- Calculator engine with natural language math
+- File navigation features
+- JBL headset workflow foundation
+- Toxic motivation engine (roasts)
+- Session status and time commands
+- User memory system (learns facts about you)
 
 ---
 
-### 🍎 Apple-Style Boot Experience
+## [0.2.0] - 2026-06-06
 
-Replaced legacy startup screen with a cleaner boot sequence.
-
-#### New Startup
-
-```text
-●
-Loading Neuro-Link...
-Initializing voice engine...
-Connecting to intelligence module...
-✓ Ready
-```
-
-Focus:
-
-* Minimal interface
-* Faster startup feedback
-* Cleaner user experience
+### Added
+- Basic speech recognition integration
+- Terminal UI with rich formatting
+- Wake word detection ("Tokyo")
+- Cross-platform subprocess handling (Windows, macOS, Linux)
 
 ---
 
-### 🔄 Reboot System Improvements
+## [0.1.0] - 2026-06-06
 
-Fixed restart reliability.
-
-Previous implementation:
-
-```python
-os.execl(...)
-```
-
-New implementation:
-
-```python
-subprocess.Popen(...)
-sys.exit(0)
-```
-
-Benefits:
-
-* Reliable relaunching
-* Separate console support
-* Reduced startup failures
+### Added
+- Initial project structure
+- Basic command parsing
+- Proof-of-concept voice input
 
 ---
 
-### 🆘 Help Recognition Improvements
+## Model Class History
 
-Expanded homophone recognition for help commands.
-
-Supported variations:
-
-```text
-help
-hell
-hellp
-halp
-helf
-elpe
-```
-
-All variations now correctly trigger the Help system.
+| Class | Version | Status |
+|-------|---------|--------|
+| Tokyo-class | 0.1.0 → 0.6.0 | Current |
+| Genesis-class | — | Planned |
+| Micron-class | — | Planned (ROI-dependent) |
+| Singularity-class | — | Vision |
 
 ---
 
-### 📚 Exam Mode Recognition
+## Release Naming Convention
 
-Improved recognition of spoken exam-related commands.
-
-Supported variations:
-
-```text
-exam mode
-exambored
-exambord
-exum mode
-eggsam mode
-```
-
-All variations now resolve to:
-
-```text
-exam mode
-```
+- **v0.X.Y** — Standard semver
+- **v0.X-Tokyo** — Tokyo-class release (current)
+- Future: **v1.X-Genesis**, **v2.X-Micron**, **vX.X-Singularity**
 
 ---
 
-### 🌙 Sleep System Changes
-
-Removed automatic sleep functionality.
-
-Removed:
-
-* wake_misses
-* sleep_after_misses
-
-Behavior:
-
-* Neuro-Link remains active indefinitely
-* Sleep only occurs through explicit commands
-
----
-
-### 🔋 Manual Sleep & Wake Controls
-
-#### Sleep Commands
-
-```text
-sleep
-go to sleep
-shut down
-```
-
-#### Wake Commands
-
-```text
-Tokyo
-wake
-wake up
-start
-online
-```
-
-#### Headset Wake
-
-```text
-[text] > wake
-```
-
-Simulates JBL headset activation workflow.
-
----
-
-### 🌌 Built-In Knowledge Base
-
-Added bundled intelligence datasets.
-
-#### Constellations
-
-Topics include:
-
-* Orion
-* Ursa Major
-* Cassiopeia
-* Scorpius
-* Cygnus
-* Leo
-* Andromeda
-* Crux
-
-#### Moon Phases
-
-Topics include:
-
-* New Moon
-* Waxing Crescent
-* First Quarter
-* Waxing Gibbous
-* Full Moon
-* Waning Gibbous
-* Last Quarter
-* Waning Crescent
-
-#### Aviation Facts
-
-Topics include:
-
-* V1
-* V2
-* Mach Number
-* ICAO
-* Squawk Codes
-* Altitude
-* Wake Turbulence
-* ILS
-* METAR
-* TAF
-
-#### Space Facts
-
-Topics include:
-
-* International Space Station (ISS)
-* Mars
-* Black Holes
-* Light Years
-* Big Bang
-* Nebulae
-* Supernovae
-* Dark Matter
-
----
-
-### 🌐 External Knowledge Sources
-
-Added Wikimedia integration.
-
-Sources:
-
-* Wikimedia Dumps
-* Wikipedia REST API
-
-Capabilities:
-
-* Dynamic fact retrieval
-* Knowledge expansion beyond bundled datasets
-* Improved response coverage
-
----
-
-### ⚙ Internal Improvements
-
-* Cleaner architecture
-* Better separation of concerns
-* Reduced complexity in main application file
-* Improved maintainability for future releases
-
----
-
-## Previous Releases
-
-### [0.3.x]
-
-* Initial voice command framework
-* URL launcher system
-* Project launcher support
-* Aviation utilities
-* Calculator engine
-* File navigation features
-* JBL headset workflow foundation
-for anything not in local knowledge.
+For the full roadmap, see [ROADMAP.md](ROADMAP.md).
