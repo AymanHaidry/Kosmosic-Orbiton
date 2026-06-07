@@ -1,6 +1,6 @@
 """Test intent recognition and routing."""
 import pytest
-from neuro_link import IntentParser
+from kosmosic_orbiton import IntentParser
 
 
 def test_search_intent(parser):
@@ -96,7 +96,6 @@ def test_exam_mode_intent(parser):
 def test_exam_board_variant(parser):
     """NLP fix: 'exam board' should map to exam_mode."""
     intent, arg = parser.parse("exam board")
-    # Currently fails — regex only catches 'exam mode'
     assert intent is None  # Documenting known gap
 
 

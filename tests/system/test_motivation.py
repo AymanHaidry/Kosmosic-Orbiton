@@ -10,7 +10,7 @@ def test_motivate_returns_roast(engine):
 
 
 def test_motivate_roast_from_database(engine):
-    from neuro_link import TOXIC_ROASTS
+    from kosmosic_orbiton import TOXIC_ROASTS
     engine.handle_motivate()
     spoken = engine.voice.speak.call_args[0][0]
     assert spoken in TOXIC_ROASTS

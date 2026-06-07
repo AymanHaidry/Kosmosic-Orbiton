@@ -18,7 +18,6 @@ def test_exam_mode_opens_desmos(engine):
 
 
 def test_exam_mode_opens_notepad_on_windows(engine):
-    with patch('neuro_link.platform.system', return_value="Windows"),          patch('neuro_link.subprocess.Popen') as mock_popen:
+    with patch('kosmosic_orbiton.platform.system', return_value="Windows"),          patch('kosmosic_orbiton.subprocess.Popen') as mock_popen:
         engine.handle_exam_mode()
-        # Notepad opening is conditional on Windows
         assert any("notepad" in str(c) for c in mock_popen.call_args_list) or True

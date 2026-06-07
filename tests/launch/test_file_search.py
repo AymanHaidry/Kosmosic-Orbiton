@@ -5,7 +5,7 @@ from unittest.mock import patch, MagicMock
 
 
 def test_file_search_finds_match(engine):
-    with patch('neuro_link.os.walk') as mock_walk:
+    with patch('kosmosic_orbiton.os.walk') as mock_walk:
         mock_walk.return_value = [
             (str(Path.home()), [], ["report_2024.pdf"])
         ]
@@ -15,7 +15,7 @@ def test_file_search_finds_match(engine):
 
 
 def test_file_search_no_match_shows_error(engine):
-    with patch('neuro_link.os.walk') as mock_walk:
+    with patch('kosmosic_orbiton.os.walk') as mock_walk:
         mock_walk.return_value = []
         engine.handle_open_file("xyz_nonexistent_abc")
         engine.ui.show_error.assert_called()

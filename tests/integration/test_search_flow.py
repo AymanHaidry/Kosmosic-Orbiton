@@ -4,7 +4,7 @@ from unittest.mock import patch, MagicMock
 
 
 def test_search_flow_full(engine, parser, mock_ui, mock_voice, mock_memory, mock_intel):
-    from neuro_link import process_text
+    from kosmosic_orbiton import process_text
 
     with patch.object(engine, 'open_chrome') as mock_open:
         success, action = process_text(
@@ -19,7 +19,7 @@ def test_search_flow_full(engine, parser, mock_ui, mock_voice, mock_memory, mock
 
 
 def test_search_flow_unknown_command(mock_ui, mock_voice, mock_memory, mock_intel):
-    from neuro_link import process_text, CommandEngine, IntentParser
+    from kosmosic_orbiton import process_text, CommandEngine, IntentParser
     parser = IntentParser()
     engine = CommandEngine(mock_ui, mock_voice, mock_memory, mock_intel)
     success, action = process_text(

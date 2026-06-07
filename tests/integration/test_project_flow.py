@@ -4,8 +4,8 @@ from unittest.mock import patch
 
 
 def test_project_flow_known(engine, parser, mock_ui, mock_voice, mock_memory, mock_intel):
-    from neuro_link import process_text
-    with patch('neuro_link.subprocess.Popen') as mock_popen:
+    from kosmosic_orbiton import process_text
+    with patch('kosmosic_orbiton.subprocess.Popen') as mock_popen:
         success, action = process_text(
             "open project hex link",
             engine, parser, mock_memory, mock_voice, mock_ui, mock_intel
@@ -15,7 +15,7 @@ def test_project_flow_known(engine, parser, mock_ui, mock_voice, mock_memory, mo
 
 
 def test_project_flow_unknown(engine, parser, mock_ui, mock_voice, mock_memory, mock_intel):
-    from neuro_link import process_text
+    from kosmosic_orbiton import process_text
     success, action = process_text(
         "open project fake_project",
         engine, parser, mock_memory, mock_voice, mock_ui, mock_intel

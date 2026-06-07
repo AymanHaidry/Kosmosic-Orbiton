@@ -1,7 +1,7 @@
 """Validate every regex pattern in IntentParser."""
 import re
 import pytest
-from neuro_link import IntentParser
+from kosmosic_orbiton import IntentParser
 
 
 def test_all_patterns_compile():
@@ -90,7 +90,5 @@ def test_exam_mode_variants(parser):
         "examboard", "exambord", "exum mode", "eggsam mode"
     ]
     matched = [parser.parse(a) for a in aliases]
-    # Only "exam mode" currently matches
     assert matched[0] == ("exam_mode", "")
-    # Others are known gaps
     assert all(m is None for m in matched[1:])

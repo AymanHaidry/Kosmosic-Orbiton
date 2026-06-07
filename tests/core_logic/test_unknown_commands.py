@@ -1,6 +1,6 @@
 """Test unknown / unrecognized command handling."""
 import pytest
-from neuro_link import IntentParser, process_text
+from kosmosic_orbiton import IntentParser, process_text
 from unittest.mock import MagicMock
 
 
@@ -31,7 +31,7 @@ def test_process_text_unknown_shows_error():
     memory.learn.return_value = False
     intel = MagicMock()
     intel.process.return_value = ("", "")
-    from neuro_link import CommandEngine, IntentParser
+    from kosmosic_orbiton import CommandEngine, IntentParser
     engine = CommandEngine(ui, voice, memory, intel)
     parser = IntentParser()
     success, action = process_text("blargh", engine, parser, memory, voice, ui, intel)

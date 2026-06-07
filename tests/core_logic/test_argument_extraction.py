@@ -1,6 +1,6 @@
 """Test argument extraction edge cases."""
 import pytest
-from neuro_link import IntentParser
+from kosmosic_orbiton import IntentParser
 
 
 def test_extracts_multi_word_args(parser):
@@ -19,9 +19,7 @@ def test_strips_leading_trailing_spaces(parser):
 
 
 def test_preserves_case_in_args(parser):
-    """Arguments should preserve original case (if any) but parser lowercases."""
     intent, arg = parser.parse("search Airbus A350")
-    # Parser lowercases text before matching, so arg is lowercased
     assert arg == "airbus a350"
 
 

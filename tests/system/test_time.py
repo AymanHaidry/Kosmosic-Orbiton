@@ -13,5 +13,4 @@ def test_time_returns_current_time(engine):
 def test_time_format_12h(engine):
     engine.handle_time()
     spoken = engine.voice.speak.call_args[0][0]
-    # Should contain AM or PM
     assert "AM" in spoken or "PM" in spoken or "a.m" in spoken.lower()

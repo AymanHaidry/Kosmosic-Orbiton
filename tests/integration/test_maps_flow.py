@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 
 def test_maps_flow(engine, parser, mock_ui, mock_voice, mock_memory, mock_intel):
-    from neuro_link import process_text
+    from kosmosic_orbiton import process_text
     with patch.object(engine, 'open_chrome') as mock_open:
         success, action = process_text(
             "maps times square",
