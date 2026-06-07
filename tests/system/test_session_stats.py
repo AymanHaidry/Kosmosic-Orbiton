@@ -1,9 +1,9 @@
 """Test session statistics tracking."""
 import pytest
+from datetime import datetime
 
 
 def test_total_commands_incremented():
-    """Total commands should increase after successful parse."""
     from kosmosic_orbiton import NeuroInterface
     ui = NeuroInterface()
     initial = ui.total_commands
@@ -12,7 +12,6 @@ def test_total_commands_incremented():
 
 
 def test_error_count_incremented():
-    """Error count should increase on failures."""
     from kosmosic_orbiton import NeuroInterface
     ui = NeuroInterface()
     initial = ui.error_count

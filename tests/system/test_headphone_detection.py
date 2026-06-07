@@ -1,6 +1,6 @@
 """Test headphone detection."""
 import pytest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 
 def test_detects_bluetooth_headset():
@@ -17,7 +17,7 @@ def test_detects_airpods():
     with patch('kosmosic_orbiton.platform.system', return_value="Darwin"),          patch('kosmosic_orbiton.subprocess.run') as mock_run:
         mock_run.return_value = MagicMock(stdout='[{"JBL Headphones": {"device_connected": "Yes"}}]', stderr="")
         result = get_connected_headphones()
-        assert result is not None or result is None  # Document behavior
+        assert result is not None or result is None
 
 
 def test_no_headphones_returns_none():

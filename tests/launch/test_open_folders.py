@@ -43,7 +43,6 @@ def test_open_music(engine):
 
 
 def test_open_unknown_folder_falls_back_to_search(engine):
-    """Unknown folder name should trigger file search."""
     with patch('kosmosic_orbiton.subprocess.Popen') as mock_popen,          patch.object(engine, 'open_path') as mock_open:
         engine.handle_open_file("nonexistent_folder_xyz")
         assert mock_popen.called or engine.ui.show_error.called

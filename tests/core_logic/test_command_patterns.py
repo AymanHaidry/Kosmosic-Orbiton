@@ -5,28 +5,24 @@ from kosmosic_orbiton import IntentParser
 
 
 def test_all_patterns_compile():
-    """Every pattern must be a valid regex."""
     parser = IntentParser()
     for pattern, intent in parser.PATTERNS:
         assert re.compile(pattern), f"Invalid regex for {intent}"
 
 
 def test_no_duplicate_intents():
-    """Each intent should appear only once to avoid ambiguity."""
     parser = IntentParser()
     intents = [intent for _, intent in parser.PATTERNS]
     assert len(intents) == len(set(intents)), "Duplicate intents detected"
 
 
 def test_patterns_are_lowercase_anchored():
-    """Patterns should start with ^ to prevent partial matching."""
     parser = IntentParser()
     for pattern, intent in parser.PATTERNS:
         assert pattern.startswith("^"), f"{intent} pattern not anchored"
 
 
 def test_search_pattern_variations(parser):
-    """search, google, look up, find should all trigger search."""
     for cmd in ["search python", "google python", "look up python", "find python"]:
         intent, arg = parser.parse(cmd)
         assert intent == "search", f"Failed for: {cmd}"
@@ -83,7 +79,6 @@ def test_maps_pattern_variations(parser):
 
 
 def test_exam_mode_variants(parser):
-    """Document all exam mode aliases."""
     parser = IntentParser()
     aliases = [
         "exam mode", "focus mode", "launch mode",

@@ -20,6 +20,6 @@ def test_status_includes_command_count(engine):
 
 def test_status_report_console_table(engine, mock_ui):
     from kosmosic_orbiton import CommandEngine
-    mock_ui.console = True  # Simulate rich console
+    mock_ui.console = True
     engine2 = CommandEngine(mock_ui, engine.voice, engine.memory, engine.intel)
     engine2.handle_status()
