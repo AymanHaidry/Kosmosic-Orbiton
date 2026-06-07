@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  🎧 Orbiton v0.5 — Voice Command Terminal
+  🎧 Orbiton v0.6.2 — Voice Command Terminal
   "We put the world around your head."
   Wake word: TOKYO
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -195,7 +195,7 @@ class NeuroInterface:
         if self.console:
             banner = Panel.fit(
                 Text.from_markup(
-                    "[bold cyan]🎧 Kosmosic Orbiton v0.5[/bold cyan]\n"
+                    "[bold cyan]🎧 Kosmosic Orbiton v0.6.2[/bold cyan]\n"
                     "[dim]Voice Command Terminal — Say TOKYO to wake[/dim]\n"
                     f"[green]Headset:[/green] {self.headphone_name or 'Scanning...'}\n"
                     f"[yellow]Session:[/yellow] {self.session_start.strftime('%H:%M:%S')}"
@@ -206,7 +206,7 @@ class NeuroInterface:
             self.console.print(banner)
         else:
             print("=" * 50)
-            print("🎧 Kosmosic Orbiton v0.5 — Say TOKYO to wake")
+            print("🎧 Kosmosic Orbiton v0.6.2 — Say TOKYO to wake")
             print(f"Headset: {self.headphone_name or 'Scanning...'}")
             print("=" * 50)
 
