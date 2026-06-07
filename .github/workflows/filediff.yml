@@ -7,6 +7,8 @@ on:
 jobs:
   filediff:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
     - uses: actions/checkout@v4
       with:
@@ -14,6 +16,8 @@ jobs:
 
     - name: File Diff
       uses: Shopify/filediff@v0.0.4
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         target_branch: ${{ github.base_ref }}
         dir_glob: '**/*.py,**/*.md,**/*.yml,**/*.yaml'
