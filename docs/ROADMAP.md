@@ -1,23 +1,28 @@
 # Orbiton Roadmap
 
-> *"We put the world around your head."* — Current status: **Tokyo-class**
+> *"We put the world around your head."* — Current status: **Tokyo-class** (Generation 1)
 
 ---
 
-## Model Classes
+## Model Classes & Generations
 
-Orbiton releases are organized by **class**, not version number. Each class represents a tier of intelligence, capability, and integration depth.
+Orbiton evolves through **generations**, each named after a model class. Each generation represents a major era of intelligence, capability, and integration depth.
 
-| Class | Tier | Description | Status |
-|---|---|---|---|
-| **Tokyo-class** | 1st | Basic reasoning, voice commands, web search, file management, aviation tools, toxic motivation. | **Current** |
-| **Genesis-class** | 2nd | Advanced reasoning, local LLM integration, long-term memory, personalization engine, agentic tasks. | Planned |
-| **Micron-class** | 3rd | Lite version. All core functionality, stripped of heavy dependencies, for older hardware or minimal installs. | Planned (ROI-dependent) |
-| **Singularity-class** | Final | Full autonomy, multi-device ecosystem, predictive execution, hardware integration. | Vision |
+| Generation | Class | Description | Version | Status |
+|------------|-------|-------------|---------|--------|
+| 1 | **Tokyo** | Basic reasoning, voice commands, web search, file management, aviation tools, toxic motivation. | `1.x.x` | **Current** |
+| 2 | **Odyssey** | Large-scale growth. Advanced reasoning, local LLM integration, long-term memory, personalization engine. | `2.x.x` | Planned |
+| 3 | **Genesis** | Agentic behavior. Long-running tasks, predictive execution, multi-step workflows, scraper living on your PC. | `3.x.x` | Planned |
+| 4 | **Micron** | Lite version. All core functionality, stripped of heavy dependencies, for older hardware or minimal installs. | `4.x.x` | Planned (ROI-dependent) |
+| 5 | **Aphrodite** | Expansion beyond the original vision. IoT integration, multi-language support, various voices, wake word customization. | `5.x.x` | Planned |
+| 6 | **Singularity** | Full autonomy. Multi-device ecosystem, predictive everything, self-maintenance, multi-device continuity. | `6.x.x` | Vision |
+| 7 | **Utopia** | Final evolution. The absolute top. Orbiton becomes the second user of your computer. | `7.x.x` | Final Vision |
+
+See [VERSIONS.md](VERSIONS.md) for the full versioning system and release rules.
 
 ---
 
-## Tokyo-class (Current)
+## Generation 1 — Tokyo (Current)
 
 ### What Works Now
 - Voice wake word ("Tokyo") and natural language command parsing
@@ -32,23 +37,23 @@ Orbiton releases are organized by **class**, not version number. Each class repr
 - Toxic motivation engine
 - Session status and time
 - User memory (learns facts about you)
-- Local knowledge base (constellations, moon phases, aviation facts, space facts)
-- Wikipedia scraper with caching
+- Local knowledge base (moon phases, aviation facts, space facts)
+- Wikimedia scraping with caching
 - Cross-platform: Windows, macOS, Linux
 
 ### Known Bugs
 1. **Self-listening on PC.** Orbiton hears its own TTS output and sometimes triggers a random intel response.
-2. **"Help" command unresponsive.** Saying "help" does not always execute the help handler — likely a misheard wake word or NLP routing issue.
-3. **Exam mode vs "exam board" NLP gap.** "Exam board" (two words) falls through to generic search instead of triggering exam mode.
+2. **"Help" command unresponsive.** Saying "help" does not always execute the help handler.
+3. **Exam mode vs "exam board" NLP.** "Exam board" (two words) falls through to generic search instead of triggering exam mode.
 4. **Linux headphone auto-detect is best-effort only.**
 5. **Edge TTS requires internet.** Offline fallback to system TTS is silent if edge-tts is installed but unreachable.
 6. **Hardcoded Windows project paths** in `PROJECTS` dict.
 
 ---
 
-## Genesis-class (Planned)
+## Generation 2 — Odyssey (Planned)
 
-Advanced reasoning and true agentic behavior.
+Large-scale growth. Advanced reasoning and memory.
 
 ### Intelligence
 - **Local LLM integration** (Ollama, llama.cpp, or similar) for offline reasoning
@@ -63,25 +68,29 @@ Advanced reasoning and true agentic behavior.
 - **Wake word customization** — choose your own wake word
 - **Multiple voices** — switch between TTS voices
 - **Multi-language support** — NLP normalization for other languages
-- **IoT integration** — control lights, thermostats, smart plugs via voice
-- **PC management** — system info, CPU/RAM monitoring, kill processes, restart services
-- **Talk to others** — share commands or intel files between Orbiton instances
+
+---
+
+## Generation 3 — Genesis (Planned)
+
+Agentic behavior and true automation.
 
 ### Agentic Tasks
 - **Long-running tasks** — "remind me in 2 hours," "download this when WiFi is back"
 - **Predictive execution** — suggest commands based on time of day, habits, calendar
 - **Multi-step workflows** — "study mode" opens Kosmosic, sets timer, enables Do Not Disturb
+- **Talk to others** — share commands or intel files between Orbiton instances
 
-### Communication (Post-Genesis / ~v4.0)
-- **Send emails** via voice command
-- **Place calls** using system dialer or VoIP integration
-- **Calendar management** — create events, check schedule, set reminders
+### PC Management
+- **System info** — CPU/RAM monitoring, disk usage, process management
+- **Kill processes** — "kill Chrome" or "close Notepad"
+- **Restart services** — manage system services via voice
 
 ---
 
-## Micron-class (Planned — ROI-Dependent)
+## Generation 4 — Micron (Planned — ROI-Dependent)
 
-A lightweight Orbiton for constrained environments. Only built if Genesis proves the concept and there is demand for a minimal version.
+A lightweight Orbiton for constrained environments. Only built if Odyssey and Genesis prove the concept and there is demand for a minimal version.
 
 - Remove rich/console dependency (plain text only)
 - Remove edge-tts dependency (system TTS only)
@@ -91,9 +100,31 @@ A lightweight Orbiton for constrained environments. Only built if Genesis proves
 
 ---
 
-## Singularity-class (Final Vision)
+## Generation 5 — Aphrodite (Planned)
 
-The absolute top. Orbiton becomes the second user of your computer.
+Expansion beyond the original vision.
+
+### Communication
+- **Send emails** via voice command
+- **Place calls** using system dialer or VoIP integration
+- **Calendar management** — create events, check schedule, set reminders
+
+### IoT & Smart Home
+- **Control lights** — "turn off bedroom lights"
+- **Thermostat control** — "set temperature to 22"
+- **Smart plugs** — "turn on the coffee maker"
+- **Home hub integration** — manage all household Orbiton instances
+
+### Personalization
+- **Wake word customization** — any word, not just "Tokyo"
+- **Voice selection** — multiple TTS voices to choose from
+- **Language packs** — full NLP support for other languages
+
+---
+
+## Generation 6 — Singularity (Vision)
+
+Full autonomy. The second user of your computer.
 
 ### Ecosystem
 - **Wearables**: Smartwatch companion, always-listening earbud firmware
@@ -109,18 +140,31 @@ The absolute top. Orbiton becomes the second user of your computer.
 
 ---
 
-## Pre-1.0 Checklist
+## Generation 7 — Utopia (Final Vision)
 
-Before we call it v1.0, these must be true:
+The absolute top. Orbiton becomes an ecosystem.
 
-- [ ] All basic commands polished and bug-free
+- **Global-scale platform evolution** — not just your PC, but every device you own
+- **Interconnected ecosystem** — all your Orbiton instances talk to each other
+- **True ambient intelligence** — invisible, proactive, always helpful
+- **The second user of your computer** — it knows your workflow better than you do
+
+---
+
+## Pre-2.0 Checklist (Odyssey Release)
+
+Before we call it Generation 2, these must be true:
+
+- [ ] Local LLM integration working offline
+- [ ] Long-term memory persists across sessions
+- [ ] Personalization engine adapts to user habits
 - [ ] Test suite passes 100% on all three OSes
 - [ ] Config system replaces hardcoded values
 - [ ] Auth system (online accounts) for multi-user support
 - [ ] Website for downloads, docs, and intel sharing
 - [ ] Self-listening bug resolved
 - [ ] Help command bug resolved
-- [ ] Documentation complete (README, PHILOSOPHY, CONTRIBUTING, API docs)
+- [ ] Documentation complete
 
 ---
 
@@ -159,7 +203,9 @@ If any of these happen, the repo stays open. Fork it. Improve it. Make it yours.
 
 ## The Company Vision
 
-Orbiton is planned to scale beyond a solo project. The goal is a company that builds tools for people who want **real** control over their digital environment — not packaged slopware. The terminal aesthetic, the voice-first design, and the local-first privacy stance are not temporary. They are the foundation.
+Kosmosic is planned to scale beyond a solo project. The goal is a company that builds tools for people who want **real** control over their digital environment — not packaged slopware. The terminal aesthetic, the voice-first design, and the local-first privacy stance are not temporary. They are the foundation.
+
+Orbiton is Generation 1. There are 6 more to go.
 
 ---
 
