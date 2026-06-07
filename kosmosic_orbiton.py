@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  🎧 NEURO-LINK v3.2 — Voice Command Terminal
-  "Your headphones are judging you."
+  🎧 Orbiton v0.5 — Voice Command Terminal
+  "We put the world around your head."
   Wake word: TOKYO
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """
@@ -139,7 +139,7 @@ ALL_COMMANDS = [
     ("🕐 Time", "what time is it", "Current time"),
     ("🧠 Memory", "who am i", "Recall stored user info"),
     ("🧠 Intel", "tell me about <topic>", "Knowledge lookup"),
-    ("🔄 Reboot", "reboot", "Restart Neuro-Link"),
+    ("🔄 Reboot", "reboot", "Restart Orbiton"),
     ("❓ Help", "help", "Show this command list"),
     ("😴 Sleep", "sleep", "Put Tokyo to sleep"),
     ("🌙 Wake", "wake / Tokyo", "Wake Tokyo up"),
@@ -167,7 +167,9 @@ class NeuroInterface:
                 width=10
             ))
             time.sleep(0.5)
-            self.console.print("[dim]Loading Neuro-Link...[/dim]")
+            self.console.print("[dim]Loading Orbiton...[/dim]")
+            time.sleep(0.5)
+            self.console.print("[dim]Waking up Tokyo...[/dim]")
             time.sleep(0.5)
             self.console.print("[dim]Initializing voice engine...[/dim]")
             time.sleep(0.5)
@@ -178,7 +180,9 @@ class NeuroInterface:
         else:
             print("\n   ●")
             time.sleep(0.5)
-            print("   Loading Neuro-Link...")
+            print("   Loading Orbiton...")
+            time.sleep(0.5)
+            print("   Waking up Tokyo...")
             time.sleep(0.5)
             print("   Initializing voice engine...")
             time.sleep(0.5)
@@ -191,7 +195,7 @@ class NeuroInterface:
         if self.console:
             banner = Panel.fit(
                 Text.from_markup(
-                    "[bold cyan]🎧 NEURO-LINK v3.2[/bold cyan]\n"
+                    "[bold cyan]🎧 Kosmosic Orbiton v0.5[/bold cyan]\n"
                     "[dim]Voice Command Terminal — Say TOKYO to wake[/dim]\n"
                     f"[green]Headset:[/green] {self.headphone_name or 'Scanning...'}\n"
                     f"[yellow]Session:[/yellow] {self.session_start.strftime('%H:%M:%S')}"
@@ -202,7 +206,7 @@ class NeuroInterface:
             self.console.print(banner)
         else:
             print("=" * 50)
-            print("🎧 NEURO-LINK v3.2 — Say TOKYO to wake")
+            print("🎧 Kosmosic Orbiton v0.5 — Say TOKYO to wake")
             print(f"Headset: {self.headphone_name or 'Scanning...'}")
             print("=" * 50)
 
@@ -284,12 +288,12 @@ class NeuroInterface:
             help_text = "\n".join([f"[green]{cmd}[/green] — [dim]{desc}[/dim]" for _, cmd, desc in ALL_COMMANDS])
             self.console.print(Panel(
                 help_text,
-                title="[bold cyan]📖 NEURO-LINK COMMAND MANUAL[/bold cyan]",
+                title="[bold cyan]📖 ORBITON COMMAND MANUAL[/bold cyan]",
                 border_style="cyan",
                 box=box.ROUNDED
             ))
         else:
-            print("\n📖 NEURO-LINK COMMAND MANUAL")
+            print("\n📖 ORBITON COMMAND MANUAL")
             for cat, cmd, desc in ALL_COMMANDS:
                 print(f"   {cmd:25} — {desc}")
             print()
@@ -852,8 +856,8 @@ class CommandEngine:
         self.speak("Here is the full command list. You can say search, youtube, calculate, weather, airport, track flight, metar, open files, navigate folders, open projects, run scripts, maps, street view, clipboard search, motivate me, status report, exam mode, kosmosic, who am I, tell me about, reboot, help, sleep, or wake.")
 
     def handle_reboot(self):
-        """Restart Neuro-Link"""
-        self.speak("Rebooting Neuro-Link. See you in a moment.")
+        """Restart Orbiton"""
+        self.speak("Rebooting Orbiton. See you in a moment.")
         self.ui.show_info("🔄 Rebooting...")
         time.sleep(1)
         # Use subprocess instead of os.execl for better cross-platform support
@@ -1032,7 +1036,7 @@ def main():
     with microphone as source:
         recognizer.adjust_for_ambient_noise(source, duration=2)
     ui.show_info("Ready. Say TOKYO or press headset button to wake me.")
-    voice.speak("Neuro-Link online. Say Tokyo or press your headset button to wake me.")
+    voice.speak("Orbiton online. Say Tokyo or press your headset button to wake me.")
 
     consecutive_errors = 0
     asleep = True
@@ -1139,4 +1143,4 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\n\n👋 Neuro-Link shutting down. Stay toxic.\n")
+        print("\n\n👋 Orbiton shutting down. Stay toxic.\n")
