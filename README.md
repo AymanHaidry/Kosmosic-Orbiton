@@ -51,7 +51,7 @@ See [TEST_STATUS.md](TEST_STATUS.md) for per-test details and [WORKFLOWS.md](WOR
 |----------|---------|-------------|
 | 🔍 Search | `search <query>` | Google search |
 | 🎥 YouTube | `youtube <query>` | Search YouTube |
-| 🧮 Math | `calculate <expr>` | Calculate and speak result |
+| 🧮 Math | `calculate <expr>` | Calculate and speak result — now understands spoken math: "two times two", "twenty five divided by five", "three squared" |
 | 🌤 Weather | `weather [city]` | Check weather |
 | ✈️ Airport | `airport <city>` | Search airport info |
 | 🛫 Track | `track <flight>` | Track flight on FlightRadar24 |
@@ -85,6 +85,7 @@ Orbiton includes a pluggable intelligence system (`neuro_link_intel.py`) that ha
 - **Wikimedia scraping** — live Wikipedia/Wiktionary queries with local caching
 - **Contextual routing** — decides whether to search, calculate, or answer directly
 - **Homophone correction** — handles misheard commands like "exambored" → "exam mode"
+- **Math normalization** — `MathNormalizer` converts spoken math ("two times", "divided by", "x") into safe Python expressions before evaluation
 
 Read more in [PHILOSOPHY.md](PHILOSOPHY.md).
 
