@@ -1,16 +1,25 @@
-            - name: filediff
-  # You may pin to the exact commit or the version.
-  # uses: Shopify/filediff@ada920c512dce7297703791084e5d9f2d65df418
-  uses: Shopify/filediff@v0.0.4
-  with:
-    # The target branch to compare the diff against
-    target_branch: 
-    # A comma seperated list of globs to compare across branches
-    dir_glob: 
-    # Script to run before getting the file diff
-    pre_diff_script: # optional
-    # Do not render a collapsible section for the files
-    file_details_open: # optional
-    # Replaces previous filediff comments
-    replace_comment: # optional, default is true
-          
+name: File Diff
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  filediff:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: File Diff
+      uses: Shopify/filediff@v0.0.4
+      with:
+        target_branch: ${{ github.base_ref }}
+        dir_glob: '**/*.py,**/*.md,**/*.yml,**/*.yaml'
+        pre_diff_script: |
+          echo "Running pre-diff setup..."
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt || true
+        file_details_open: false
+        replace_comment: true
