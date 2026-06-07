@@ -1,10 +1,10 @@
-![Core Logic](https://github.com/AymanHaidry/Kosmosic-Orbiton/workflows/Core%20Logic%20Tests/badge.svg)
-![URL Engine](https://github.com/AymanHaidry/Kosmosic-Orbiton/workflows/URL%20Engine%20Tests/badge.svg)
-![Compute](https://github.com/AymanHaidry/Kosmosic-Orbiton/workflows/Compute%20Tests/badge.svg)
-![Launch](https://github.com/AymanHaidry/Kosmosic-Orbiton/workflows/Launch%20Tests/badge.svg)
-![System](https://github.com/AymanHaidry/Kosmosic-Orbiton/workflows/System%20Tests/badge.svg)
-![Integration](https://github.com/AymanHaidry/Kosmosic-Orbiton/workflows/Integration%20Tests/badge.svg)
-![Pylint](https://github.com/AymanHaidry/Kosmosic-Orbiton/workflows/Pylint/badge.svg)
+![Core Logic](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/core-logic.yml/badge.svg)
+![URL Engine](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/url-engine.yml/badge.svg)
+![Compute](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/compute.yml/badge.svg)
+![Launch](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/launch.yml/badge.svg)
+![System](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/system.yml/badge.svg)
+![Integration](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/integration.yml/badge.svg)
+![Pylint](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/pylint.yml/badge.svg)
 # 🎧 Orbiton — Voice Command Terminal
 
 > *"We put the world around your head."*
@@ -33,6 +33,20 @@ python kosmosic_orbiton.py
 ```
 
 Say **"TOKYO"** to wake the assistant, or type commands directly in the terminal.
+
+---
+
+## 🎯 CI Status
+
+| Category | Status |
+|----------|--------|
+| Core Logic | ![Core Logic](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/core-logic.yml/badge.svg) |
+| URL Engine | ![URL Engine](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/url-engine.yml/badge.svg) |
+| Compute | ![Compute](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/compute.yml/badge.svg) |
+| Launch | ![Launch](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/launch.yml/badge.svg) |
+| System | ![System](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/system.yml/badge.svg) |
+| Integration | ![Integration](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/integration.yml/badge.svg) |
+| Pylint | ![Pylint](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/pylint.yml/badge.svg) |
 
 ---
 
