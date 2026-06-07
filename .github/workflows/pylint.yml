@@ -25,4 +25,4 @@ jobs:
 
     - name: Analyse code with pylint
       run: |
-        pylint kosmosic_orbiton.py neuro_link_intel.py tests/ --fail-under=4.0 --disable=R,C
+        pylint kosmosic_orbiton.py neuro_link_intel.py tests/ --fail-under=8.4 --disable=R,C
