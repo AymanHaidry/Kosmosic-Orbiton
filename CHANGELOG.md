@@ -21,6 +21,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.6.2] - 2026-06-07
+
+### Fixed
+- **Speech-to-math calculation** — `calculate` command no longer fails on spoken math
+  - `MathNormalizer` converts words to digits ("two" → 2, "twenty five" → 25)
+  - Spoken operators mapped to symbols ("times", "into", "x" → `*`, "divided by" → `/`, "squared" → `**2`)
+  - `safe_eval` whitelist prevents code injection from malformed speech input
+  - Fixes: `calculate 2 x 2`, `calculate two times`, `calculate 2 into` all now resolve correctly
+
+### Changed
+- `handle_calculate` in `kosmosic_orbiton.py` now routes through `MathNormalizer` instead of raw `eval()`
+- `neuro_link_intel.py` exports `MathNormalizer` class
+
+---
+
+## [0.6.1] - 2026-06-07
+
+### Fixed
+- **FileDiff workflow** — added `GITHUB_TOKEN` env and `pull-requests: write` permission to fix `Missing required environment variables: GITHUB_TOKEN` error
+
+### Changed
+- **CI runs on all branches** — all 10 workflow files updated from `branches: [main, develop]` to `branches: ['*']`
+  - compute, core-logic, filediff, integration, launch, pylint, python-tests, python-tests-per-file, system, url-engine
+- **Pylint score visibility** — `pylint.yml` now prints score to CI logs via dedicated `Pylint Score` step
+
+---
+
 ## [0.6.0] - 2026-06-07
 
 ### Fixed
@@ -123,7 +150,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Class | Version | Status |
 |-------|---------|--------|
-| Tokyo-class | 0.1.0 → 0.6.0 | Current |
+| Tokyo-class | 0.1.0 → 0.6.2 | Current |
 | Genesis-class | — | Planned |
 | Micron-class | — | Planned (ROI-dependent) |
 | Singularity-class | — | Vision |
