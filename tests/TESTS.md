@@ -1,13 +1,15 @@
 # Orbiton Test Architecture
 
-This document outlines the testing structure for Neuro-Link and the purpose of each test suite.
+This document outlines the testing structure for **Orbiton** (by Kosmosic) and the purpose of each test suite.
 
 ---
 
-# Directory Structure
+## Directory Structure
 
 ```text
 tests/
+│
+├── conftest.py
 │
 ├── core_logic/
 │   ├── test_intent_parser.py
@@ -26,6 +28,7 @@ tests/
 │   └── test_streetview_urls.py
 │
 ├── compute/
+│   ├── __init__.py
 │   ├── test_basic_math.py
 │   ├── test_advanced_math.py
 │   ├── test_constants.py
@@ -50,26 +53,24 @@ tests/
 │   ├── test_headphone_detection.py
 │   └── test_session_stats.py
 │
-├── integration/
-│   ├── test_search_flow.py
-│   ├── test_youtube_flow.py
-│   ├── test_weather_flow.py
-│   ├── test_maps_flow.py
-│   ├── test_file_open_flow.py
-│   └── test_project_flow.py
-│
-└── conftest.py
+└── integration/
+    ├── test_search_flow.py
+    ├── test_youtube_flow.py
+    ├── test_weather_flow.py
+    ├── test_maps_flow.py
+    ├── test_file_open_flow.py
+    └── test_project_flow.py
 ```
 
 ---
 
-# Test Categories
+## Test Categories
 
-## Core Logic
+### Core Logic
 
-Validates Neuro-Link's understanding of commands.
+Validates Orbiton's understanding of commands.
 
-### Coverage
+#### Coverage
 
 * Intent recognition
 * Command pattern matching
@@ -77,7 +78,7 @@ Validates Neuro-Link's understanding of commands.
 * Unknown command handling
 * Routing decisions
 
-### Examples
+#### Examples
 
 Input:
 
@@ -105,11 +106,11 @@ Expected:
 
 ---
 
-## URL Engine
+### URL Engine
 
 Validates URL generation without opening browsers.
 
-### Coverage
+#### Coverage
 
 * Google Search URLs
 * YouTube Search URLs
@@ -120,7 +121,7 @@ Validates URL generation without opening browsers.
 * METAR URLs
 * Street View URLs
 
-### Examples
+#### Examples
 
 Input:
 
@@ -148,11 +149,11 @@ flightradar24.com
 
 ---
 
-## Compute
+### Compute
 
 Validates mathematical operations and expression parsing.
 
-### Coverage
+#### Coverage
 
 * Basic arithmetic
 * Advanced calculations
@@ -161,7 +162,7 @@ Validates mathematical operations and expression parsing.
 * Square root calculations
 * Security protections
 
-### Examples
+#### Examples
 
 Input:
 
@@ -189,11 +190,11 @@ Expected:
 
 ---
 
-## Launch
+### Launch
 
 Validates local resource launching and navigation.
 
-### Coverage
+#### Coverage
 
 * Folder opening
 * Folder traversal
@@ -204,7 +205,7 @@ Validates local resource launching and navigation.
 * Clipboard actions
 * Exam mode setup
 
-### Examples
+#### Examples
 
 Input:
 
@@ -221,7 +222,7 @@ Expected:
 Input:
 
 ```text
-open project neuro-link
+open project orbiton
 ```
 
 Expected:
@@ -232,11 +233,11 @@ Expected:
 
 ---
 
-## System
+### System
 
 Validates utility and system-level functionality.
 
-### Coverage
+#### Coverage
 
 * Status reports
 * Time retrieval
@@ -244,7 +245,7 @@ Validates utility and system-level functionality.
 * Headphone detection
 * Session statistics
 
-### Examples
+#### Examples
 
 Input:
 
@@ -260,11 +261,11 @@ Session information returned
 
 ---
 
-## Integration
+### Integration
 
 Validates complete end-to-end workflows.
 
-### Coverage
+#### Coverage
 
 * Search flow
 * YouTube flow
@@ -273,7 +274,7 @@ Validates complete end-to-end workflows.
 * File opening flow
 * Project launch flow
 
-### Examples
+#### Examples
 
 Input:
 
@@ -301,7 +302,7 @@ Successful execution
 
 ---
 
-# CI/CD Integration
+## CI/CD Integration
 
 Each category can be executed independently through GitHub Actions.
 
@@ -310,12 +311,12 @@ Potential workflow structure:
 ```text
 .github/workflows/
 
-core-logic.yml
-url-engine.yml
-compute.yml
-launch.yml
-system.yml
-integration.yml
+├── core-logic.yml
+├── url-engine.yml
+├── compute.yml
+├── launch.yml
+├── system.yml
+└── integration.yml
 ```
 
 Benefits:
@@ -327,7 +328,7 @@ Benefits:
 
 ---
 
-# Testing Philosophy
+## Testing Philosophy
 
 Orbiton prioritizes behavior testing over implementation testing.
 
@@ -350,3 +351,24 @@ Result
 ```
 
 The goal is to verify that Orbiton behaves correctly from the user's perspective while remaining flexible internally.
+
+---
+
+## Running Tests
+
+```bash
+# All tests
+pytest tests/ -v
+
+# By category
+pytest tests/core_logic/ -v
+pytest tests/url_engine/ -v
+pytest tests/compute/ -v
+pytest tests/launch/ -v
+pytest tests/system/ -v
+pytest tests/integration/ -v
+```
+
+---
+
+*Orbiton Test Architecture v1.0 — Kosmosic © 2026*
