@@ -1,9 +1,0 @@
-# Everything needs review from Ayman
-* @AymanHaidry
-
-# Intelligence module — also requires review
-neuro_link_intel.py @AymanHaidry
-tests/compute/ @AymanHaidry
-
-# CI changes — require review
-.github/workflows/ @AymanHaidry
