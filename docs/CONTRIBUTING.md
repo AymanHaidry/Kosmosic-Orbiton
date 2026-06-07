@@ -27,14 +27,18 @@ Orbiton is a **voice-first command terminal** built for people who want the worl
 **Core principles:**
 - **Voice is the primary interface.** Everything should be speakable, natural, and forgiving of sloppy speech.
 - **Aviation, space, and study are first-class citizens.** METAR lookups, flight tracking, and exam mode are not afterthoughts.
-- **Toxic motivation is optional but on-brand.** The roasts are harsh on purpose. If you add new ones, keep the energy.
+- **Toxic motivation is accountability.** The roasts are harsh on purpose. If you add new ones, keep the energy.
 - **It should feel like an Apple product booted into a terminal.** Clean output, minimal clutter, no noise.
 - **Cross-platform matters.** Windows, macOS, and Linux should all work. If you only test one, say so.
 
 **What we are NOT:**
 - A general-purpose chatbot (use ChatGPT for that).
 - A GUI application (keep it terminal + voice).
-- A project that references *Project Hail Mary* (do not ask).
+- A cloud service. Your data lives in a local `_.pycache_` folder. Not our servers. Not Microsoft's. Yours.
+- Ads, paywalls, or "vibecoded ultra 2050 spaceship neon purple gamer aesthetic." If it looks like it belongs on a Fortnite skin, it does not belong in Orbiton.
+- *Project Hail Mary*. Do not ask.
+
+**Read the full philosophy:** [PHILOSOPHY.md](PHILOSOPHY.md)
 
 ---
 
@@ -50,7 +54,7 @@ Orbiton is a **voice-first command terminal** built for people who want the worl
 
 ```bash
 git clone https://github.com/AymanHaidry/Kosmosic-Orbiton.git
-cd Kosmosic-Orbiton
+cd Kosmic-Orbiton
 pip install -r requirements.txt   # or: pip install speechrecognition rich edge-tts
 ```
 
@@ -176,9 +180,9 @@ In `ALL_COMMANDS`:
 
 ### 5. Add tests
 
-- `tests/url_engine/test_translate_urls.py` -- verify URL generation.
-- `tests/core_logic/test_intent_parser.py` -- verify intent recognition.
-- `tests/integration/test_translate_flow.py` -- verify end-to-end flow.
+- `tests/url_engine/test_translate_urls.py` — verify URL generation.
+- `tests/core_logic/test_intent_parser.py` — verify intent recognition.
+- `tests/integration/test_translate_flow.py` — verify end-to-end flow.
 
 ### 6. Update this doc if needed
 
@@ -220,11 +224,14 @@ If it compiles, you are probably fine.
 
 These are things we know about and are not fixing right now. If you want to tackle one, open a PR:
 
-- **Reboot is broken on some platforms.** `subprocess.Popen([sys.executable, __file__])` does not always restart cleanly.
-- **Help command not always heard.** "help" is sometimes misheard as "hell" -- NLP handles this, but edge cases exist.
+- **Self-listening on PC.** Orbiton hears its own TTS output and sometimes triggers a random intel response.
+- **"Help" command unresponsive.** Saying "help" does not always execute the help handler.
 - **Exam mode vs "exam board" NLP.** The regex catches "exambored" but "exam board" (two words) still falls through to NLP. Could be tighter.
 - **No Linux headphone auto-detect.** `get_connected_headphones()` works on Windows and macOS but Linux support is best-effort.
 - **Edge TTS requires internet.** Fallback to system TTS is silent if edge-tts is installed but offline.
+- **Hardcoded Windows project paths** in `PROJECTS` dict.
+
+**See the full roadmap:** [ROADMAP.md](ROADMAP.md)
 
 ---
 
@@ -232,6 +239,7 @@ These are things we know about and are not fixing right now. If you want to tack
 
 - **Open an issue:** For bugs, feature requests, or "how do I..." questions.
 - **Check the code:** The docstrings are actually decent. Start with `kosmosic_orbiton.py` -> `CommandEngine`.
+- **Read the roadmap:** If you want to know where the project is headed.
 
 ---
 
@@ -244,4 +252,4 @@ These are things we know about and are not fixing right now. If you want to tack
 
 ---
 
-> *"Your ancestors built empires. You cannot even close 3 Chrome tabs."* -- Orbiton
+> *"Your ancestors built empires. You cannot even close 3 Chrome tabs."* — Orbiton

@@ -1,20 +1,13 @@
-![Core Logic](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/core-logic.yml/badge.svg)
-![URL Engine](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/url-engine.yml/badge.svg)
-![Compute](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/compute.yml/badge.svg)
-![Launch](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/launch.yml/badge.svg)
-![System](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/system.yml/badge.svg)
-![Integration](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/integration.yml/badge.svg)
-![Pylint](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/pylint.yml/badge.svg)
 # 🎧 Orbiton — Voice Command Terminal
 
 > *"We put the world around your head."*
 
-
-**Company:** Kosmosic  
+**Company:** [Kosmosic](https://kosmosic.vercel.app)  
 **Product:** Orbiton  
-**Wake Word:** TOKYO
+**Wake Word:** TOKYO  
+**Current Class:** [Tokyo-class](ROADMAP.md#tokyo-class-current)
 
-Orbiton is a Python-powered desktop voice assistant that turns your headset into a wireless command terminal. Launch apps, search the web, open files, manage projects, and automate everyday tasks using natural voice commands.
+Orbiton is a Python-powered desktop voice assistant that turns your headset into a wireless command terminal. Launch apps, search the web, open files, manage projects, and automate everyday tasks using natural voice commands. No cloud required. No bloat. Just you and your machine.
 
 ---
 
@@ -23,7 +16,7 @@ Orbiton is a Python-powered desktop voice assistant that turns your headset into
 ```bash
 # Clone the repo
 git clone https://github.com/AymanHaidry/Kosmosic-Orbiton.git
-cd Kosmic-Orbiton
+cd Kosmosic-Orbiton
 
 # Install dependencies
 pip install -r requirements.txt  # speech_recognition, edge-tts, rich, etc.
@@ -47,6 +40,8 @@ Say **"TOKYO"** to wake the assistant, or type commands directly in the terminal
 | System | ![System](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/system.yml/badge.svg) |
 | Integration | ![Integration](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/integration.yml/badge.svg) |
 | Pylint | ![Pylint](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/pylint.yml/badge.svg) |
+
+See [TEST_STATUS.md](TEST_STATUS.md) for per-test details and [WORKFLOWS.md](WORKFLOWS.md) for CI configuration.
 
 ---
 
@@ -86,9 +81,12 @@ Say **"TOKYO"** to wake the assistant, or type commands directly in the terminal
 Orbiton includes a pluggable intelligence system (`neuro_link_intel.py`) that handles:
 
 - **NLP normalization** — "what's" → "what is", "exam board" → "exam mode"
-- **Knowledge lookup** — constellations, moon phases, aviation facts
-- **Wikimedia scraping** — live Wikipedia/Wiktionary queries
+- **Knowledge lookup** — constellations, moon phases, aviation facts, space facts
+- **Wikimedia scraping** — live Wikipedia/Wiktionary queries with local caching
 - **Contextual routing** — decides whether to search, calculate, or answer directly
+- **Homophone correction** — handles misheard commands like "exambored" → "exam mode"
+
+Read more in [PHILOSOPHY.md](PHILOSOPHY.md).
 
 ---
 
@@ -107,7 +105,7 @@ pytest tests/system/ -v
 pytest tests/integration/ -v
 ```
 
-See [tests/TESTS.md](tests/TESTS.md) for the full test architecture.
+See [TESTS.md](TESTS.md) for the full test architecture and [TEST_STATUS.md](TEST_STATUS.md) for current status.
 
 ---
 
@@ -118,6 +116,13 @@ Kosmosic-Orbiton/
 ├── kosmosic_orbiton.py          # Main entry point
 ├── neuro_link_intel.py          # Intelligence / NLP module
 ├── CHANGELOG.md                 # Version history
+├── PHILOSOPHY.md                # Why Orbiton exists
+├── ROADMAP.md                   # Where we are going
+├── CONTRIBUTING.md              # How to contribute
+├── CONTRIBUTORS.md              # Who built this
+├── TEST_STATUS.md               # Per-test CI status
+├── TESTS.md                     # Test architecture docs
+├── WORKFLOWS.md                 # CI/CD configuration docs
 ├── tests/                       # Full pytest suite
 │   ├── conftest.py              # Shared fixtures
 │   ├── core_logic/              # Intent & pattern tests
@@ -126,7 +131,7 @@ Kosmosic-Orbiton/
 │   ├── launch/                  # File & project tests
 │   ├── system/                  # Status & time tests
 │   └── integration/             # End-to-end flow tests
-└── .github/workflows/           # CI/CD (pylint)
+└── .github/workflows/           # CI/CD definitions
 ```
 
 ---
@@ -149,9 +154,24 @@ Edit the `CONFIG` dict in `kosmosic_orbiton.py`:
 
 | OS | Status | Notes |
 |----|--------|-------|
-| Windows | ✅ Full | File Explorer, PowerShell TTS |
+| Windows | ✅ Full | File Explorer, PowerShell TTS, VS Code projects |
 | macOS | ✅ Full | `open`, `say`, `afplay` |
-| Linux | ✅ Partial | `xdg-open`, `spd-say` |
+| Linux | ✅ Partial | `xdg-open`, `spd-say`, best-effort headphone detection |
+
+---
+
+## 📚 Documentation
+
+| Doc | What it covers |
+|-----|---------------|
+| [PHILOSOPHY.md](PHILOSOPHY.md) | Why Orbiton exists, privacy stance, open source philosophy |
+| [ROADMAP.md](ROADMAP.md) | Model classes (Tokyo → Genesis → Micron → Singularity), features, company vision |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | How to contribute, testing rules, adding commands, code style |
+| [CONTRIBUTORS.md](CONTRIBUTORS.md) | List of contributors |
+| [TEST_STATUS.md](TEST_STATUS.md) | Per-test CI status and badges |
+| [TESTS.md](TESTS.md) | Test architecture, directory structure, writing new tests |
+| [WORKFLOWS.md](WORKFLOWS.md) | CI/CD workflow configuration and troubleshooting |
+| [CHANGELOG.md](CHANGELOG.md) | Version history |
 
 ---
 
