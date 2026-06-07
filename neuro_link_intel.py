@@ -197,6 +197,121 @@ class NaturalLanguageProcessor:
         return None
 
 
+# ─── MATH NORMALIZER ───────────────────────────────────────
+class MathNormalizer:
+    """Converts spoken math into safe Python expressions."""
+
+    # Word numbers → digits
+    WORD_NUMBERS = {
+        "zero": 0, "one": 1, "two": 2, "three": 3, "four": 4,
+        "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9,
+        "ten": 10, "eleven": 11, "twelve": 12, "thirteen": 13,
+        "fourteen": 14, "fifteen": 15, "sixteen": 16,
+        "seventeen": 17, "eighteen": 18, "nineteen": 19,
+        "twenty": 20, "thirty": 30, "forty": 40, "fifty": 50,
+        "sixty": 60, "seventy": 70, "eighty": 80, "ninety": 90,
+        "hundred": 100, "thousand": 1000, "million": 1000000,
+    }
+
+    # Spoken operators → Python symbols (multi-word first)
+    SPOKEN_OPS = {
+        "to the power of": "**",
+        "divided by": "/",
+        "over": "/",
+        "times": "*",
+        "into": "*",
+        "multiplied by": "*",
+        "minus": "-",
+        "subtract": "-",
+        "plus": "+",
+        "add": "+",
+        "mod": "%",
+        "modulo": "%",
+        "squared": "**2",
+        "cubed": "**3",
+    }
+
+    @classmethod
+    def words_to_number(cls, words: list) -> float:
+        """Convert a list of word tokens to a number."""
+        current = 0
+        total = 0
+        scale = 1
+
+        for word in words:
+            val = cls.WORD_NUMBERS.get(word)
+            if val is None:
+                continue
+            if val == 100:
+                current = max(1, current) * 100
+            elif val >= 1000:
+                total += current
+                current = 0
+                scale = val
+            else:
+                current += val
+
+        return (total + current) * scale
+
+    @classmethod
+    def normalize(cls, text: str) -> str:
+        """Full pipeline: strip 'calculate', word numbers → digits, spoken ops → symbols."""
+        text = text.lower().strip()
+
+        # Remove command prefix
+        text = re.sub(r"^calculate\s+", "", text)
+
+        # Multi-word operators first (order matters — longest first)
+        for spoken, symbol in sorted(cls.SPOKEN_OPS.items(), key=lambda x: -len(x[0])):
+            text = re.sub(rf"\b{re.escape(spoken)}\b", f" {symbol} ", text)
+
+        # Single-char operators (e.g. "x" as multiply)
+        text = re.sub(r"\bx\b", "*", text)
+
+        # Word numbers → digits
+        tokens = text.split()
+        i = 0
+        out_tokens = []
+        while i < len(tokens):
+            num_words = []
+            while i < len(tokens) and tokens[i] in cls.WORD_NUMBERS:
+                num_words.append(tokens[i])
+                i += 1
+            if num_words:
+                out_tokens.append(str(cls.words_to_number(num_words)))
+            if i < len(tokens):
+                out_tokens.append(tokens[i])
+                i += 1
+
+        expr = " ".join(out_tokens)
+        expr = re.sub(r"\s+", " ", expr).strip()
+
+        # Collapse multiple operators
+        expr = re.sub(r"([+\-*/%])\s+\1+", r"\1", expr)
+
+        return expr
+
+    @classmethod
+    def safe_eval(cls, expr: str) -> str:
+        """Evaluate only safe math. No variables, no calls, no imports."""
+        if not expr:
+            raise ValueError("Empty expression")
+
+        # Whitelist: digits, operators, parentheses, decimal points, spaces
+        if not re.match(r"^[0-9+\-*/%.()\s]+$", expr):
+            raise ValueError(f"Unsafe characters in expression: {expr}")
+
+        try:
+            result = eval(expr, {"__builtins__": {}}, {})
+        except Exception as e:
+            raise ValueError(f"Math error: {e}")
+
+        # Format nicely
+        if isinstance(result, float) and result.is_integer():
+            return str(int(result))
+        return str(result)
+
+
 # ─── KNOWLEDGE ENGINE ────────────────────────────────────────
 class KnowledgeEngine:
     """Looks up facts from local intel files and wikimedia dumps."""

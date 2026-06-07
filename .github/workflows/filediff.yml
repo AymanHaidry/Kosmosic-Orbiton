@@ -2,7 +2,7 @@ name: File Diff
 
 on:
   pull_request:
-    branches: [ main, develop ]
+    branches: ['*']
 
 jobs:
   filediff:

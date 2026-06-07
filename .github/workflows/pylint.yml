@@ -2,9 +2,9 @@ name: Pylint
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: ['*']
   pull_request:
-    branches: [ main ]
+    branches: ['*']
 
 jobs:
   pylint:
@@ -26,3 +26,15 @@ jobs:
     - name: Analyse code with pylint
       run: |
         pylint kosmosic_orbiton.py neuro_link_intel.py tests/ --fail-under=8.4 --disable=R,C
+
+    - name: Pylint Score
+      run: |
+        echo "========================================"
+        echo "  PYLINT SCORE REPORT"
+        echo "========================================"
+        pylint kosmosic_orbiton.py neuro_link_intel.py tests/ --disable=R,C --output-format=text | tail -5 || true
+        SCORE=$(pylint kosmosic_orbiton.py neuro_link_intel.py tests/ --disable=R,C --output-format=json 2>/dev/null | python -c "import sys,json; data=json.load(sys.stdin); print(round(sum(d['message'].get('score',0) for d in data if 'score' in str(d))/max(len(data),1),2))" 2>/dev/null || echo "N/A")
+        echo ""
+        echo "📊 Pylint Score: $SCORE"
+        echo "========================================"
+      shell: bash

@@ -44,7 +44,7 @@ except ImportError:
     EDGE_TTS_AVAILABLE = False
 
 # ─── INTELLIGENCE MODULE ───────────────────────────────────
-from neuro_link_intel import get_intelligence, NaturalLanguageProcessor
+from neuro_link_intel import get_intelligence, NaturalLanguageProcessor, MathNormalizer
 
 # ─── CONFIGURATION ───────────────────────────────────────────
 CONFIG = {
@@ -573,22 +573,16 @@ class CommandEngine:
         self.speak(msg)
 
     def handle_calculate(self, expr: str):
-        safe_expr = expr.lower()
-        safe_expr = re.sub(r"[^0-9+*/().^\s\squared cubed sqrt pi e-]", "", safe_expr)
-        safe_expr = safe_expr.replace("squared", "**2").replace("cubed", "**3")
-        safe_expr = safe_expr.replace("times", "*").replace("x", "*")
-        safe_expr = safe_expr.replace("divided by", "/")
-        safe_expr = safe_expr.replace("pi", str(math.pi)).replace("e", str(math.e))
-        safe_expr = safe_expr.replace("sqrt", "math.sqrt")
+        """Handle calculate with full speech-to-math normalization."""
         try:
-            result = eval(safe_expr, {"__builtins__": {}}, {"math": math})
-            result_str = f"{result:.4f}" if isinstance(result, float) else str(result)
-            msg = f"The answer is {result_str}"
-            self.ui.show_success(f"Result: {result_str}")
+            normalized = MathNormalizer.normalize(expr)
+            result = MathNormalizer.safe_eval(normalized)
+            msg = f"The answer is {result}"
+            self.ui.show_success(f"Result: {result}")
             self.speak(msg)
-        except Exception as e:
+        except ValueError as e:
             self.ui.show_error(f"Calculation failed: {e}")
-            self.speak("Sorry, I could not calculate that.")
+            self.speak("Sorry, I couldn't understand that math problem.")
 
     def handle_weather(self, city: str = ""):
         if city:
