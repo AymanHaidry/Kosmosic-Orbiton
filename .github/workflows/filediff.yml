@@ -20,6 +20,6 @@ jobs:
         pre_diff_script: |
           echo "Running pre-diff setup..."
           python -m pip install --upgrade pip
-          pip install -r requirements.txt || true
+          pip install -r requirements.txt
         file_details_open: false
         replace_comment: true
