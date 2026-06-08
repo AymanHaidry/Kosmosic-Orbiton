@@ -20,7 +20,7 @@ Each generation is named after a model class. The class order is fixed and repre
 
 | Generation | Class | Description | Version Range | Status |
 |------------|-------|-------------|---------------|--------|
-| 1 | **Tokyo** | Basic reasoning, voice commands, web search, file management, aviation tools, toxic motivation. | `1.x.x` | **Current** |
+| 1 | **Tokyo** | Basic reasoning, voice commands, web search, file management, aviation tools, toxic motivation. | `0.x.x -> 1.x.x` | **Current** |
 | 2 | **Odyssey** | Large-scale growth. Advanced reasoning, local LLM integration, long-term memory, personalization engine. | `2.x.x` | Planned |
 | 3 | **Genesis** | Agentic behavior. Long-running tasks, predictive execution, multi-step workflows, scraper living on your PC. | `3.x.x` | Planned |
 | 4 | **Micron** | Lite version. All core functionality, stripped of heavy dependencies, for older hardware or minimal installs. ROI-dependent. | `4.x.x` | Planned (ROI-dependent) |

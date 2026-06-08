@@ -1,7 +1,7 @@
 # 📖 THE ORBITON MANUAL
 ## *The Complete, Exhaustive, No-Bullshit Guide to Mastering Kosmosic Orbiton*
 
-> **Version:** 0.6.2 (Tokyo-class)  
+> **Version:** 0.7 (Tokyo-class)  
 > **Last Updated:** 2026-06-08  
 > **Read Time:** ~45 minutes if you are thorough. 5 minutes if you are panicking.  
 > **Target Audience:** Everyone. A 3rd grader. A 48-year-old senior dev. A cat walking on a keyboard. If you can read, you can master this.
@@ -1131,7 +1131,9 @@ The test suite provides these fixtures:
 
 ---
 
-## 16. Troubleshooting Bible
+## 16. Troubleshooting Bible 
+
+➡️ [Open Here](docs/TROUBLESHOOT.md)
 
 ### Installation Issues
 
@@ -1392,7 +1394,7 @@ You speak -> "tell me about black holes"
 
 Orbiton evolves through **generations**, each named after a model class.
 
-### Generation 1 — Tokyo (Current, v0.6.2)
+### Generation 1 — Tokyo (Current, v0.7)
 **Status:** Active development.  
 **What works:** Voice commands, web search, file management, aviation tools, toxic motivation, local knowledge, Wikipedia scraping, cross-platform support.  
 **Known bugs:** Self-listening, help command unresponsive, exam board NLP, Linux headphone detection, Edge TTS offline fallback, hardcoded Windows paths.
