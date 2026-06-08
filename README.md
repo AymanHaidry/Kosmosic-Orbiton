@@ -140,6 +140,7 @@ pytest tests/compute/ -v
 pytest tests/launch/ -v
 pytest tests/system/ -v
 pytest tests/integration/ -v
+pytest tests/troubleshooter/ -v
 ```
 
 See [docs/TESTS.md](docs/TESTS.md) for the full test architecture and [docs/TEST_STATUS.md](docs/TEST_STATUS.md) for current status.
