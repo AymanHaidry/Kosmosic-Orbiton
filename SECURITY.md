@@ -20,7 +20,7 @@ Instead, report privately via one of these channels:
 | Method | Contact |
 |--------|---------|
 | Email | aymanhaidry2022@outlook.com *(preferred)* |
-| GitHub Private Vulnerability Reporting | [Report via GitHub](https://github.com/AymanHaidry/Compute4Me/security/advisories/new) |
+| GitHub Private Vulnerability Reporting | [Report via GitHub](https://github.com/AymanHaidry/Kosmosic-Orbiton/security/advisories/new) |
 
 ### What to include
 
