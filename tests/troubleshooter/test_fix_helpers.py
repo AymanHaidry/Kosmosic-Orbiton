@@ -76,7 +76,7 @@ def test_get_docs_url_fallback_online(tmp_path):
 
 def test_generate_bug_report_creates_file(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setattr("builtins.input", lambda _: "")
+    monkeypatch.setattr("builtins.input", lambda: "")
     results = {"python_version": True, "internet": False}
     filename = generate_bug_report(results)
     path = tmp_path / filename
@@ -85,11 +85,12 @@ def test_generate_bug_report_creates_file(tmp_path, monkeypatch):
     assert "ORBITON BUG REPORT" in content
     assert "python_version: PASS" in content
     assert "internet: FAIL" in content
+    assert sys.platform in content or "OS:" in content
 
 
 def test_generate_bug_report_empty_results(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setattr("builtins.input", lambda _: "")
+    monkeypatch.setattr("builtins.input", lambda: "")
     filename = generate_bug_report({})
     path = tmp_path / filename
     assert path.exists()
