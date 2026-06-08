@@ -136,7 +136,7 @@ def test_main_restart_loop(monkeypatch):
 
 
 def test_main_invalid_choice_then_valid(monkeypatch, capsys):
-    inputs = iter(["99", "1", "q"])
+    inputs = iter(["99", "1", "1", "q"])
     monkeypatch.setattr("builtins.input", lambda *a, **k: next(inputs))
     monkeypatch.setattr("troubleshooter.flow_wont_start", lambda: {})
     monkeypatch.setattr("troubleshooter.ask_yes_no", lambda *a, **k: False)
