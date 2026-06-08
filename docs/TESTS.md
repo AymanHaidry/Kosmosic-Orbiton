@@ -117,10 +117,11 @@ Tests for the standalone interactive diagnostic tool (`troubleshooter.py`).
 | --- | --- |
 | `test_colors.py` | ANSI color helpers (✓, ✗, ⚠, ℹ, →, bold/magenta titles) |
 | `test_input_helpers.py` | `ask()` and `ask_yes_no()` input validation, EOF handling, defaults |
+| `test_run_cmd.py` | `run_cmd()` shell wrapper: success, missing command, timeout, shell mode |
 | `test_system_checks.py` | Python version, module imports, file existence, internet, Edge TTS, JSON, microphone, Chrome, VS Code:, PyAudio |
 | `test_fix_helpers.py` | `install_module()`, `install_from_requirements()`, `fix_corrupted_json()`, `get_docs_url()`, `generate_bug_report()` |
-| `test_diagnostic_flows.py` | All 7 diagnostic flows: wont_start, voice_not_working, tts_silent, commands_wrong, files_projects, slow_laggy, install_update |
-| `test_main.py` | Main menu entry point, all 7 flows, restart loop, invalid choice, quit |
+| `test_diagnostic_flows.py` | All 6 diagnostic flows: wont_start, voice_not_working, tts_silent, commands_wrong, files_projects, other |
+| `test_main.py` | Main menu entry point, all 6 flows + bug report, restart loop, invalid choice, quit |
 
 **Critical testing strategy:** All troubleshooter tests mock `input()`, `ask_yes_no()`, and `subprocess.run` to avoid hanging on interactive prompts or failing on CI environments that lack microphones, Chrome, or VS Code:.
 
@@ -260,6 +261,7 @@ Each category has its own workflow in `.github/workflows/`. See WORKFLOWS.md for
 | Voice tests fail | No microphone in CI | Use screen recordings, not unit tests |
 | Troubleshooter tests hang | `input()` not mocked | Monkeypatch `builtins.input`, `troubleshooter.ask`, and `troubleshooter.ask_yes_no` |
 | Troubleshooter tests fail on macOS/Windows | Platform-specific checks (e.g. `arecord`, `Get-PnpDevice`) | Mock `sys.platform` and `run_cmd()` return values |
+| Troubleshooter import error | `tests/troubleshooter/__init__.py` shadows root `troubleshooter.py` | Do **not** create `tests/troubleshooter/__init__.py` |
 | Troubleshooter coverage low | `troubleshooter.py` is standalone | Add `--cov=troubleshooter` to pytest flags |
 
 * * *
