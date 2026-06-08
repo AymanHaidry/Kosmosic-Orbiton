@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Compute4Me is pre-1.0 (0.x.y). There are no formal stability or long-term-support guarantees. Security fixes ship as part of regular minor or patch releases on whatever the current development branch is.
+Kosmosic Orbiton is pre-1.0 (0.x.y). There are no formal stability or long-term-support guarantees. Security fixes ship as part of regular minor or patch releases on whatever the current development branch is.
 
 | Version | Supported |
 |---------|-----------|
@@ -19,7 +19,7 @@ Instead, report privately via one of these channels:
 
 | Method | Contact |
 |--------|---------|
-| Email | security@kosmosic.dev *(preferred)* |
+| Email | aymanhaidry2022@outlook.com *(preferred)* |
 | GitHub Private Vulnerability Reporting | [Report via GitHub](https://github.com/AymanHaidry/Compute4Me/security/advisories/new) |
 
 ### What to include
