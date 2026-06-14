@@ -19,7 +19,7 @@ Orbiton is a **Python-powered desktop voice assistant** that turns your headset 
 **Company:** Kosmosic  
 **Website:** [theorbiton.vercel.app](https://theorbiton.vercel.app)  
 **License:** GNU GPL v3.0  
-**Current Version:** v0.7.0 (Tokyo-class)  
+**Current Version:** v0.7.1 (Tokyo-class)  
 **Repository:** [github.com/AymanHaidry/Kosmosic-Orbiton](https://github.com/AymanHaidry/Kosmosic-Orbiton)
 
 ---
@@ -50,7 +50,7 @@ Kosmosic-Orbiton/
 │   ├── VERSIONS.md              # Versioning system
 │   ├── WORKFLOWS.md             # CI/CD docs
 │   ├── ARCHITECTURE_DECISIONS.md # ADR log
-│   └── PROJECT_CONTEXT.md       # This file
+│   └── PROJECT_CONTEXT.md      # This file
 ├── tests/                       # pytest suite (207 tests)
 │   ├── conftest.py
 │   ├── core_logic/              # Intent & pattern tests
@@ -80,6 +80,8 @@ The main application. Contains:
 - `handle_*()` functions — one per command category
 - `process_command()` — routes commands to handlers
 - `main()` — boot sequence and main loop
+
+> ⚠️ **Note:** The docstring in this file still shows `v0.6.2` — cosmetic issue, does not affect functionality.
 
 ### `neuro_link_intel.py`
 The intelligence layer. Contains:
@@ -139,15 +141,17 @@ pytest tests/troubleshooter/ -v
 
 ---
 
-## 🚦 Current Status (v0.7.0 — Tokyo-class)
+## 🚦 Current Status (v0.7.1 — Tokyo-class)
 
 | Area | Status | Notes |
 |------|--------|-------|
 | Core voice commands | ✅ Stable | 207 tests passing |
 | Math engine | ✅ Stable | MathNormalizer handles spoken math |
-| Troubleshooter | ✅ New (v0.7.0) | 56 tests, standalone tool |
+| Troubleshooter | ✅ Stable (v0.7.0) | 56 tests, standalone tool |
+| Documentation | ✅ Comprehensive | PROJECT_CONTEXT.md + ARCHITECTURE_DECISIONS.md added in v0.7.1 |
 | Self-listening bug | ⚠️ Partial fix | TTS output can trigger phantom commands — use headphones |
 | Bandit security findings | 🔴 Open | 20+ findings in troubleshooter.py — see issue #60 |
+| Version string in docstring | ⚠️ Cosmetic | `kosmosic_orbiton.py` docstring shows `v0.6.2` — needs update |
 | Genesis-class (local LLM) | 🔜 Planned | v2.x roadmap |
 | Wake word customization | 🔜 Planned | Post-Tokyo |
 | Multi-language support | 🔜 Planned | Post-Tokyo |
@@ -160,7 +164,8 @@ pytest tests/troubleshooter/ -v
 2. **Bandit security findings** (#60) — 20+ `subprocess` and `input()` findings in `troubleshooter.py`. Low real-world risk (local tool), but must be addressed before v1.0.
 3. **`help` command unreliable via voice** — Type `help` instead. NLP homophones (`hell`, `halp`, `helf`) partially mitigate.
 4. **`exam board` falls through to search** — Say `exam mode` or `exambored` instead.
-5. **Version string in `kosmosic_orbiton.py` docstring** — Shows `v0.6.2` but repo is at `v0.7.0`. Cosmetic only.
+5. **Version string in `kosmosic_orbiton.py` docstring** — Shows `v0.6.2` but repo is at `v0.7.1`. Cosmetic only — does not affect runtime.
+6. **Hardcoded Windows project paths** — `PROJECTS` dict in `kosmosic_orbiton.py` contains Windows-specific paths. Config file system planned for Odyssey-class.
 
 ---
 
@@ -201,6 +206,8 @@ See [SECURITY.md](../SECURITY.md) for the vulnerability reporting policy.
 
 **Active security concern:** Bandit findings in `troubleshooter.py` (issue #60). The tool is local-only, reducing real-world attack surface, but findings should be reviewed before v1.0.
 
+**Dependency security:** No known CVEs in current dependencies (`SpeechRecognition`, `edge-tts`, `rich`, `pytest`, `pytest-cov`) as of 2026-06-14. The `edge-tts` library uses Microsoft's unofficial Edge TTS API — monitor for API deprecation.
+
 ---
 
 ## 📞 Contact
@@ -211,4 +218,4 @@ See [SECURITY.md](../SECURITY.md) for the vulnerability reporting policy.
 
 ---
 
-*Last updated: 2026-06-12 by Orbiton Workflow Agent (scheduled health scan)*
+*Last updated: 2026-06-14 by Orbiton Workflow Agent (scheduled daily health scan)*
