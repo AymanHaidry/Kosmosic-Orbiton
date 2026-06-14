@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- 🔧 ORBITON TROUBLESHOOTER v1.0
+ 🔧 ORBITON TROUBLESHOOTER v2.0
  "I ran a diagnostic on your life. Now let me fix your setup."
  Standalone diagnostic tool. Run this when something breaks.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -40,6 +40,9 @@ class Colors:
     def arrow(cls, text): return f"{cls.CYAN}→{cls.RESET} {text}"
     @classmethod
     def title(cls, text): return f"\n{cls.BOLD}{cls.MAGENTA}{text}{cls.RESET}"
+
+# ─── SESSION PERSISTENCE ──────────────────────────────────────
+LAST_RESULTS = {}
 
 def print_banner():
     print(f"""
@@ -248,6 +251,58 @@ def check_pyaudio():
         print(f"  {Colors.warn('PyAudio')} NOT installed (speech recognition may fail on some platforms)")
         return False
 
+def check_pygame():
+    """Check if pygame is available for background audio playback."""
+    try:
+        import pygame
+        pygame.mixer.init()
+        pygame.mixer.quit()
+        print(f"  {Colors.ok('Pygame')} installed and mixer works (background audio, no WMP window)")
+        return True
+    except ImportError:
+        print(f"  {Colors.warn('Pygame')} NOT installed (Windows audio will open in WMP)")
+        return False
+    except Exception as e:
+        print(f"  {Colors.warn('Pygame')} installed but mixer failed: {e}")
+        return False
+
+
+def check_audio_player():
+    """Check for available audio playback backends."""
+    plat = sys.platform
+    players = []
+    try:
+        import pygame
+        pygame.mixer.init()
+        pygame.mixer.quit()
+        players.append("pygame")
+        print(f"  {Colors.ok('Audio backend')} pygame (background, no WMP window)")
+    except Exception:
+        pass
+    if plat == "win32":
+        ok, _, _ = run_cmd(["where", "mpg123"], timeout=5)
+        if ok:
+            players.append("mpg123")
+            print(f"  {Colors.ok('Audio backend')} mpg123 found")
+        if not players:
+            print(f"  {Colors.warn('Audio backend')} no background player found (will use WMP fallback)")
+    elif plat == "darwin":
+        ok, _, _ = run_cmd(["which", "afplay"], timeout=5)
+        if ok:
+            players.append("afplay")
+            print(f"  {Colors.ok('Audio backend')} afplay")
+    else:
+        for player in ["mpg123", "ffplay", "vlc", "xdg-open"]:
+            ok, _, _ = run_cmd(["which", player], timeout=5)
+            if ok:
+                players.append(player)
+                print(f"  {Colors.ok('Audio backend')} {player}")
+                break
+        if not players:
+            print(f"  {Colors.warn('Audio backend')} no player found")
+    return players
+
+
 def install_module(module_name, pip_name=None):
     """Offer to install a missing module."""
     if pip_name is None:
@@ -329,8 +384,22 @@ def print_docs_links():
     print(f"    {Colors.CYAN}→{Colors.RESET} Manual: {Colors.BLUE}{manual_url}{Colors.RESET}")
     print(f"    {Colors.CYAN}→{Colors.RESET} Troubleshooting: {Colors.BLUE}{troubleshoot_url}{Colors.RESET}")
 
-def generate_bug_report(results):
+def generate_bug_report(results=None):
     """Generate a bug report file and pause so user can see it."""
+    if results is None:
+        results = LAST_RESULTS
+    if not results:
+        print(f"
+  {Colors.YELLOW}No scan data available.{Colors.RESET}")
+        print(f"  {Colors.CYAN}→{Colors.RESET} Run a scan first (options 1-6).")
+        print(f"
+  {Colors.DIM}Press Enter to continue...{Colors.RESET}")
+        try:
+            input()
+        except (EOFError, KeyboardInterrupt):
+            pass
+        return None
+
     timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
     filename = f"orbiton_bug_report_{timestamp}.txt"
 
@@ -347,9 +416,22 @@ Working directory: {os.getcwd()}
 
 === DIAGNOSTIC RESULTS ===
 """
+    def _fmt(value):
+        if value is True:
+            return "PASS"
+        elif value is False:
+            return "FAIL"
+        elif value is None:
+            return "WARN"
+        elif isinstance(value, str):
+            return f"INFO ({value})"
+        elif isinstance(value, list):
+            return f"INFO ({', '.join(value)})"
+        else:
+            return f"INFO ({value})"
+
     for key, value in results.items():
-        status = "PASS" if value else "FAIL"
-        report += f"{key}: {status}\n"
+        report += f"{key}: {_fmt(value)}\n"
 
     report += """
 === PLEASE DESCRIBE YOUR ISSUE BELOW ===
@@ -366,10 +448,14 @@ Working directory: {os.getcwd()}
 
 """
 
-    with open(filename, "w", encoding="utf-8") as f:
-        f.write(report)
-
-    print(f"\n  {Colors.ok(f'Bug report saved to: {filename}')}")
+    try:
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(report)
+        print(f"\n  {Colors.ok(f'Bug report saved to: {filename}')}")
+    except OSError as e:
+        print(f"\n  {Colors.fail(f'Could not write bug report: {e}')}")
+        print(f"  {Colors.CYAN}→{Colors.RESET} Check write permissions in: {os.getcwd()}")
+        filename = None
     print(f"  {Colors.CYAN}→{Colors.RESET} Paste this into a GitHub issue:")
     print(f"     {Colors.BLUE}https://github.com/AymanHaidry/Kosmosic-Orbiton/issues{Colors.RESET}")
     print_docs_links()
@@ -420,8 +506,9 @@ def flow_wont_start():
     results["speech_recognition"] = check_module("speechrecognition", "speech_recognition")
     results["rich"] = check_module("rich")
     results["edge_tts"] = check_module("edge-tts", "edge_tts")
+    results["pygame"] = check_module("pygame")
 
-    missing = [k for k, v in results.items() if k in ("speech_recognition", "rich", "edge_tts") and not v]
+    missing = [k for k, v in results.items() if k in ("speech_recognition", "rich", "edge_tts", "pygame") and not v]
     if missing:
         print(f"\n  {Colors.YELLOW}Missing dependencies detected.{Colors.RESET}")
         # Offer requirements.txt install first
@@ -432,6 +519,7 @@ def flow_wont_start():
                 results["speech_recognition"] = check_module("speechrecognition", "speech_recognition")
                 results["rich"] = check_module("rich")
                 results["edge_tts"] = check_module("edge-tts", "edge_tts")
+                results["pygame"] = check_module("pygame")
             else:
                 # Fall back to individual installs
                 for mod in missing:
@@ -580,7 +668,15 @@ def flow_tts_silent():
         print(f"        pip uninstall edge-tts")
         print(f"     3. Accept silence — core commands still work")
 
-    # Check 3: Speakers/headphones
+    # Check 3: Pygame (background audio, no WMP)
+    print(f"\n{Colors.BOLD}Checking background audio engine...{Colors.RESET}")
+    results["pygame"] = check_pygame()
+
+    # Check 4: Audio player backends
+    print(f"\n{Colors.BOLD}Checking audio playback backends...{Colors.RESET}")
+    results["audio_players"] = check_audio_player()
+
+    # Check 5: Speakers/headphones
     print(f"\n{Colors.BOLD}Checking audio output...{Colors.RESET}")
     print(f"  {Colors.CYAN}→{Colors.RESET} Are your speakers/headphones plugged in and turned up?")
 
@@ -598,12 +694,38 @@ def flow_tts_silent():
 
             # Try to play it
             plat = sys.platform
-            if plat == "win32":
+            # Prefer pygame (background, no WMP window)
+            if results.get("pygame"):
+                try:
+                    import pygame
+                    pygame.mixer.init()
+                    pygame.mixer.music.load("troubleshooter_test.mp3")
+                    pygame.mixer.music.play()
+                    while pygame.mixer.music.get_busy():
+                        time.sleep(0.05)
+                    pygame.mixer.quit()
+                    print(f"  {Colors.ok('Audio playback')} works via pygame (no WMP window)")
+                    results["audio_playback"] = "pygame"
+                except Exception as e:
+                    print(f"  {Colors.warn('Pygame playback')} failed: {e}")
+                    results["audio_playback"] = False
+            elif plat == "win32":
                 play_cmd = ["start", "", "troubleshooter_test.mp3"]
-                shell = True
+                ok2, _, _ = run_cmd(play_cmd, shell=True, timeout=10)
+                if ok2:
+                    print(f"  {Colors.ok('Audio playback')} works via start command")
+                    results["audio_playback"] = "start"
+                else:
+                    print(f"  {Colors.fail('Audio playback')} failed")
+                    results["audio_playback"] = False
             elif plat == "darwin":
-                play_cmd = ["afplay", "troubleshooter_test.mp3"]
-                shell = False
+                ok2, _, _ = run_cmd(["afplay", "troubleshooter_test.mp3"], timeout=10)
+                if ok2:
+                    print(f"  {Colors.ok('Audio playback')} works via afplay")
+                    results["audio_playback"] = "afplay"
+                else:
+                    print(f"  {Colors.fail('Audio playback')} failed")
+                    results["audio_playback"] = False
             else:
                 # Try multiple Linux players
                 for player in ["mpg123", "ffplay", "vlc", "xdg-open"]:
@@ -611,33 +733,19 @@ def flow_tts_silent():
                     if ok2:
                         print(f"  {Colors.ok('Audio player')} '{player}' works")
                         results["audio_player"] = player
+                        results["audio_playback"] = player
                         break
                 else:
                     print(f"  {Colors.fail('No audio player')} found")
                     print(f"  {Colors.CYAN}→{Colors.RESET} Install one: sudo apt-get install mpg123")
                     results["audio_player"] = None
-                # Clean up
-                try:
-                    Path("troubleshooter_test.mp3").unlink()
-                except:
-                    pass
-                print_docs_links()
-                return results
-
-            if plat in ("win32", "darwin"):
-                ok2, _, _ = run_cmd(play_cmd, shell=shell, timeout=10)
-                if ok2:
-                    print(f"  {Colors.ok('Audio playback')} works")
-                    results["audio_playback"] = True
-                else:
-                    print(f"  {Colors.fail('Audio playback')} failed")
                     results["audio_playback"] = False
 
-                # Clean up
-                try:
-                    Path("troubleshooter_test.mp3").unlink()
-                except:
-                    pass
+            # Clean up
+            try:
+                Path("troubleshooter_test.mp3").unlink()
+            except:
+                pass
         else:
             print(f"  {Colors.fail('Edge TTS direct test')} failed: {err}")
             results["edge_tts_direct"] = False
@@ -831,9 +939,10 @@ def flow_other():
     results["rich"] = check_module("rich")
     results["edge_tts"] = check_module("edge-tts", "edge_tts")
     results["pyaudio"] = check_pyaudio()
+    results["pygame"] = check_pygame()
 
     # Auto-install missing deps from requirements.txt
-    missing_deps = [k for k, v in results.items() if k in ("speech_recognition", "rich", "edge_tts") and not v]
+    missing_deps = [k for k, v in results.items() if k in ("speech_recognition", "rich", "edge_tts", "pygame") and not v]
     if missing_deps and Path("requirements.txt").exists():
         print(f"\n  {Colors.YELLOW}Missing dependencies detected.{Colors.RESET}")
         if install_from_requirements():
@@ -842,6 +951,7 @@ def flow_other():
             results["speech_recognition"] = check_module("speechrecognition", "speech_recognition")
             results["rich"] = check_module("rich")
             results["edge_tts"] = check_module("edge-tts", "edge_tts")
+            results["pygame"] = check_module("pygame")
 
     print(f"\n{Colors.BOLD}Files:{Colors.RESET}")
     results["main_file"] = check_file_exists("kosmosic_orbiton.py")
@@ -881,6 +991,7 @@ def flow_other():
 # ─── MAIN MENU ────────────────────────────────────────────────
 
 def main():
+    global LAST_RESULTS
     print_banner()
 
     print(f"{Colors.BOLD}What is broken?{Colors.RESET}")
@@ -920,15 +1031,22 @@ def main():
     elif choice == "6":
         results = flow_other()
     elif choice == "7":
-        print(f"\n{Colors.YELLOW}No previous scan data in this session.{Colors.RESET}")
-        print(f"{Colors.CYAN}→{Colors.RESET} Run a scan first (options 1-6), then come back.")
-        # PAUSE
-        print(f"\n  {Colors.DIM}Press Enter to continue...{Colors.RESET}")
-        try:
-            input()
-        except (EOFError, KeyboardInterrupt):
-            pass
+        if not LAST_RESULTS:
+            print(f"\n{Colors.YELLOW}No previous scan data in this session.{Colors.RESET}")
+            print(f"{Colors.CYAN}→{Colors.RESET} Run a scan first (options 1-6), then come back.")
+            # PAUSE
+            print(f"\n  {Colors.DIM}Press Enter to continue...{Colors.RESET}")
+            try:
+                input()
+            except (EOFError, KeyboardInterrupt):
+                pass
+        else:
+            generate_bug_report()
         return
+
+    # Persist results for bug report generation
+    if results:
+        LAST_RESULTS.update(results)
 
     # Post-flow options
     print(f"\n{Colors.CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{Colors.RESET}")
