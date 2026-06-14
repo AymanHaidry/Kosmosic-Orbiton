@@ -6,6 +6,7 @@ SpeechRecognition>=3.10.0
 
 # TTS: neural text-to-speech (Microsoft Edge voices)
 edge-tts>=6.1.0
+pygame>=2.5.0
 
 # UI: pretty terminal colors, tables, panels
 rich>=13.0.0
@@ -13,3 +14,4 @@ rich>=13.0.0
 # Testing: pytest suite + coverage
 pytest>=8.0.0
 pytest-cov>=5.0.0
+
