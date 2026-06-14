@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  🎧 Orbiton v0.6.2 — Voice Command Terminal
+  🎧 Orbiton v0.7.3 — Voice Command Terminal
   "We put the world around your head."
   Wake word: TOKYO
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -195,7 +195,7 @@ class NeuroInterface:
         if self.console:
             banner = Panel.fit(
                 Text.from_markup(
-                    "[bold cyan]🎧 Kosmosic Orbiton v0.6.2[/bold cyan]\n"
+                    "[bold cyan]🎧 Kosmosic Orbiton v0.7.3[/bold cyan]\n"
                     "[dim]Voice Command Terminal — Say TOKYO to wake[/dim]\n"
                     f"[green]Headset:[/green] {self.headphone_name or 'Scanning...'}\n"
                     f"[yellow]Session:[/yellow] {self.session_start.strftime('%H:%M:%S')}"
@@ -206,7 +206,7 @@ class NeuroInterface:
             self.console.print(banner)
         else:
             print("=" * 50)
-            print("🎧 Kosmosic Orbiton v0.6.2 — Say TOKYO to wake")
+            print("🎧 Kosmosic Orbiton v0.7.3 — Say TOKYO to wake")
             print(f"Headset: {self.headphone_name or 'Scanning...'}")
             print("=" * 50)
 
@@ -421,7 +421,17 @@ class VoiceManager:
                 mp3_path = os.path.join(tempfile.gettempdir(), "neuro_link_tts.mp3")
                 asyncio.run(self._edge_speak(text, mp3_path))
                 if sys.platform == "win32":
-                    os.startfile(mp3_path)
+                    try:
+                        import pygame
+                        pygame.mixer.init()
+                        pygame.mixer.music.load(mp3_path)
+                        pygame.mixer.music.play()
+                        while pygame.mixer.music.get_busy():
+                            time.sleep(0.05)
+                    except ImportError:
+                        # pygame not installed, fallback to startfile
+                        os.startfile(mp3_path)
+                        time.sleep(2)
                 elif sys.platform == "darwin":
                     subprocess.run(["afplay", mp3_path], capture_output=True)
                 else:
