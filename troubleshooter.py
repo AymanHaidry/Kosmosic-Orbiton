@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- 🔧 ORBITON TROUBLESHOOTER v2.0
+ 🔧 ORBITON TROUBLESHOOTER v1.0
  "I ran a diagnostic on your life. Now let me fix your setup."
  Standalone diagnostic tool. Run this when something breaks.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
