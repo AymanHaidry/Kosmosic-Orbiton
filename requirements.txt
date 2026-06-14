@@ -1,4 +1,4 @@
-# Orbiton Dependencies v2 compatible Orbiton v0->v7.0 Tokyo-class
+# Orbiton Dependencies v2 compatible Orbiton v0->v0.7.3 Tokyo-class
 # Install with: pip install -r requirements.txt
 
 # Core: speech recognition (Google Web Speech API)
