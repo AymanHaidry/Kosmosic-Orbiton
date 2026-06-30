@@ -399,7 +399,7 @@ class UserMemory:
 
 class VoiceManager:
     """Natural text-to-speech using edge-tts or system fallback."""
-        def __init__(self, voice: str = "en-US-AriaNeural"):
+    def __init__(self, voice: str = "en-US-AriaNeural"):
         self.voice = voice
         self.tts_queue = queue.Queue()
         self.tts_active = threading.Event()          # ← NEW: True while speaking
@@ -1066,7 +1066,18 @@ def main():
     # Text input thread
     text_queue = queue.Queue()
     def text_input_loop():
-            while True:
+        while True:
+            try:
+                typed = input("\n[text] > ")
+                if typed.strip():
+                    text_queue.put(typed.strip())
+            except EOFError:
+                break
+
+    text_thread = threading.Thread(target=text_input_loop, daemon=True)
+    text_thread.start()
+
+    while True:
         try:
             # ─── 1. TEXT INPUT (never blocked by TTS) ─────────────────
             try:
@@ -1152,7 +1163,6 @@ def main():
             ui.show_info("Resetting audio engine...")
             consecutive_errors = 0
             time.sleep(1)
-
     text_thread = threading.Thread(target=text_input_loop, daemon=True)
     text_thread.start()
 
