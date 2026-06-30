@@ -5,7 +5,7 @@
 **Company:** [Kosmosic](https://kosmosic.vercel.app)  
 **Product:** Orbiton  
 **Wake Word:** TOKYO  
-**Current Version:** v0.7.0 (Tokyo-class)  
+**Current Version:** v0.7.3 (Tokyo-class)  
 **Current Class:** [Tokyo-class](docs/ROADMAP.md#tokyo-class-current)
 
 Orbiton is a Python-powered desktop voice assistant that turns your headset into a wireless command terminal. Launch apps, search the web, open files, manage projects, and automate everyday tasks using natural voice commands. No cloud required. No bloat. Just you and your machine.
