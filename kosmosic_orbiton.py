@@ -60,6 +60,7 @@ CONFIG = {
     "wake_word": "tokyo",
     "memory_file": str(Path.home() / ".neuro_link_memory.json"),
     "voice": "en-US-AriaNeural",
+    "post_tts_silence": 0.5,   # ← NEW: seconds to keep mic off after speaking. Introduced in v0.7.3
 }
 
 # Toxic motivation database
@@ -398,9 +399,13 @@ class UserMemory:
 
 class VoiceManager:
     """Natural text-to-speech using edge-tts or system fallback."""
-    def __init__(self, voice: str = "en-US-AriaNeural"):
+        def __init__(self, voice: str = "en-US-AriaNeural"):
         self.voice = voice
         self.tts_queue = queue.Queue()
+        self.tts_active = threading.Event()          # ← NEW: True while speaking
+        self.post_tts_until = 0.0                  # ← NEW: timestamp
+        self.post_tts_silence = 1.5              # ← NEW: seconds after TTS
+        self._lock = threading.Lock()            # ← NEW: guard post_tts_until
         self._thread = threading.Thread(target=self._tts_worker, daemon=True)
         self._thread.start()
 
@@ -410,8 +415,21 @@ class VoiceManager:
             text = self.tts_queue.get()
             if text is None:
                 break
-            self._speak_now(text)
+            self.tts_active.set()
+            try:
+                self._speak_now(text)
+            finally:
+                self.tts_active.clear()
+                with self._lock:
+                    self.post_tts_until = time.time() + self.post_tts_silence
             self.tts_queue.task_done()
+
+    def is_listening_blocked(self) -> bool:
+        """Return True if mic should stay off (TTS playing or cooling down)."""
+        if self.tts_active.is_set():
+            return True
+        with self._lock:
+            return time.time() < self.post_tts_until
 
     def _speak_now(self, text: str):
         """Actually speak the text."""
@@ -1048,13 +1066,92 @@ def main():
     # Text input thread
     text_queue = queue.Queue()
     def text_input_loop():
-        while True:
+            while True:
+        try:
+            # ─── 1. TEXT INPUT (never blocked by TTS) ─────────────────
             try:
-                typed = input("\n[text] > ")
-                if typed.strip():
-                    text_queue.put(typed.strip())
-            except EOFError:
-                break
+                typed_cmd = text_queue.get_nowait()
+                ui.show_heard(f"[typed] {typed_cmd}")
+                if asleep:
+                    if CONFIG["wake_word"] in typed_cmd.lower() or typed_cmd.lower() in ("wake", "wake up", "start"):
+                        asleep = False
+                        msg = "Tokyo online. What do you need?"
+                        ui.show_success(msg)
+                        voice.speak(msg)
+                        remainder = re.sub(r"\b(tokyo|wake|start)\b", "", typed_cmd, flags=re.IGNORECASE).strip()
+                        if remainder:
+                            process_text(remainder, engine, parser, memory, voice, ui, intel)
+                    else:
+                        ui.show_info("💤 Sleeping. Say TOKYO or WAKE to wake.")
+                else:
+                    success, action = process_text(typed_cmd, engine, parser, memory, voice, ui, intel)
+                    if action == "sleep":
+                        asleep = True
+                continue
+            except queue.Empty:
+                pass
+
+            # ─── 2. TTS SILENCE WINDOW (voice only) ───────────────────
+            if voice.is_listening_blocked():
+                time.sleep(0.1)
+                continue
+
+            # ─── 3. VOICE INPUT ───────────────────────────────────────
+            if asleep:
+                ui.show_listening(active=False)
+            else:
+                ui.show_listening(active=True)
+
+            with microphone as source:
+                audio = recognizer.listen(
+                    source,
+                    timeout=CONFIG["audio_timeout"],
+                    phrase_time_limit=CONFIG["phrase_limit"]
+                )
+
+            ui.show_info("Processing speech...")
+            text = recognizer.recognize_google(audio)
+            ui.show_heard(text)
+
+            # Wake word check
+            if asleep:
+                normalized = intel.nlp.normalize(text)
+                if CONFIG["wake_word"] in normalized or any(w in normalized for w in ["wake", "wake up", "start", "online"]):
+                    asleep = False
+                    msg = "Tokyo online. What do you need?"
+                    ui.show_success(msg)
+                    voice.speak(msg)
+                    remainder = re.sub(r"\b(tokyo|wake|wake up|start|online)\b", "", text, flags=re.IGNORECASE).strip()
+                    if remainder:
+                        process_text(remainder, engine, parser, memory, voice, ui, intel)
+                continue
+
+            # Awake: process command
+            success, action = process_text(text, engine, parser, memory, voice, ui, intel)
+            if action == "sleep":
+                asleep = True
+
+        except sr.WaitTimeoutError:
+            consecutive_errors += 1
+            if consecutive_errors > 3:
+                ui.show_info("Still listening...")
+                consecutive_errors = 0
+        except sr.UnknownValueError:
+            ui.show_error("Could not understand audio")
+            consecutive_errors += 1
+        except sr.RequestError as e:
+            ui.show_error(f"Speech API error: {e}")
+            consecutive_errors += 1
+            time.sleep(2)
+        except Exception as e:
+            ui.show_error(f"Unexpected error: {e}")
+            consecutive_errors += 1
+            time.sleep(1)
+
+        if consecutive_errors > CONFIG["max_errors_before_reset"]:
+            ui.show_info("Resetting audio engine...")
+            consecutive_errors = 0
+            time.sleep(1)
 
     text_thread = threading.Thread(target=text_input_loop, daemon=True)
     text_thread.start()
