@@ -23,8 +23,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Resolve self-listening bug (#27) before v1.0
 - Resolve Bandit security findings in `troubleshooter.py` (#60) before v1.0
 
-### Known Cosmetic Issues
-- Version string in `kosmosic_orbiton.py` docstring still shows `v0.6.2` — needs updating to `v0.7.1`
+
+
+---
+
+ ## [0.7.3] - 2026-06-30
+### Fixed
+Self-listening bug (#27) — TTS output no longer triggers phantom voice commands
+Added tts_active threading event to VoiceManager to track when audio is playing
+Added post_tts_until timestamp with 1.5 s silence buffer after TTS finishes
+Added is_listening_blocked() method to query TTS + cool-down state
+Main loop now skips recognizer.listen() while TTS is active or during post-TTS silence window
+Text input commands bypass the silence window entirely (typing always works)
+Fixes: "Tokyo motivate me" no longer causes Orbiton to hear its own roast and execute a random follow-up command
+Eliminates need for headphones as a workaround for speaker-based setups
+### Changed
+VoiceManager.__init__ now initializes tts_active, post_tts_until, post_tts_silence, and _lock
+VoiceManager._tts_worker wraps _speak_now() in try/finally to guarantee tts_active is always cleared
+main() loop reordered: text input → TTS silence check → voice input
+CONFIG dict now includes "post_tts_silence": 1.5 for user-tunable silence window duration
+### Technical
+Thread-safe: post_tts_until is guarded by _lock to prevent race conditions between TTS worker and main loop
+Zero new dependencies (no AEC libraries, no webrtcvad, no speexdsp)
+Deterministic: mic stays off for exact duration of playback + fixed buffer, unlike previous time.sleep(0.5) workaround which returned too early due to queue-based async TTS
 
 ---
 
