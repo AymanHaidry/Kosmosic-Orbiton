@@ -3,6 +3,7 @@
 
 # Core: speech recognition (Google Web Speech API)
 SpeechRecognition>=3.10.0
+PyAudio>=0.2.14
 
 # TTS: neural text-to-speech (Microsoft Edge voices)
 edge-tts>=6.1.0
@@ -14,4 +15,3 @@ rich>=13.0.0
 # Testing: pytest suite + coverage
 pytest>=8.0.0
 pytest-cov>=5.0.0
-
