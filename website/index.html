@@ -1139,12 +1139,11 @@ setTimeout(() => typeTerminal('term3', termData.term3), 5000);
 async function fetchReleases() {
     const grid = document.getElementById('download-grid');
     try {
-        const response = await fetch('https://api.github.com/repos/AymanHaidry/Kosmosic-Orbiton/releases/latest');
+        const response = await fetch('/api/releases');
         if (!response.ok) throw new Error('No releases found');
         const release = await response.json();
 
         if (!release.assets || release.assets.length === 0) {
-            // Keep the "Coming Soon" placeholders visible
             return;
         }
 
@@ -1190,12 +1189,9 @@ async function fetchReleases() {
 
         grid.innerHTML = html;
     } catch (err) {
-        // Silently keep the "Coming Soon" placeholders — no error message needed
-        // The build-from-source section above is the primary CTA
+        // Silently keep the "Coming Soon" placeholders
     }
 }
-
-fetchReleases();
 </script>
 </body>
 </html>
