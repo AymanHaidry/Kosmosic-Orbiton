@@ -74,6 +74,13 @@ See [docs/TEST_STATUS.md](docs/TEST_STATUS.md) for per-test details and [docs/WO
 | 😴 Sleep | `sleep` | Put Orbiton to sleep |
 | ☀️ Wake | `wake` / `wake up` / say **TOKYO** | Wake Orbiton |
 | 🎓 Kosmosic | `kosmosic` | Open study dashboard |
+| 🔋 Device | `battery`               | Show battery level & status  |
+| 🔉 Device | `volume [up/down/mute]` | Get/set/mute system volume   |
+| 💡 Device | `brightness [level]`    | Get/set screen brightness    |
+| 🛜 Device | `wifi [scan/connect]`   | Scan networks or connect     |
+| 🔗 Device | `bluetooth`             | List paired devices / toggle |
+| 💪 Device | `system info`           | CPU, RAM, disk usage         |
+
 
 ---
 
