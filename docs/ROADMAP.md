@@ -10,7 +10,7 @@ Orbiton evolves through **generations**, each named after a model class. Each ge
 
 | Generation | Class | Description | Version | Status |
 |------------|-------|-------------|---------|--------|
-| 1 | **Tokyo** | Basic reasoning, voice commands, web search, file management, aviation tools, toxic motivation. | `1.x.x` | **Current** |
+| 1 | **Tokyo** | Basic reasoning, voice commands, web search, file management, aviation tools, toxic motivation, device control. | `0.x.x` | **Current** |
 | 2 | **Odyssey** | Large-scale growth. Advanced reasoning, local LLM integration, long-term memory, personalization engine. | `2.x.x` | Planned |
 | 3 | **Genesis** | Agentic behavior. Long-running tasks, predictive execution, multi-step workflows, scraper living on your PC. | `3.x.x` | Planned |
 | 4 | **Micron** | Lite version. All core functionality, stripped of heavy dependencies, for older hardware or minimal installs. | `4.x.x` | Planned (ROI-dependent) |
@@ -29,7 +29,7 @@ See [VERSIONS.md](VERSIONS.md) for the full versioning system and release rules.
 - Web search, YouTube search, Google Maps, Street View
 - Weather, airport search, flight tracking (FlightRadar24), METAR/TAF
 - File/folder opening and navigation
-- VS Code project launcher
+- VS Code: project launcher
 - Python script runner
 - Clipboard search
 - Calculator and math expressions
@@ -40,14 +40,14 @@ See [VERSIONS.md](VERSIONS.md) for the full versioning system and release rules.
 - Local knowledge base (moon phases, aviation facts, space facts)
 - Wikimedia scraping with caching
 - Cross-platform: Windows, macOS, Linux
+- **Device control suite** — battery, volume, brightness, WiFi, Bluetooth, system info
 
 ### Known Bugs
-1. **Self-listening on PC.** Orbiton hears its own TTS output and sometimes triggers a random intel response.
-2. **"Help" command unresponsive.** Saying "help" does not always execute the help handler.
-3. **Exam mode vs "exam board" NLP.** "Exam board" (two words) falls through to generic search instead of triggering exam mode.
-4. **Linux headphone auto-detect is best-effort only.**
-5. **Edge TTS requires internet.** Offline fallback to system TTS is silent if edge-tts is installed but unreachable.
-6. **Hardcoded Windows project paths** in `PROJECTS` dict.
+1. **"Help" command unresponsive.** Saying "help" does not always execute the help handler.
+2. **Exam mode vs "exam board" NLP.** "Exam board" (two words) falls through to generic search instead of triggering exam mode.
+3. **Linux headphone auto-detect is best-effort only.**
+4. **Edge TTS requires internet.** Offline fallback to system TTS is silent if edge-tts is installed but unreachable.
+5. **Hardcoded Windows project paths** in `PROJECTS` dict.
 
 ---
 
@@ -82,7 +82,6 @@ Agentic behavior and true automation.
 - **Talk to others** — share commands or intel files between Orbiton instances
 
 ### PC Management
-- **System info** — CPU/RAM monitoring, disk usage, process management
 - **Kill processes** — "kill Chrome" or "close Notepad"
 - **Restart services** — manage system services via voice
 
@@ -162,7 +161,7 @@ Before we call it Generation 2, these must be true:
 - [ ] Config system replaces hardcoded values
 - [ ] Auth system (online accounts) for multi-user support
 - [ ] Website for downloads, docs, and intel sharing
-- [ ] Self-listening bug resolved
+- [x] Self-listening bug resolved
 - [ ] Help command bug resolved
 - [ ] Documentation complete
 

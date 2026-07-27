@@ -14,6 +14,7 @@ tests/
 ├── compute/                 # Math expressions, security, constants
 ├── launch/                  # File operations, projects, scripts
 ├── system/                  # Status, time, motivation, hardware
+├── device/                  # Device control suite (battery, volume, brightness, WiFi, BT)
 ├── integration/             # End-to-end command flows
 └── troubleshooter/          # Diagnostic tool tests
 ```
@@ -95,6 +96,18 @@ Tests for system-level features.
 | `test_session_stats.py` | Command count, error count, session tracking |
 | `test_status.py` | Status report generation (voice + console) |
 | `test_time.py` | Time retrieval and 12h format |
+
+### Device (`tests/device/`)
+
+Tests for the system native control suite.
+
+| File | What it tests |
+| --- | --- |
+| `test_device_nlp.py` | NLP normalization for "batery", "volium", "wify", "blutooth" |
+| `test_device_controller.py` | Controller logic for brightness, volume, battery, WiFi, Bluetooth |
+| `test_device_integration.py` | End-to-end device command flows through `process_text()` |
+
+**Platform note:** Device tests mock platform-specific backends (`wmi`, `sysfs`, `amixer`, `brightnessctl`, `bluetoothctl`) to run on CI.
 
 ### Integration (`tests/integration/`)
 
@@ -186,6 +199,19 @@ def test_translate_flow(engine, parser, mock_ui, mock_voice, mock_memory, mock_i
         mock_open.assert_called_once()
 ```
 
+### For a new device command
+
+```python
+# tests/device/test_device_controller.py
+import pytest
+
+def test_battery_shows_level(engine, mock_ui):
+    engine.handle_battery()
+    assert mock_ui.speak.call_count >= 1
+    spoken = mock_ui.speak.call_args[0][0].lower()
+    assert "battery" in spoken or "power" in spoken
+```
+
 ### For a new troubleshooter diagnostic
 
 ```python
@@ -217,6 +243,7 @@ pytest tests/url_engine/ -v
 pytest tests/compute/ -v
 pytest tests/launch/ -v
 pytest tests/system/ -v
+pytest tests/device/ -v
 pytest tests/integration/ -v
 pytest tests/troubleshooter/ -v
 
@@ -245,6 +272,7 @@ Each category has its own workflow in `.github/workflows/`. See WORKFLOWS.md for
 | `compute.yml` | `tests/compute/` | Ubuntu |
 | `launch.yml` | `tests/launch/` | Windows |
 | `system.yml` | `tests/system/` | Ubuntu |
+| `device.yml` | `tests/device/` | Ubuntu |
 | `integration.yml` | `tests/integration/` | Ubuntu |
 | `troubleshooter.yml` | `tests/troubleshooter/` | Ubuntu |
 | `pylint.yml` | `kosmosic_orbiton.py` + `neuro_link_intel.py` + `troubleshooter.py` | Ubuntu |
