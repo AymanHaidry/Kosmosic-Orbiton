@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  🎧 Orbiton v0.7.3 — Voice Command Terminal
+  🎧 Orbiton v0.8.0 — Voice Command Terminal
   "We put the world around your head."
   Wake word: TOKYO
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -21,10 +21,11 @@ import platform
 import threading
 import queue
 import asyncio
+import shutil
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import quote
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Tuple
 
 # ─── OPTIONAL IMPORTS ──────────────────────────────────────
 try:
@@ -43,6 +44,12 @@ try:
 except ImportError:
     EDGE_TTS_AVAILABLE = False
 
+try:
+    import psutil
+    PSUTIL_AVAILABLE = True
+except ImportError:
+    PSUTIL_AVAILABLE = False
+
 # ─── INTELLIGENCE MODULE ───────────────────────────────────
 from neuro_link_intel import get_intelligence, NaturalLanguageProcessor, MathNormalizer
 
@@ -60,7 +67,7 @@ CONFIG = {
     "wake_word": "tokyo",
     "memory_file": str(Path.home() / ".neuro_link_memory.json"),
     "voice": "en-US-AriaNeural",
-    "post_tts_silence": 0.5,   # ← NEW: seconds to keep mic off after speaking. Introduced in v0.7.3
+    "post_tts_silence": 0.5,
 }
 
 # Toxic motivation database
@@ -80,6 +87,12 @@ TOXIC_ROASTS = [
     "Your to-do list is older than some civilizations. Start item one.",
     "I calculated your productivity. The result made my circuits cry.",
     "You call this grinding? I have seen sloths with more hustle.",
+    # ─── DEVICE ROASTS ───
+    "Your battery is lower than your standards. Charge it.",
+    "You are asking me to check your volume because you are too lazy to look at the tray icon. Pathetic.",
+    "Your screen brightness is the only thing dimmer than your career prospects.",
+    "You have 47 WiFi networks available and you still cannot connect to productivity.",
+    "Your Bluetooth is off. Much like your social life.",
 ]
 
 # Random Street View locations (amazing places)
@@ -140,6 +153,13 @@ ALL_COMMANDS = [
     ("🕐 Time", "what time is it", "Current time"),
     ("🧠 Memory", "who am i", "Recall stored user info"),
     ("🧠 Intel", "tell me about <topic>", "Knowledge lookup"),
+    # ─── DEVICE COMMANDS ───
+    ("🔋 Battery", "battery", "Check battery level & status"),
+    ("🔊 Volume", "volume [set/mute/unmute]", "Control system volume"),
+    ("💡 Brightness", "brightness [set <0-100>]", "Control screen brightness"),
+    ("📶 WiFi", "wifi [list/connect]", "Scan & connect to networks"),
+    ("🔷 Bluetooth", "bluetooth [list/on/off]", "Manage Bluetooth devices"),
+    ("🖥 System", "system", "CPU, RAM, disk & platform info"),
     ("🔄 Reboot", "reboot", "Restart Orbiton"),
     ("❓ Help", "help", "Show this command list"),
     ("😴 Sleep", "sleep", "Put Tokyo to sleep"),
@@ -196,7 +216,7 @@ class NeuroInterface:
         if self.console:
             banner = Panel.fit(
                 Text.from_markup(
-                    "[bold cyan]🎧 Kosmosic Orbiton v0.7.3[/bold cyan]\n"
+                    "[bold cyan]🎧 Kosmosic Orbiton v0.8.0[/bold cyan]\n"
                     "[dim]Voice Command Terminal — Say TOKYO to wake[/dim]\n"
                     f"[green]Headset:[/green] {self.headphone_name or 'Scanning...'}\n"
                     f"[yellow]Session:[/yellow] {self.session_start.strftime('%H:%M:%S')}"
@@ -207,7 +227,7 @@ class NeuroInterface:
             self.console.print(banner)
         else:
             print("=" * 50)
-            print("🎧 Kosmosic Orbiton v0.7.3 — Say TOKYO to wake")
+            print("🎧 Kosmosic Orbiton v0.8.0 — Say TOKYO to wake")
             print(f"Headset: {self.headphone_name or 'Scanning...'}")
             print("=" * 50)
 
@@ -274,6 +294,7 @@ class NeuroInterface:
     def show_command_table(self):
         if not self.console:
             print("\nCommands: search, youtube, calculate, weather, airport, track, metar, open, run, motivate, streetview, maps, clipboard, status, exam mode, kosmosic, help, reboot, who am i, sleep, wake, tell me about")
+            print("Device: battery, volume, brightness, wifi, bluetooth, system")
             return
         table = Table(title="Available Commands", box=box.SIMPLE_HEAD)
         table.add_column("Category", style="cyan", no_wrap=True)
@@ -336,6 +357,155 @@ class NeuroInterface:
             ))
         else:
             print(f"\n🧠 {topic.title()}: {fact}\n")
+
+    # ─── DEVICE DISPLAY METHODS ───
+    def show_battery(self, info: Dict):
+        """Beautiful battery display"""
+        if "error" in info:
+            self.show_error(f"Battery: {info['error']}")
+            return
+        pct = info.get("percent", "?")
+        status = info.get("status", "Unknown")
+        plugged = info.get("plugged", False)
+
+        if self.console:
+            icon = "🔌" if plugged else "🔋"
+            color = "green" if (pct != "?" and int(pct) > 50) else "yellow" if (pct != "?" and int(pct) > 20) else "red"
+            self.console.print(Panel(
+                f"[{color}]{icon} {pct}%[/{color}]\n[dim]Status: {status}[/dim]\n[dim]{'Plugged in' if plugged else 'On battery'}[/dim]",
+                title="[bold cyan]🔋 BATTERY[/bold cyan]",
+                border_style="cyan",
+                box=box.ROUNDED
+            ))
+        else:
+            icon = "🔌" if plugged else "🔋"
+            print(f"\n{icon} Battery: {pct}% | Status: {status} | {'Plugged in' if plugged else 'On battery'}\n")
+
+    def show_volume(self, info: Dict):
+        """Beautiful volume display"""
+        if "error" in info:
+            self.show_error(f"Volume: {info['error']}")
+            return
+        pct = info.get("percent", "?")
+        muted = info.get("muted", False)
+
+        if self.console:
+            if muted:
+                bar = "🔇 MUTED"
+                color = "red"
+            else:
+                level = int(pct) if pct != "?" else 0
+                filled = "█" * (level // 10)
+                empty = "░" * (10 - level // 10)
+                bar = f"{filled}{empty} {pct}%"
+                color = "green" if level > 50 else "yellow" if level > 20 else "red"
+            self.console.print(Panel(
+                f"[{color}]{bar}[/{color}]",
+                title="[bold cyan]🔊 VOLUME[/bold cyan]",
+                border_style="cyan",
+                box=box.ROUNDED
+            ))
+        else:
+            state = "MUTED" if muted else f"{pct}%"
+            print(f"\n🔊 Volume: {state}\n")
+
+    def show_brightness(self, info: Dict):
+        """Beautiful brightness display"""
+        if "error" in info:
+            self.show_error(f"Brightness: {info['error']}")
+            return
+        pct = info.get("percent", "?")
+
+        if self.console:
+            level = int(pct) if pct != "?" else 0
+            filled = "█" * (level // 10)
+            empty = "░" * (10 - level // 10)
+            bar = f"{filled}{empty} {pct}%"
+            color = "yellow" if level > 50 else "dim"
+            self.console.print(Panel(
+                f"[{color}]{bar}[/{color}]",
+                title="[bold cyan]💡 BRIGHTNESS[/bold cyan]",
+                border_style="cyan",
+                box=box.ROUNDED
+            ))
+        else:
+            print(f"\n💡 Brightness: {pct}%\n")
+
+    def show_wifi_list(self, networks: List[Dict]):
+        """Beautiful WiFi network list"""
+        if not networks or (len(networks) == 1 and "error" in networks[0]):
+            err = networks[0].get("error", "Unknown error") if networks else "No networks found"
+            self.show_error(f"WiFi: {err}")
+            return
+
+        if self.console:
+            table = Table(title="📶 Available WiFi Networks", box=box.SIMPLE_HEAD)
+            table.add_column("#", style="dim", width=4, justify="right")
+            table.add_column("SSID", style="green")
+            table.add_column("Signal", style="cyan")
+            table.add_column("Security", style="yellow")
+            for i, net in enumerate(networks[:15], 1):
+                ssid = net.get("ssid", "Hidden")
+                sig = net.get("signal", "?")
+                sec = net.get("security", "?")
+                table.add_row(str(i), ssid, sig, sec)
+            self.console.print(table)
+        else:
+            print("\n📶 Available WiFi Networks")
+            for i, net in enumerate(networks[:15], 1):
+                ssid = net.get("ssid", "Hidden")
+                sig = net.get("signal", "?")
+                sec = net.get("security", "?")
+                print(f"   {i:2}. {ssid:25} | {sig:10} | {sec}")
+            print()
+
+    def show_bluetooth_devices(self, devices: List[Dict]):
+        """Beautiful Bluetooth device list"""
+        if not devices or (len(devices) == 1 and "error" in devices[0]):
+            err = devices[0].get("error", "Unknown error") if devices else "No devices found"
+            self.show_error(f"Bluetooth: {err}")
+            return
+
+        if self.console:
+            table = Table(title="🔷 Bluetooth Devices", box=box.SIMPLE_HEAD)
+            table.add_column("#", style="dim", width=4)
+            table.add_column("Name", style="green")
+            table.add_column("Status", style="cyan")
+            for i, dev in enumerate(devices[:15], 1):
+                name = dev.get("name", "Unknown")
+                status = dev.get("status", "?")
+                table.add_row(str(i), name, status)
+            self.console.print(table)
+        else:
+            print("\n🔷 Bluetooth Devices")
+            for i, dev in enumerate(devices[:15], 1):
+                name = dev.get("name", "Unknown")
+                status = dev.get("status", "?")
+                print(f"   {i:2}. {name} | {status}")
+            print()
+
+    def show_system_info(self, info: Dict):
+        """Beautiful system info display"""
+        if "error" in info:
+            self.show_error(f"System: {info['error']}")
+            return
+
+        if self.console:
+            table = Table(title="🖥 System Information", box=box.SIMPLE_HEAD)
+            table.add_column("Metric", style="cyan")
+            table.add_column("Value", style="green")
+            table.add_row("Platform", str(info.get("platform", "?")))
+            table.add_row("CPU Usage", f"{info.get('cpu_percent', '?')}%")
+            table.add_row("Memory", f"{info.get('memory_used_gb', '?')} / {info.get('memory_total_gb', '?')} GB ({info.get('memory_percent', '?')}%)")
+            table.add_row("Disk Free", f"{info.get('disk_free_gb', '?')} GB / {info.get('disk_total_gb', '?')} GB")
+            self.console.print(table)
+        else:
+            print("\n🖥 System Information")
+            print(f"   Platform: {info.get('platform', '?')}")
+            print(f"   CPU: {info.get('cpu_percent', '?')}%")
+            print(f"   RAM: {info.get('memory_used_gb', '?')}/{info.get('memory_total_gb', '?')} GB")
+            print(f"   Disk: {info.get('disk_free_gb', '?')} GB free")
+            print()
 
 
 class UserMemory:
@@ -402,10 +572,10 @@ class VoiceManager:
     def __init__(self, voice: str = "en-US-AriaNeural"):
         self.voice = voice
         self.tts_queue = queue.Queue()
-        self.tts_active = threading.Event()          # ← NEW: True while speaking
-        self.post_tts_until = 0.0                  # ← NEW: timestamp
-        self.post_tts_silence = 1.5              # ← NEW: seconds after TTS
-        self._lock = threading.Lock()            # ← NEW: guard post_tts_until
+        self.tts_active = threading.Event()
+        self.post_tts_until = 0.0
+        self.post_tts_silence = 1.5
+        self._lock = threading.Lock()
         self._thread = threading.Thread(target=self._tts_worker, daemon=True)
         self._thread.start()
 
@@ -447,7 +617,6 @@ class VoiceManager:
                         while pygame.mixer.music.get_busy():
                             time.sleep(0.05)
                     except ImportError:
-                        # pygame not installed, fallback to startfile
                         os.startfile(mp3_path)
                         time.sleep(2)
                 elif sys.platform == "darwin":
@@ -561,6 +730,395 @@ def get_connected_headphones() -> Optional[str]:
     return None
 
 
+# ═════════════════════════════════════════════════════════════
+#  🔧 DEVICE CONTROLLER — Cross-Platform Hardware Control
+# ═════════════════════════════════════════════════════════════
+
+class DeviceController:
+    """Cross-platform device hardware control. Windows primary, Linux secondary."""
+
+    SYSTEM = platform.system()
+
+    # ── Helper: Run PowerShell safely ───────────────────────
+    @classmethod
+    def _ps(cls, script: str, timeout: int = 10) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            ["powershell", "-Command", script],
+            capture_output=True, text=True, timeout=timeout
+        )
+
+    @classmethod
+    def _run(cls, cmd: List[str], timeout: int = 10, check: bool = False) -> subprocess.CompletedProcess:
+        return subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, check=check)
+
+    # ── Battery ─────────────────────────────────────────────
+    @classmethod
+    def get_battery(cls) -> Dict:
+        if cls.SYSTEM == "Windows":
+            try:
+                ps = ('Get-WmiObject Win32_Battery | '
+                      'Select-Object EstimatedChargeRemaining,BatteryStatus | '
+                      'ConvertTo-Json')
+                result = cls._ps(ps, timeout=5)
+                if not result.stdout.strip():
+                    return {"error": "No battery detected (desktop PC?)"}
+                data = json.loads(result.stdout)
+                if isinstance(data, list):
+                    data = data[0]
+                pct = data.get("EstimatedChargeRemaining", "Unknown")
+                status = data.get("BatteryStatus", 0)
+                status_map = {1: "Discharging", 2: "Charging", 3: "Fully Charged",
+                              4: "Low", 5: "Critical", 6: "Charging", 7: "Charging",
+                              8: "Charging", 9: "Charging", 10: "Charging",
+                              11: "Partially Charged"}
+                return {
+                    "percent": pct,
+                    "status": status_map.get(status, "Unknown"),
+                    "plugged": status in (2, 3, 6, 7, 8, 9, 10, 11)
+                }
+            except Exception as e:
+                return {"error": str(e)}
+        elif cls.SYSTEM == "Linux":
+            try:
+                for bat_name in ["BAT0", "BAT1", "BAT2"]:
+                    bat_path = Path(f"/sys/class/power_supply/{bat_name}")
+                    if bat_path.exists():
+                        with open(bat_path / "capacity") as f:
+                            pct = int(f.read().strip())
+                        with open(bat_path / "status") as f:
+                            status = f.read().strip()
+                        return {
+                            "percent": pct,
+                            "status": status,
+                            "plugged": status in ("Charging", "Full", "Not charging")
+                        }
+                return {"error": "No battery found"}
+            except Exception as e:
+                return {"error": str(e)}
+        return {"error": f"Battery info not supported on {cls.SYSTEM}"}
+
+    # ── Volume ──────────────────────────────────────────────
+    @classmethod
+    def get_volume(cls) -> Dict:
+        if cls.SYSTEM == "Windows":
+            try:
+                nircmd = shutil.which("nircmd.exe")
+                if nircmd:
+                    result = cls._run([nircmd, "getsysvolume"])
+                    if result.returncode == 0:
+                        raw = int(result.stdout.strip())
+                        pct = round(raw / 655.35, 1)
+                        return {"percent": pct, "muted": pct == 0}
+                return {"percent": "Unknown", "muted": False,
+                        "note": "Install nircmd.exe for precise volume control"}
+            except Exception as e:
+                return {"error": str(e)}
+        elif cls.SYSTEM == "Linux":
+            try:
+                result = cls._run(["amixer", "get", "Master"])
+                if result.returncode == 0:
+                    match = re.search(r'\[(\d+)%\]', result.stdout)
+                    muted = "[off]" in result.stdout.lower() or "muted" in result.stdout.lower()
+                    return {"percent": int(match.group(1)) if match else 0, "muted": muted}
+                result = cls._run(["pactl", "list", "sinks"])
+                match = re.search(r'Volume:.*?/(\d+)%', result.stdout)
+                muted = "Mute: yes" in result.stdout
+                return {"percent": int(match.group(1)) if match else 0, "muted": muted}
+            except Exception as e:
+                return {"error": str(e)}
+        return {"error": f"Volume not supported on {cls.SYSTEM}"}
+
+    @classmethod
+    def set_volume(cls, level: int) -> Dict:
+        level = max(0, min(100, level))
+        if cls.SYSTEM == "Windows":
+            try:
+                nircmd = shutil.which("nircmd.exe")
+                if nircmd:
+                    raw_vol = int(level * 655.35)
+                    result = cls._run([nircmd, "setsysvolume", str(raw_vol)])
+                    if result.returncode == 0:
+                        return {"success": True, "level": level}
+                ps = (f'$wsh = New-Object -ComObject WScript.Shell; '
+                      f'1..50 | ForEach-Object {{ $wsh.SendKeys([char]174) }}; '
+                      f'1..{int(level / 2)} | ForEach-Object {{ $wsh.SendKeys([char]175) }}')
+                cls._ps(ps, timeout=5)
+                return {"success": True, "level": level, "method": "fallback"}
+            except Exception as e:
+                return {"error": str(e)}
+        elif cls.SYSTEM == "Linux":
+            try:
+                cls._run(["amixer", "set", "Master", f"{level}%"], check=True)
+                return {"success": True, "level": level}
+            except:
+                try:
+                    cls._run(["pactl", "set-sink-volume", "@DEFAULT_SINK@", f"{level}%"])
+                    return {"success": True, "level": level}
+                except Exception as e:
+                    return {"error": str(e)}
+        return {"error": f"Set volume not supported on {cls.SYSTEM}"}
+
+    @classmethod
+    def mute(cls, muted: bool = True) -> Dict:
+        if cls.SYSTEM == "Windows":
+            try:
+                nircmd = shutil.which("nircmd.exe")
+                if nircmd:
+                    flag = "1" if muted else "0"
+                    cls._run([nircmd, "mutesysvolume", flag])
+                    return {"success": True, "muted": muted}
+                cls._ps('$wsh = New-Object -ComObject WScript.Shell; $wsh.SendKeys([char]173)')
+                return {"success": True, "muted": muted, "method": "fallback"}
+            except Exception as e:
+                return {"error": str(e)}
+        elif cls.SYSTEM == "Linux":
+            try:
+                state = "mute" if muted else "unmute"
+                cls._run(["amixer", "set", "Master", state], check=True)
+                return {"success": True, "muted": muted}
+            except:
+                try:
+                    flag = "1" if muted else "0"
+                    cls._run(["pactl", "set-sink-mute", "@DEFAULT_SINK@", flag])
+                    return {"success": True, "muted": muted}
+                except Exception as e:
+                    return {"error": str(e)}
+        return {"error": f"Mute not supported on {cls.SYSTEM}"}
+
+    # ── Brightness ──────────────────────────────────────────
+    @classmethod
+    def get_brightness(cls) -> Dict:
+        if cls.SYSTEM == "Windows":
+            try:
+                ps = ('Get-CimInstance -Namespace root/WMI -ClassName WmiMonitorBrightness | '
+                      'Select-Object CurrentBrightness | ConvertTo-Json')
+                result = cls._ps(ps, timeout=5)
+                if not result.stdout.strip():
+                    return {"error": "Could not read brightness. External monitor?"}
+                data = json.loads(result.stdout)
+                if isinstance(data, list):
+                    data = data[0]
+                return {"percent": data.get("CurrentBrightness", "Unknown")}
+            except Exception as e:
+                return {"error": str(e)}
+        elif cls.SYSTEM == "Linux":
+            try:
+                result = cls._run(["brightnessctl", "g"])
+                if result.returncode == 0:
+                    curr = int(result.stdout.strip())
+                    result2 = cls._run(["brightnessctl", "m"])
+                    max_b = int(result2.stdout.strip())
+                    return {"percent": round((curr / max_b) * 100, 1)}
+            except:
+                pass
+            try:
+                result = cls._run(["xrandr", "--verbose"])
+                match = re.search(r'Brightness: (\d+\.\d+)', result.stdout)
+                if match:
+                    return {"percent": round(float(match.group(1)) * 100, 1)}
+            except Exception as e:
+                return {"error": str(e)}
+        return {"error": f"Brightness not supported on {cls.SYSTEM}"}
+
+    @classmethod
+    def set_brightness(cls, level: int) -> Dict:
+        level = max(0, min(100, level))
+        if cls.SYSTEM == "Windows":
+            try:
+                ps = (f'$monitor = Get-CimInstance -Namespace root/WMI -ClassName WmiMonitorBrightnessMethods; '
+                      f'$monitor.WmiSetBrightness(1, {level})')
+                cls._ps(ps, timeout=5)
+                return {"success": True, "level": level}
+            except Exception as e:
+                return {"error": str(e)}
+        elif cls.SYSTEM == "Linux":
+            try:
+                cls._run(["brightnessctl", "set", f"{level}%"], check=True)
+                return {"success": True, "level": level}
+            except:
+                try:
+                    result = cls._run(["xrandr"])
+                    output = result.stdout.split('\n')[0].split(' ')[0]
+                    cls._run(["xrandr", "--output", output, "--brightness", str(level / 100)])
+                    return {"success": True, "level": level}
+                except Exception as e:
+                    return {"error": str(e)}
+        return {"error": f"Set brightness not supported on {cls.SYSTEM}"}
+
+    # ── WiFi ────────────────────────────────────────────────
+    @classmethod
+    def get_wifi_networks(cls) -> List[Dict]:
+        if cls.SYSTEM == "Windows":
+            try:
+                ps = 'netsh wlan show networks mode=Bssid | Out-String'
+                result = cls._ps(ps, timeout=15)
+                lines = result.stdout.split('\n')
+                networks = []
+                current = {}
+                for line in lines:
+                    line = line.strip()
+                    if line.startswith("SSID"):
+                        if current:
+                            networks.append(current)
+                        current = {"ssid": line.split(":", 1)[1].strip(),
+                                   "signal": "Unknown", "security": "Unknown"}
+                    elif "Signal" in line and current:
+                        current["signal"] = line.split(":", 1)[1].strip()
+                    elif "Authentication" in line and current:
+                        current["security"] = line.split(":", 1)[1].strip()
+                if current:
+                    networks.append(current)
+                return networks
+            except Exception as e:
+                return [{"error": str(e)}]
+        elif cls.SYSTEM == "Linux":
+            try:
+                result = cls._run(["nmcli", "-t", "-f", "SSID,SIGNAL,SECURITY", "dev", "wifi"])
+                networks = []
+                for line in result.stdout.strip().split('\n'):
+                    if not line:
+                        continue
+                    parts = line.split(':')
+                    networks.append({
+                        "ssid": parts[0] if parts[0] else "Hidden",
+                        "signal": parts[1] + "%" if len(parts) > 1 and parts[1] else "Unknown",
+                        "security": parts[2] if len(parts) > 2 and parts[2] else "Open"
+                    })
+                return networks
+            except Exception as e:
+                return [{"error": str(e)}]
+        return [{"error": f"WiFi scan not supported on {cls.SYSTEM}"}]
+
+    @classmethod
+    def connect_wifi(cls, ssid: str, password: Optional[str] = None) -> Dict:
+        if cls.SYSTEM == "Windows":
+            try:
+                result = cls._run(["netsh", "wlan", "show", "profile", f"name={ssid}"])
+                profile_exists = "not found" not in result.stdout.lower()
+
+                if not profile_exists:
+                    if not password:
+                        return {"error": "Password required for new network", "needs_password": True}
+                    # Build XML profile
+                    xml_lines = [
+                        '<?xml version="1.0"?>',
+                        '<WLANProfile xmlns="http://www.microsoft.com/networking/WLAN/profile/v1">',
+                        f'    <name>{ssid}</name>',
+                        '    <SSIDConfig><SSID><name>' + ssid + '</name></SSID></SSIDConfig>',
+                        '    <connectionType>ESS</connectionType>',
+                        '    <connectionMode>auto</connectionMode>',
+                        '    <MSM>',
+                        '        <security>',
+                        '            <authEncryption>',
+                        '                <authentication>WPA2PSK</authentication>',
+                        '                <encryption>AES</encryption>',
+                        '                <useOneX>false</useOneX>',
+                        '            </authEncryption>',
+                        '            <sharedKey>',
+                        '                <keyType>passPhrase</keyType>',
+                        '                <protected>false</protected>',
+                        '                <keyMaterial>' + password + '</keyMaterial>',
+                        '            </sharedKey>',
+                        '        </security>',
+                        '    </MSM>',
+                        '</WLANProfile>'
+                    ]
+                    profile_path = Path.home() / f".orbiton_wifi_{ssid.replace(' ', '_')}.xml"
+                    with open(profile_path, 'w', encoding='utf-8') as f:
+                        f.write('\n'.join(xml_lines))
+                    cls._run(["netsh", "wlan", "add", "profile", f"filename={profile_path}"])
+
+                cls._run(["netsh", "wlan", "connect", f"name={ssid}"])
+                return {"success": True, "ssid": ssid}
+            except Exception as e:
+                return {"error": str(e)}
+        elif cls.SYSTEM == "Linux":
+            try:
+                if password:
+                    cls._run(["nmcli", "dev", "wifi", "connect", ssid, "password", password], check=True)
+                else:
+                    cls._run(["nmcli", "dev", "wifi", "connect", ssid], check=True)
+                return {"success": True, "ssid": ssid}
+            except Exception as e:
+                return {"error": str(e)}
+        return {"error": f"WiFi connect not supported on {cls.SYSTEM}"}
+
+    # ── Bluetooth ───────────────────────────────────────────
+    @classmethod
+    def get_bluetooth_devices(cls) -> List[Dict]:
+        if cls.SYSTEM == "Windows":
+            try:
+                ps = ('Get-PnpDevice -Class Bluetooth | '
+                      'Where-Object {$_.FriendlyName -and $_.FriendlyName -notlike "*Radio*"} | '
+                      'Select-Object FriendlyName, Status | ConvertTo-Json')
+                result = cls._ps(ps, timeout=5)
+                if not result.stdout.strip():
+                    return [{"error": "No Bluetooth devices found"}]
+                data = json.loads(result.stdout)
+                if isinstance(data, dict):
+                    data = [data]
+                return [{"name": d.get("FriendlyName", "Unknown"),
+                         "status": d.get("Status", "Unknown")} for d in data]
+            except Exception as e:
+                return [{"error": str(e)}]
+        elif cls.SYSTEM == "Linux":
+            try:
+                result = cls._run(["bluetoothctl", "devices"])
+                devices = []
+                for line in result.stdout.strip().split('\n'):
+                    parts = line.split(' ', 2)
+                    if len(parts) >= 3:
+                        devices.append({"name": parts[2], "status": "Paired"})
+                return devices
+            except Exception as e:
+                return [{"error": str(e)}]
+        return [{"error": f"Bluetooth not supported on {cls.SYSTEM}"}]
+
+    @classmethod
+    def toggle_bluetooth(cls, enable: bool) -> Dict:
+        if cls.SYSTEM == "Windows":
+            try:
+                bt_tool = shutil.which("btpair.exe") or shutil.which("BluetoothCommandLineTools")
+                if bt_tool:
+                    action = "enable" if enable else "disable"
+                    cls._run([bt_tool, action])
+                    return {"success": True, "enabled": enable}
+                return {"success": False, "error": "Bluetooth toggle requires admin rights on Windows. Use Settings or install Bluetooth command-line tools."}
+            except Exception as e:
+                return {"error": str(e)}
+        elif cls.SYSTEM == "Linux":
+            try:
+                action = "power on" if enable else "power off"
+                cls._run(["bluetoothctl", action], check=True)
+                return {"success": True, "enabled": enable}
+            except Exception as e:
+                return {"error": str(e)}
+        return {"error": f"Bluetooth toggle not supported on {cls.SYSTEM}"}
+
+    # ── System Info ─────────────────────────────────────────
+    @classmethod
+    def get_system_info(cls) -> Dict:
+        try:
+            disk = shutil.disk_usage('/')
+            mem = None
+            cpu_pct = None
+            if PSUTIL_AVAILABLE:
+                mem = psutil.virtual_memory()
+                cpu_pct = psutil.cpu_percent(interval=0.5)
+
+            return {
+                "platform": cls.SYSTEM,
+                "cpu_percent": cpu_pct,
+                "memory_used_gb": round(mem.used / (1024**3), 2) if mem else None,
+                "memory_total_gb": round(mem.total / (1024**3), 2) if mem else None,
+                "memory_percent": mem.percent if mem else None,
+                "disk_free_gb": round(disk.free / (1024**3), 2),
+                "disk_total_gb": round(disk.total / (1024**3), 2),
+            }
+        except Exception as e:
+            return {"error": str(e)}
+
+
 class CommandEngine:
     def __init__(self, ui: NeuroInterface, voice: VoiceManager, memory: UserMemory, intel):
         self.ui = ui
@@ -586,6 +1144,7 @@ class CommandEngine:
         """Always speak feedback naturally."""
         self.voice.speak(text)
 
+    # ─── EXISTING HANDLERS ─────────────────────────────────
     def handle_search(self, query: str):
         url = f"https://www.google.com/search?q={quote(query)}"
         self.open_chrome(url)
@@ -601,7 +1160,6 @@ class CommandEngine:
         self.speak(msg)
 
     def handle_calculate(self, expr: str):
-        """Handle calculate with full speech-to-math normalization."""
         try:
             normalized = MathNormalizer.normalize(expr)
             result = MathNormalizer.safe_eval(normalized)
@@ -647,7 +1205,6 @@ class CommandEngine:
         self.speak(msg)
 
     def handle_open_file(self, target: str):
-        """Intelligent file opener by name, extension, or folder"""
         target = target.lower().strip()
         home = Path.home()
         folder_map = {
@@ -662,7 +1219,6 @@ class CommandEngine:
             path = folder_map[target]
             if path.exists():
                 self.current_folder = path
-                # Open actual File Explorer
                 self._open_file_explorer(path)
                 self.ui.show_success(f"Opened: {target}")
                 self.speak(f"Opening {target} folder in File Explorer")
@@ -705,7 +1261,6 @@ class CommandEngine:
             self.speak("I could not find any files matching that name.")
 
     def _open_file_explorer(self, path: Path):
-        """Open Windows File Explorer at the given path."""
         if sys.platform == "win32":
             subprocess.Popen(["explorer.exe", str(path)])
         elif sys.platform == "darwin":
@@ -866,54 +1421,277 @@ class CommandEngine:
         self.speak(msg)
 
     def handle_kosmosic(self):
-        """Open Kosmosic study dashboard"""
         self.open_chrome(KOSMOSIC_APP)
         msg = "Opening Kosmosic study dashboard. Time to grind."
         self.ui.show_success(msg)
         self.speak(msg)
 
     def handle_help(self):
-        """Show all available commands"""
         self.ui.show_help()
-        self.speak("Here is the full command list. You can say search, youtube, calculate, weather, airport, track flight, metar, open files, navigate folders, open projects, run scripts, maps, street view, clipboard search, motivate me, status report, exam mode, kosmosic, who am I, tell me about, reboot, help, sleep, or wake.")
+        self.speak("Here is the full command list. You can say search, youtube, calculate, weather, airport, track flight, metar, open files, navigate folders, open projects, run scripts, maps, street view, clipboard search, motivate me, status report, exam mode, kosmosic, who am I, tell me about, battery, volume, brightness, wifi, bluetooth, system, reboot, help, sleep, or wake.")
 
     def handle_reboot(self):
-        """Restart Orbiton"""
         self.speak("Rebooting Orbiton. See you in a moment.")
         self.ui.show_info("🔄 Rebooting...")
         time.sleep(1)
-        # Use subprocess instead of os.execl for better cross-platform support
         subprocess.Popen([sys.executable, __file__], 
                         creationflags=subprocess.CREATE_NEW_CONSOLE if sys.platform == "win32" else 0)
         sys.exit(0)
 
     def handle_whoami(self):
-        """Recall stored user info"""
         info = self.memory.recall()
         self.ui.show_info(f"🧠 {info}")
         self.speak(info)
 
     def handle_knowledge(self, topic: str):
-        """Look up knowledge from intelligence module"""
         result = self.intel.process(f"tell me about {topic}")
         if result[0] == "knowledge" and result[1]:
             self.ui.show_knowledge(topic, result[1])
             self.speak(result[1])
         else:
-            # Fall back to Google search
             self.handle_search(topic)
 
     def handle_sleep(self):
-        """Manual sleep command"""
         self.speak("Going to sleep. Press your headset button twice or say Tokyo to wake me.")
         self.ui.show_info("💤 Manual sleep activated")
         return "sleep"
 
     def handle_wake(self):
-        """Manual wake command"""
         self.speak("I am awake. What do you need?")
         self.ui.show_success("🌙 Tokyo is awake")
         return "wake"
+
+    # ═════════════════════════════════════════════════════════════
+    #  🔧 DEVICE HANDLERS
+    # ═════════════════════════════════════════════════════════════
+
+    def handle_battery(self):
+        """Check battery level and status"""
+        info = DeviceController.get_battery()
+        self.ui.show_battery(info)
+        if "error" in info:
+            self.speak(f"Battery check failed: {info['error']}")
+        else:
+            pct = info.get("percent", "?")
+            status = info.get("status", "Unknown")
+            plugged = "plugged in" if info.get("plugged") else "on battery power"
+            self.speak(f"Battery is at {pct} percent. Status: {status}. You are {plugged}.")
+
+    def handle_volume(self, args: str = ""):
+        """Control system volume: read, set, mute, unmute"""
+        args = args.lower().strip()
+
+        # Mute / Unmute
+        if "mute" in args and "un" not in args:
+            result = DeviceController.mute(True)
+            if result.get("success"):
+                self.ui.show_volume({"percent": 0, "muted": True})
+                self.speak("Muted.")
+            else:
+                self.ui.show_error(f"Mute failed: {result.get('error')}")
+                self.speak(f"Could not mute: {result.get('error')}")
+            return
+
+        if "unmute" in args:
+            result = DeviceController.mute(False)
+            if result.get("success"):
+                info = DeviceController.get_volume()
+                self.ui.show_volume(info)
+                self.speak("Unmuted.")
+            else:
+                self.ui.show_error(f"Unmute failed: {result.get('error')}")
+                self.speak(f"Could not unmute: {result.get('error')}")
+            return
+
+        # Set volume
+        level = NaturalLanguageProcessor.extract_volume_level(args)
+        if level is not None:
+            result = DeviceController.set_volume(level)
+            if result.get("success"):
+                self.ui.show_volume({"percent": level, "muted": False})
+                self.speak(f"Volume set to {level} percent.")
+            else:
+                self.ui.show_error(f"Volume failed: {result.get('error')}")
+                self.speak(f"Could not set volume: {result.get('error')}")
+            return
+
+        # Read volume
+        info = DeviceController.get_volume()
+        self.ui.show_volume(info)
+        if "error" in info:
+            self.speak(f"Volume check failed: {info['error']}")
+        else:
+            pct = info.get("percent", "?")
+            muted = "muted" if info.get("muted") else "unmuted"
+            self.speak(f"Volume is at {pct} percent. Currently {muted}.")
+
+    def handle_brightness(self, args: str = ""):
+        """Control screen brightness: read or set"""
+        args = args.lower().strip()
+
+        level = NaturalLanguageProcessor.extract_brightness_level(args)
+        if level is not None:
+            result = DeviceController.set_brightness(level)
+            if result.get("success"):
+                self.ui.show_brightness({"percent": level})
+                self.speak(f"Brightness set to {level} percent.")
+            else:
+                self.ui.show_error(f"Brightness failed: {result.get('error')}")
+                self.speak(f"Could not set brightness: {result.get('error')}")
+            return
+
+        info = DeviceController.get_brightness()
+        self.ui.show_brightness(info)
+        if "error" in info:
+            self.speak(f"Brightness check failed: {info['error']}")
+        else:
+            self.speak(f"Brightness is at {info.get('percent', '?')} percent.")
+
+    def handle_wifi(self, args: str = ""):
+        """WiFi: list networks, connect with numbered selection + dialog"""
+        args = args.lower().strip()
+
+        if "list" in args or "scan" in args or "show" in args or not args:
+            networks = DeviceController.get_wifi_networks()
+            self.ui.show_wifi_list(networks)
+
+            if not networks or (len(networks) == 1 and "error" in networks[0]):
+                err = networks[0].get("error", "Unknown") if networks else "No networks"
+                self.speak(f"WiFi scan failed: {err}")
+                return
+
+            self.speak(f"Found {len(networks)} networks. Check the list and say 'connect to wifi' to pick one.")
+            return
+
+        if "connect" in args:
+            networks = DeviceController.get_wifi_networks()
+            if not networks or (len(networks) == 1 and "error" in networks[0]):
+                err = networks[0].get("error", "Unknown") if networks else "No networks"
+                self.speak(f"WiFi scan failed: {err}")
+                return
+
+            self.ui.show_wifi_list(networks)
+            self.speak(f"Pick a network by number, 1 through {min(len(networks), 15)}.")
+
+            # Prompt for selection
+            if self.ui.console:
+                self.ui.console.print("[cyan]Enter number to connect, or 'cancel':[/cyan]")
+            else:
+                print("\nEnter number to connect, or 'cancel':")
+
+            try:
+                choice = input("> ").strip()
+                if choice.lower() == 'cancel':
+                    self.speak("Cancelled.")
+                    return
+
+                idx = int(choice) - 1
+                if idx < 0 or idx >= len(networks):
+                    self.ui.show_error("Invalid selection.")
+                    self.speak("That number is not on the list.")
+                    return
+
+                selected = networks[idx]
+                ssid = selected.get("ssid", "")
+                if not ssid or ssid == "Hidden":
+                    self.ui.show_error("Cannot connect to hidden network this way.")
+                    self.speak("Cannot connect to a hidden network.")
+                    return
+
+                # Try connecting without password first
+                result = DeviceController.connect_wifi(ssid)
+
+                if result.get("needs_password"):
+                    # Dialog for password
+                    try:
+                        import tkinter as tk
+                        from tkinter import simpledialog
+                        root = tk.Tk()
+                        root.withdraw()
+                        root.geometry("+500+300")
+                        password = simpledialog.askstring(
+                            "WiFi Password",
+                            f"Enter password for '{ssid}':",
+                            show='*'
+                        )
+                        root.destroy()
+                    except Exception:
+                        # Fallback to terminal input
+                        password = input(f"Password for '{ssid}': ").strip()
+
+                    if password:
+                        result = DeviceController.connect_wifi(ssid, password)
+                    else:
+                        self.speak("No password provided. Cancelled.")
+                        return
+
+                if result.get("success"):
+                    self.ui.show_success(f"Connected to {ssid}")
+                    self.speak(f"Connected to {ssid}.")
+                else:
+                    self.ui.show_error(f"Connection failed: {result.get('error')}")
+                    self.speak(f"Could not connect: {result.get('error')}")
+
+            except ValueError:
+                self.ui.show_error("Invalid input.")
+                self.speak("Please enter a number.")
+            except Exception as e:
+                self.ui.show_error(f"WiFi error: {e}")
+                self.speak(f"WiFi connection error: {e}")
+            return
+
+        # Default: show networks
+        self.handle_wifi("list")
+
+    def handle_bluetooth(self, args: str = ""):
+        """Bluetooth: list devices, toggle on/off"""
+        args = args.lower().strip()
+
+        if "on" in args:
+            result = DeviceController.toggle_bluetooth(True)
+            if result.get("success"):
+                self.ui.show_success("Bluetooth enabled")
+                self.speak("Bluetooth is now on.")
+            else:
+                self.ui.show_error(f"Bluetooth error: {result.get('error')}")
+                self.speak(f"Could not enable Bluetooth: {result.get('error')}")
+            return
+
+        if "off" in args:
+            result = DeviceController.toggle_bluetooth(False)
+            if result.get("success"):
+                self.ui.show_success("Bluetooth disabled")
+                self.speak("Bluetooth is now off.")
+            else:
+                self.ui.show_error(f"Bluetooth error: {result.get('error')}")
+                self.speak(f"Could not disable Bluetooth: {result.get('error')}")
+            return
+
+        if "list" in args or "devices" in args or not args:
+            devices = DeviceController.get_bluetooth_devices()
+            self.ui.show_bluetooth_devices(devices)
+            if not devices or (len(devices) == 1 and "error" in devices[0]):
+                err = devices[0].get("error", "Unknown") if devices else "None found"
+                self.speak(f"Bluetooth scan failed: {err}")
+            else:
+                self.speak(f"Found {len(devices)} Bluetooth devices.")
+            return
+
+        # Default
+        self.handle_bluetooth("list")
+
+    def handle_system(self):
+        """Show system info: CPU, RAM, disk"""
+        info = DeviceController.get_system_info()
+        self.ui.show_system_info(info)
+        if "error" in info:
+            self.speak(f"System info failed: {info['error']}")
+        else:
+            plat = info.get("platform", "Unknown")
+            cpu = info.get("cpu_percent", "?")
+            mem_pct = info.get("memory_percent", "?")
+            disk_free = info.get("disk_free_gb", "?")
+            self.speak(f"System status. Platform: {plat}. CPU usage: {cpu} percent. Memory usage: {mem_pct} percent. Disk free: {disk_free} gigabytes.")
 
     def open_path(self, path: Path):
         if platform.system() == "Windows":
@@ -962,6 +1740,13 @@ class IntentParser:
         (r"^(?:tell me about|what is|who is|where is|how to|what are|who was|what was)\s+(.+)", "knowledge"),
         (r"^(?:sleep|go to sleep|shut down|power off)", "sleep"),
         (r"^(?:wake|wake up|start|go online|power on)", "wake"),
+        # ─── DEVICE PATTERNS ───
+        (r"^(?:battery|power level|how much battery|charge left|how charged|battery status|remaining battery|battery percent)\b", "battery"),
+        (r"^(?:volume|how loud|sound level|mute|unmute|turn (up|down) the (volume|sound)|set (volume|sound)|make it (louder|quieter)|louder|quieter|turn (up|down))\b", "volume"),
+        (r"^(?:brightness|screen (brightness|dim)|how bright|dim the screen|brighten|set brightness|turn (up|down) brightness)\b", "brightness"),
+        (r"^(?:wifi|wi-fi|connect to (wifi|network)|list networks|available (wifi|networks)|scan (wifi|networks)|wifi (status|networks)|show (wifi|networks))\b", "wifi"),
+        (r"^(?:bluetooth|bt|pair bluetooth|bluetooth devices|toggle bluetooth|turn (on|off) bluetooth|bluetooth (status|on|off))\b", "bluetooth"),
+        (r"^(?:system (info|status)|cpu usage|memory usage|ram usage|disk (space|usage)|storage|device status|how is my (system|computer|pc)|computer status)\b", "system"),
     ]
 
     def parse(self, text: str) -> Optional[tuple]:
@@ -1003,6 +1788,17 @@ def process_text(text: str, engine: CommandEngine, parser: IntentParser,
     elif nlp_result[0] == "search":
         engine.handle_search(nlp_result[1])
         return True, ""
+    elif nlp_result[0] == "device":
+        device_type, args = nlp_result[1]
+        handler = getattr(engine, f"handle_{device_type}", None)
+        if handler:
+            if args:
+                handler(args)
+            else:
+                handler()
+        else:
+            ui.show_error(f"Unknown device handler: {device_type}")
+        return True, ""
 
     # Fall back to regex parser
     result = parser.parse(text)
@@ -1016,7 +1812,6 @@ def process_text(text: str, engine: CommandEngine, parser: IntentParser,
                 ret = handler(arg)
             else:
                 ret = handler()
-            # Check if handler returned a special action
             if ret == "sleep":
                 return True, "sleep"
             elif ret == "wake":
@@ -1132,91 +1927,6 @@ def main():
                     msg = "Tokyo online. What do you need?"
                     ui.show_success(msg)
                     voice.speak(msg)
-                    remainder = re.sub(r"\b(tokyo|wake|wake up|start|online)\b", "", text, flags=re.IGNORECASE).strip()
-                    if remainder:
-                        process_text(remainder, engine, parser, memory, voice, ui, intel)
-                continue
-
-            # Awake: process command
-            success, action = process_text(text, engine, parser, memory, voice, ui, intel)
-            if action == "sleep":
-                asleep = True
-
-        except sr.WaitTimeoutError:
-            consecutive_errors += 1
-            if consecutive_errors > 3:
-                ui.show_info("Still listening...")
-                consecutive_errors = 0
-        except sr.UnknownValueError:
-            ui.show_error("Could not understand audio")
-            consecutive_errors += 1
-        except sr.RequestError as e:
-            ui.show_error(f"Speech API error: {e}")
-            consecutive_errors += 1
-            time.sleep(2)
-        except Exception as e:
-            ui.show_error(f"Unexpected error: {e}")
-            consecutive_errors += 1
-            time.sleep(1)
-
-        if consecutive_errors > CONFIG["max_errors_before_reset"]:
-            ui.show_info("Resetting audio engine...")
-            consecutive_errors = 0
-            time.sleep(1)
-    text_thread = threading.Thread(target=text_input_loop, daemon=True)
-    text_thread.start()
-
-    while True:
-        try:
-            # Check for text input first
-            try:
-                typed_cmd = text_queue.get_nowait()
-                ui.show_heard(f"[typed] {typed_cmd}")
-                if asleep:
-                    if CONFIG["wake_word"] in typed_cmd.lower() or typed_cmd.lower() in ("wake", "wake up", "start"):
-                        asleep = False
-                        msg = "Tokyo online. What do you need?"
-                        ui.show_success(msg)
-                        voice.speak(msg)
-                        remainder = re.sub(r"\b(tokyo|wake|start)\b", "", typed_cmd, flags=re.IGNORECASE).strip()
-                        if remainder:
-                            process_text(remainder, engine, parser, memory, voice, ui, intel)
-                    else:
-                        ui.show_info("💤 Sleeping. Say TOKYO or WAKE to wake.")
-                else:
-                    success, action = process_text(typed_cmd, engine, parser, memory, voice, ui, intel)
-                    if action == "sleep":
-                        asleep = True
-                continue
-            except queue.Empty:
-                pass
-
-            # Voice input
-            if asleep:
-                ui.show_listening(active=False)
-            else:
-                ui.show_listening(active=True)
-
-            with microphone as source:
-                audio = recognizer.listen(
-                    source,
-                    timeout=CONFIG["audio_timeout"],
-                    phrase_time_limit=CONFIG["phrase_limit"]
-                )
-
-            ui.show_info("Processing speech...")
-            text = recognizer.recognize_google(audio)
-            ui.show_heard(text)
-
-            # Wake word check
-            if asleep:
-                normalized = intel.nlp.normalize(text)
-                if CONFIG["wake_word"] in normalized or any(w in normalized for w in ["wake", "wake up", "start", "online"]):
-                    asleep = False
-                    msg = "Tokyo online. What do you need?"
-                    ui.show_success(msg)
-                    voice.speak(msg)
-                    # Remove wake words and process remainder
                     remainder = re.sub(r"\b(tokyo|wake|wake up|start|online)\b", "", text, flags=re.IGNORECASE).strip()
                     if remainder:
                         process_text(remainder, engine, parser, memory, voice, ui, intel)

@@ -139,6 +139,135 @@ def check_internet():
         print(f"  {Colors.fail('Internet')} connection FAILED (Edge TTS and Wikipedia will not work)")
     return ok
 
+def flow_device_control():
+    """Device control (battery, volume, brightness, wifi, bluetooth) not working."""
+    print(Colors.title("DIAGNOSING: Device control issues"))
+
+    results = {}
+    plat = sys.platform
+
+    # Check 1: Platform support
+    print(f"\n{Colors.BOLD}Checking platform support...{Colors.RESET}")
+    if plat == "win32":
+        print(f"  {Colors.ok('Windows')} — Primary support platform")
+        results["platform"] = True
+    elif plat == "linux":
+        print(f"  {Colors.ok('Linux')} — Secondary support, some features limited")
+        results["platform"] = True
+    elif plat == "darwin":
+        print(f"  {Colors.warn('macOS')} — Device control not fully supported yet")
+        results["platform"] = False
+    else:
+        print(f"  {Colors.fail('Unknown OS')} — Device control unavailable")
+        results["platform"] = False
+
+    # Check 2: psutil (optional but recommended)
+    print(f"\n{Colors.BOLD}Checking psutil...{Colors.RESET}")
+    has_psutil = check_module("psutil")
+    results["psutil"] = has_psutil
+    if not has_psutil:
+        print(f"  {Colors.YELLOW}Tip:{Colors.RESET} Install psutil for richer system info")
+        install_module("psutil")
+
+    # Check 3: Volume tools
+    print(f"\n{Colors.BOLD}Checking volume control...{Colors.RESET}")
+    if plat == "win32":
+        nircmd = shutil.which("nircmd.exe")
+        if nircmd:
+            print(f"  {Colors.ok('nircmd.exe')} found at {nircmd}")
+            results["volume_tool"] = True
+        else:
+            print(f"  {Colors.warn('nircmd.exe')} NOT found — volume control uses fallback (less precise)")
+            print(f"  {Colors.CYAN}→{Colors.RESET} Download from https://www.nirsoft.net/utils/nircmd.html")
+            results["volume_tool"] = None
+    elif plat == "linux":
+        ok, _, _ = run_cmd(["which", "amixer"], timeout=5)
+        if ok:
+            print(f"  {Colors.ok('amixer')} available")
+            results["volume_tool"] = True
+        else:
+            ok2, _, _ = run_cmd(["which", "pactl"], timeout=5)
+            if ok2:
+                print(f"  {Colors.ok('pactl')} available")
+                results["volume_tool"] = True
+            else:
+                print(f"  {Colors.warn('No volume tool')} — install alsa-utils or pulseaudio-utils")
+                results["volume_tool"] = False
+
+    # Check 4: Brightness tools (Linux)
+    if plat == "linux":
+        print(f"\n{Colors.BOLD}Checking brightness control...{Colors.RESET}")
+        ok, _, _ = run_cmd(["which", "brightnessctl"], timeout=5)
+        if ok:
+            print(f"  {Colors.ok('brightnessctl')} available")
+            results["brightness_tool"] = True
+        else:
+            print(f"  {Colors.warn('brightnessctl')} NOT found — will try xrandr fallback")
+            results["brightness_tool"] = None
+
+    # Check 5: WiFi tools
+    print(f"\n{Colors.BOLD}Checking WiFi tools...{Colors.RESET}")
+    if plat == "win32":
+        ok, _, _ = run_cmd(["netsh", "wlan", "show", "profiles"], timeout=5)
+        if ok:
+            print(f"  {Colors.ok('netsh wlan')} available")
+            results["wifi_tool"] = True
+        else:
+            print(f"  {Colors.fail('netsh wlan')} FAILED — WiFi control will not work")
+            results["wifi_tool"] = False
+    elif plat == "linux":
+        ok, _, _ = run_cmd(["which", "nmcli"], timeout=5)
+        if ok:
+            print(f"  {Colors.ok('nmcli')} available")
+            results["wifi_tool"] = True
+        else:
+            print(f"  {Colors.warn('nmcli')} NOT found — WiFi control requires NetworkManager")
+            results["wifi_tool"] = False
+
+    # Check 6: Bluetooth tools
+    print(f"\n{Colors.BOLD}Checking Bluetooth tools...{Colors.RESET}")
+    if plat == "win32":
+        print(f"  {Colors.warn('Windows Bluetooth')} — Limited support, may require admin rights")
+        results["bt_tool"] = None
+    elif plat == "linux":
+        ok, _, _ = run_cmd(["which", "bluetoothctl"], timeout=5)
+        if ok:
+            print(f"  {Colors.ok('bluetoothctl')} available")
+            results["bt_tool"] = True
+        else:
+            print(f"  {Colors.warn('bluetoothctl')} NOT found — install bluez")
+            results["bt_tool"] = False
+
+    # Check 7: Battery
+    print(f"\n{Colors.BOLD}Checking battery read...{Colors.RESET}")
+    if plat == "win32":
+        ok, out, _ = run_cmd(["powershell", "-Command", "Get-WmiObject Win32_Battery"], timeout=5)
+        if ok and "EstimatedChargeRemaining" in out:
+            print(f"  {Colors.ok('Battery')} readable via WMI")
+            results["battery"] = True
+        else:
+            print(f"  {Colors.warn('No battery')} — Desktop PC or WMI issue")
+            results["battery"] = None
+    elif plat == "linux":
+        bat_path = Path("/sys/class/power_supply/BAT0")
+        if bat_path.exists():
+            print(f"  {Colors.ok('Battery')} found at {bat_path}")
+            results["battery"] = True
+        else:
+            print(f"  {Colors.warn('No battery')} — Desktop PC or no ACPI")
+            results["battery"] = None
+
+    # Summary
+    print(f"\n{Colors.BOLD}Device Control Summary:{Colors.RESET}")
+    all_ok = all(v is True for v in results.values() if v is not None)
+    if all_ok:
+        print(f"  {Colors.ok('All device features should work')}")
+    else:
+        print(f"  {Colors.warn('Some features may be limited — see details above')}")
+
+    print_docs_links()
+    return results
+
 def check_edge_tts_connectivity():
     """Check if Edge TTS servers are reachable."""
     ok, _, _ = run_cmd(["ping", "-c", "1", "speech.platform.bing.com"] if sys.platform != "win32" else ["ping", "-n", "1", "speech.platform.bing.com"], timeout=5)

@@ -27,6 +27,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+ ## [0.8.0] - 2026-07-07
+
+### Added
+- **Device Control Suite** — Cross-platform hardware control (Windows primary, Linux secondary)
+  - **Battery** — Read charge level, status, plugged state via WMI (Windows) or sysfs (Linux)
+  - **Volume** — Get/set/mute/unmute system volume. Windows: nircmd preferred, SendKeys fallback. Linux: amixer/pactl
+  - **Brightness** — Get/set screen brightness. Windows: WMI monitor methods. Linux: brightnessctl/xrandr
+  - **WiFi** — Scan available networks with numbered list display. Connect with tkinter password dialog for new networks
+  - **Bluetooth** — List paired devices. Toggle on/off (Linux full, Windows limited)
+  - **System Info** — CPU usage, RAM usage, disk free space via psutil/shutil
+- **Device NLP patterns** in `neuro_link_intel.py` — recognizes "batery", "volium", "wify", "blutooth", etc.
+- **Rich display panels** for all device info — colored bars, tables, status icons
+- **5 new toxic roasts** for device commands
+- **Device test suite** — `tests/device/` with NLP, controller, and integration tests
+
+### Changed
+- Version bump to v0.8.0 (Tokyo-class)
+- `ALL_COMMANDS` expanded with 6 new device entries
+- `IntentParser` regex patterns expanded with device commands
+- `process_text()` now routes `"device"` intent from intelligence module
+
+### Dependencies
+- Optional: `psutil` for richer system metrics
+- Optional: `nircmd.exe` on Windows for precise volume control
+
+
+---
+
+ 
  ## [0.7.3] - 2026-06-30
 ### Fixed
 Self-listening bug (#27) — TTS output no longer triggers phantom voice commands

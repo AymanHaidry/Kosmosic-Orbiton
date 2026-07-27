@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  🧠 ORBITON INTELLIGENCE MODULE
-  Natural language understanding & knowledge engine
+ 🧠 ORBITON INTELLIGENCE MODULE
+ Natural language understanding & knowledge engine
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """
 
@@ -117,6 +117,91 @@ class NaturalLanguageProcessor:
         "whoami": "who am i",
         "huami": "who am i",
         "hooami": "who am i",
+        # ─── DEVICE HOMOPHONES ───
+        "batery": "battery",
+        "battry": "battery",
+        "batry": "battery",
+        "volum": "volume",
+        "volium": "volume",
+        "voolume": "volume",
+        "brigtness": "brightness",
+        "brighness": "brightness",
+        "brite": "bright",
+        "wify": "wifi",
+        "wi fi": "wifi",
+        "weefee": "wifi",
+        "bluetoof": "bluetooth",
+        "bluetooh": "bluetooth",
+        "blutooth": "bluetooth",
+        "blutuf": "bluetooth",
+        "sysinfo": "system",
+        "sys info": "system",
+    }
+
+    # ─── DEVICE COMMAND PATTERNS ───
+    DEVICE_PATTERNS = {
+        "battery": [
+            r"battery",
+            r"power level",
+            r"how much battery",
+            r"charge left",
+            r"how charged",
+            r"battery status",
+            r"remaining battery",
+            r"battery percent",
+        ],
+        "volume": [
+            r"volume",
+            r"how loud",
+            r"sound level",
+            r"mute",
+            r"unmute",
+            r"turn (up|down) the (volume|sound)",
+            r"set (volume|sound)",
+            r"make it (louder|quieter)",
+            r"louder",
+            r"quieter",
+            r"turn (up|down)",
+        ],
+        "brightness": [
+            r"brightness",
+            r"screen (brightness|dim)",
+            r"how bright",
+            r"dim the screen",
+            r"brighten",
+            r"set brightness",
+            r"turn (up|down) brightness",
+        ],
+        "wifi": [
+            r"wifi",
+            r"wi-fi",
+            r"connect to (wifi|network)",
+            r"list networks",
+            r"available (wifi|networks)",
+            r"scan (wifi|networks)",
+            r"wifi (status|networks)",
+            r"show (wifi|networks)",
+        ],
+        "bluetooth": [
+            r"bluetooth",
+            r"bt",
+            r"pair bluetooth",
+            r"bluetooth devices",
+            r"toggle bluetooth",
+            r"turn (on|off) bluetooth",
+            r"bluetooth (status|on|off)",
+        ],
+        "system": [
+            r"system (info|status)",
+            r"cpu usage",
+            r"memory usage",
+            r"ram usage",
+            r"disk (space|usage)",
+            r"storage",
+            r"device status",
+            r"how is my (system|computer|pc)",
+            r"computer status",
+        ],
     }
 
     @classmethod
@@ -160,7 +245,7 @@ class NaturalLanguageProcessor:
 
     @classmethod
     def extract_weather_query(cls, text: str) -> Optional[str]:
-        """Extract city from weather queries like 'what's the weather in doha'."""
+        """Extract city from weather queries like 'what\'s the weather in doha'."""
         patterns = [
             r"what\s+is\s+the\s+weather\s+(?:in|at|for)?\s*(.+)",
             r"how\s+is\s+the\s+weather\s+(?:in|at|for)?\s*(.+)",
@@ -196,120 +281,43 @@ class NaturalLanguageProcessor:
                 return m.group(1).strip()
         return None
 
-
-# ─── MATH NORMALIZER ───────────────────────────────────────
-class MathNormalizer:
-    """Converts spoken math into safe Python expressions."""
-
-    # Word numbers → digits
-    WORD_NUMBERS = {
-        "zero": 0, "one": 1, "two": 2, "three": 3, "four": 4,
-        "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9,
-        "ten": 10, "eleven": 11, "twelve": 12, "thirteen": 13,
-        "fourteen": 14, "fifteen": 15, "sixteen": 16,
-        "seventeen": 17, "eighteen": 18, "nineteen": 19,
-        "twenty": 20, "thirty": 30, "forty": 40, "fifty": 50,
-        "sixty": 60, "seventy": 70, "eighty": 80, "ninety": 90,
-        "hundred": 100, "thousand": 1000, "million": 1000000,
-    }
-
-    # Spoken operators → Python symbols (multi-word first)
-    SPOKEN_OPS = {
-        "to the power of": "**",
-        "divided by": "/",
-        "over": "/",
-        "times": "*",
-        "into": "*",
-        "multiplied by": "*",
-        "minus": "-",
-        "subtract": "-",
-        "plus": "+",
-        "add": "+",
-        "mod": "%",
-        "modulo": "%",
-        "squared": "**2",
-        "cubed": "**3",
-    }
+    @classmethod
+    def extract_device_command(cls, text: str) -> Optional[Tuple[str, str]]:
+        """Extract (device_type, args) from device-related commands."""
+        normalized = cls.normalize(text)
+        for device, patterns in cls.DEVICE_PATTERNS.items():
+            for pattern in patterns:
+                if re.search(rf"\b{pattern}\b", normalized):
+                    # Extract args: everything after the matched pattern
+                    match = re.search(rf"\b{pattern}\b", normalized)
+                    if match:
+                        args = normalized[match.end():].strip()
+                        return device, args
+                    return device, ""
+        return None
 
     @classmethod
-    def words_to_number(cls, words: list) -> float:
-        """Convert a list of word tokens to a number."""
-        current = 0
-        total = 0
-        scale = 1
-
-        for word in words:
-            val = cls.WORD_NUMBERS.get(word)
-            if val is None:
-                continue
-            if val == 100:
-                current = max(1, current) * 100
-            elif val >= 1000:
-                total += current
-                current = 0
-                scale = val
-            else:
-                current += val
-
-        return (total + current) * scale
+    def extract_volume_level(cls, text: str) -> Optional[int]:
+        """Extract a percentage or level from volume commands."""
+        match = re.search(r'(\d+)(?:\s*%|\s+percent)?', text)
+        if match:
+            return int(match.group(1))
+        # Word numbers
+        word_map = {
+            "zero": 0, "one": 10, "two": 20, "three": 30, "four": 40,
+            "five": 50, "six": 60, "seven": 70, "eight": 80, "nine": 90,
+            "ten": 100, "half": 50, "quarter": 25, "max": 100, "maximum": 100,
+            "min": 0, "minimum": 0, "full": 100,
+        }
+        for word, val in word_map.items():
+            if re.search(rf"\b{word}\b", text.lower()):
+                return val
+        return None
 
     @classmethod
-    def normalize(cls, text: str) -> str:
-        """Full pipeline: strip 'calculate', word numbers → digits, spoken ops → symbols."""
-        text = text.lower().strip()
-
-        # Remove command prefix
-        text = re.sub(r"^calculate\s+", "", text)
-
-        # Multi-word operators first (order matters — longest first)
-        for spoken, symbol in sorted(cls.SPOKEN_OPS.items(), key=lambda x: -len(x[0])):
-            text = re.sub(rf"\b{re.escape(spoken)}\b", f" {symbol} ", text)
-
-        # Single-char operators (e.g. "x" as multiply)
-        text = re.sub(r"\bx\b", "*", text)
-
-        # Word numbers → digits
-        tokens = text.split()
-        i = 0
-        out_tokens = []
-        while i < len(tokens):
-            num_words = []
-            while i < len(tokens) and tokens[i] in cls.WORD_NUMBERS:
-                num_words.append(tokens[i])
-                i += 1
-            if num_words:
-                out_tokens.append(str(cls.words_to_number(num_words)))
-            if i < len(tokens):
-                out_tokens.append(tokens[i])
-                i += 1
-
-        expr = " ".join(out_tokens)
-        expr = re.sub(r"\s+", " ", expr).strip()
-
-        # Collapse multiple operators
-        expr = re.sub(r"([+\-*/%])\s+\1+", r"\1", expr)
-
-        return expr
-
-    @classmethod
-    def safe_eval(cls, expr: str) -> str:
-        """Evaluate only safe math. No variables, no calls, no imports."""
-        if not expr:
-            raise ValueError("Empty expression")
-
-        # Whitelist: digits, operators, parentheses, decimal points, spaces
-        if not re.match(r"^[0-9+\-*/%.()\s]+$", expr):
-            raise ValueError(f"Unsafe characters in expression: {expr}")
-
-        try:
-            result = eval(expr, {"__builtins__": {}}, {})
-        except Exception as e:
-            raise ValueError(f"Math error: {e}")
-
-        # Format nicely
-        if isinstance(result, float) and result.is_integer():
-            return str(int(result))
-        return str(result)
+    def extract_brightness_level(cls, text: str) -> Optional[int]:
+        """Extract a percentage from brightness commands."""
+        return cls.extract_volume_level(text)  # Same logic
 
 
 # ─── KNOWLEDGE ENGINE ────────────────────────────────────────
@@ -320,7 +328,7 @@ class KnowledgeEngine:
 
     # Built-in mini knowledge bases
     BUILTIN_INTEL = {
-        
+
     }
 
     def __init__(self):
@@ -433,7 +441,7 @@ class IntelligenceOrchestrator:
         """
         Process raw speech text.
         Returns: (action_type, data)
-        action_type can be: 'command', 'knowledge', 'time', 'weather', 'search', 'unknown'
+        action_type can be: 'command', 'knowledge', 'time', 'weather', 'search', 'device', 'unknown'
         data is the extracted argument or knowledge text.
         """
         normalized = self.nlp.normalize(text)
@@ -447,7 +455,12 @@ class IntelligenceOrchestrator:
         if weather_city:
             return "weather", weather_city
 
-        # 3. Check if it's a general knowledge question
+        # 3. Check device commands
+        device_cmd = self.nlp.extract_device_command(normalized)
+        if device_cmd:
+            return "device", device_cmd  # (device_type, args)
+
+        # 4. Check if it's a general knowledge question
         search_query = self.nlp.extract_search_query(normalized)
         if search_query:
             # Try local knowledge first
@@ -461,7 +474,7 @@ class IntelligenceOrchestrator:
             # Fall back to Google search
             return "search", search_query
 
-        # 4. Check for direct knowledge queries
+        # 5. Check for direct knowledge queries
         direct = self.knowledge.lookup(normalized)
         if direct:
             return "knowledge", direct
@@ -473,6 +486,74 @@ class IntelligenceOrchestrator:
 
     def get_intel_categories(self) -> List[str]:
         return self.knowledge.get_categories()
+
+
+# ─── MATH NORMALIZER ─────────────────────────────────────────
+class MathNormalizer:
+    """Safely normalize and evaluate math expressions from speech."""
+
+    # Speech-to-symbol mapping
+    REPLACEMENTS = {
+        "plus": "+",
+        "minus": "-",
+        "times": "*",
+        "multiplied by": "*",
+        "divided by": "/",
+        "over": "/",
+        "modulo": "%",
+        "mod": "%",
+        "to the power of": "**",
+        "squared": "**2",
+        "cubed": "**3",
+        "square root of": "math.sqrt(",
+        "cube root of": "round(",
+        "factorial of": "math.factorial(",
+        "percent of": "/100*",
+        "percent": "/100",
+        "pi": "math.pi",
+        "e": "math.e",
+    }
+
+    # Word numbers → digits
+    WORD_NUMBERS = {
+        "zero": "0", "one": "1", "two": "2", "three": "3", "four": "4",
+        "five": "5", "six": "6", "seven": "7", "eight": "8", "nine": "9",
+        "ten": "10", "eleven": "11", "twelve": "12", "twenty": "20",
+        "thirty": "30", "forty": "40", "fifty": "50", "hundred": "100",
+    }
+
+    @classmethod
+    def normalize(cls, expr: str) -> str:
+        """Convert spoken math to eval-safe expression."""
+        expr = expr.lower().strip()
+
+        # Replace word numbers
+        for word, digit in cls.WORD_NUMBERS.items():
+            expr = re.sub(rf"\b{word}\b", digit, expr)
+
+        # Replace speech operators (longest first to avoid partial matches)
+        for phrase, symbol in sorted(cls.REPLACEMENTS.items(), key=lambda x: -len(x[0])):
+            expr = expr.replace(phrase, symbol)
+
+        # Clean up
+        expr = re.sub(r"\s+", "", expr)
+        return expr
+
+    @classmethod
+    def safe_eval(cls, expr: str) -> float:
+        """Evaluate math expression safely."""
+        allowed = {
+            "math": __import__("math"),
+            "__builtins__": {},
+        }
+        # Only allow numbers, operators, and math functions
+        if not re.match(r"^[\d\+\-\*/\.\(\)%,\s\^]+$", expr.replace("math.", "").replace("round", "")):
+            raise ValueError("Invalid characters in expression")
+        try:
+            result = eval(expr, allowed)
+            return result
+        except Exception as e:
+            raise ValueError(f"Could not evaluate: {e}")
 
 
 # ─── SINGLETON INSTANCE ──────────────────────────────────────

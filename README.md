@@ -5,7 +5,7 @@
 **Company:** [Kosmosic](https://kosmosic.vercel.app)  
 **Product:** Orbiton  
 **Wake Word:** TOKYO  
-**Current Version:** v0.7.3 (Tokyo-class)  
+**Current Version:** v0.8.0 (Tokyo-class)  
 **Current Class:** [Tokyo-class](docs/ROADMAP.md#tokyo-class-current)
 
 Orbiton is a Python-powered desktop voice assistant that turns your headset into a wireless command terminal. Launch apps, search the web, open files, manage projects, and automate everyday tasks using natural voice commands. No cloud required. No bloat. Just you and your machine.
@@ -39,6 +39,7 @@ Say **"TOKYO"** to wake the assistant, or type commands directly in the terminal
 | Compute | ![Compute](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/compute.yml/badge.svg) |
 | Launch | ![Launch](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/launch.yml/badge.svg) |
 | System | ![System](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/system.yml/badge.svg) |
+| Device | ![Device](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/device.yml/badge.svg) |
 | Integration | ![Integration](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/integration.yml/badge.svg) |
 | Pylint | ![Pylint](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/pylint.yml/badge.svg) |
 
@@ -74,6 +75,13 @@ See [docs/TEST_STATUS.md](docs/TEST_STATUS.md) for per-test details and [docs/WO
 | 😴 Sleep | `sleep` | Put Orbiton to sleep |
 | ☀️ Wake | `wake` / `wake up` / say **TOKYO** | Wake Orbiton |
 | 🎓 Kosmosic | `kosmosic` | Open study dashboard |
+| 🔋 Device | `battery`               | Show battery level & status  |
+| 🔉 Device | `volume [up/down/mute]` | Get/set/mute system volume   |
+| 💡 Device | `brightness [level]`    | Get/set screen brightness    |
+| 🛜 Device | `wifi [scan/connect]`   | Scan networks or connect     |
+| 🔗 Device | `bluetooth`             | List paired devices / toggle |
+| 💪 Device | `system info`           | CPU, RAM, disk usage         |
+
 
 ---
 
@@ -139,6 +147,7 @@ pytest tests/url_engine/ -v
 pytest tests/compute/ -v
 pytest tests/launch/ -v
 pytest tests/system/ -v
+pytest tests/device/ -v
 pytest tests/integration/ -v
 pytest tests/troubleshooter/ -v
 ```
@@ -182,7 +191,9 @@ Kosmosic-Orbiton/
 │   ├── compute/                 # Math & security tests
 │   ├── launch/                  # File & project tests
 │   ├── system/                  # Status & time tests
-│   └── integration/             # End-to-end flow tests
+│   ├── device/                  # Device control tests
+│   ├── integration/             # End-to-end flow tests
+│   └── troubleshooter/          # Diagnostic tool tests
 ├── .github/workflows/           # CI/CD definitions
 └── website/                     # Project website
 ```

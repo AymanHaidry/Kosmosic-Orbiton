@@ -1,7 +1,7 @@
 # 📖 THE ORBITON MANUAL
 ## *The Complete, Exhaustive, No-Bullshit Guide to Mastering Kosmosic Orbiton*
 
-> **Version:** 0.7 (Tokyo-class)  
+> **Version:** 0.8 (Tokyo-class)  
 > **Last Updated:** 2026-06-08  
 > **Read Time:** ~45 minutes if you are thorough. 5 minutes if you are panicking.  
 > **Target Audience:** Everyone. A 3rd grader. A 48-year-old senior dev. A cat walking on a keyboard. If you can read, you can master this.
@@ -322,7 +322,38 @@ This section documents **every single command** Orbiton understands. Each entry 
 
 ---
 
-### 🌤 Information Commands
+
+### 🔋 Device Control Commands
+
+#### `battery`
+**Example:** `"battery"`  
+**What it does:** Reads system battery level, charging status, and time remaining.  
+**Windows:** WMI (`Win32_Battery`). **Linux:** sysfs (`/sys/class/power_supply/`).
+
+#### `volume [up|down|mute|unmute|level]`
+**Examples:** `"volume up"`, `"volume 50"`, `"mute"`  
+**What it does:** Controls system master volume.  
+**Windows:** `nircmd.exe` or SendKeys fallback. **Linux:** `amixer` / `pactl`.
+
+#### `brightness [level]`
+**Examples:** `"brightness"`, `"brightness 80"`  
+**What it does:** Gets or sets screen brightness percentage.  
+**Windows:** WMI monitor methods. **Linux:** `brightnessctl` / `xrandr`.
+
+#### `wifi [scan|connect &lt;ssid&gt;]`
+**Examples:** `"wifi scan"`, `"wifi connect MyNetwork"`  
+**What it does:** Scans available networks or connects with a password dialog.  
+**Note:** Password prompt uses tkinter.
+
+#### `bluetooth [on|off|list]`
+**Examples:** `"bluetooth"`, `"bluetooth off"`  
+**What it does:** Lists paired devices or toggles Bluetooth adapter.  
+**Linux:** Full control via `bluetoothctl`. **Windows:** Limited / paired list only.
+
+#### `system info`
+**Example:** `"system info"`  
+**What it does:** Displays CPU usage, RAM usage, and disk free space in a Rich panel.  
+**Requires:** `psutil` (optional dependency).
 
 #### `weather [city]`
 **Examples:**

@@ -13,6 +13,7 @@
 | Compute | ![Compute](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/compute.yml/badge.svg) | 7 | ~20 |
 | Launch | ![Launch](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/launch.yml/badge.svg) | 8 | ~29 |
 | System | ![System](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/system.yml/badge.svg) | 5 | ~15 |
+| Device | ![Device](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/device.yml/badge.svg) | 3 | ~12 |
 | Integration | ![Integration](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/integration.yml/badge.svg) | 6 | ~12 |
 | Pylint | ![Pylint](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/pylint.yml/badge.svg) | — | — |
 
@@ -63,7 +64,7 @@
 | `test_folder_navigation.py` | ✅ | Filesystem navigation |
 | `test_latest_file.py` | ✅ | Latest file discovery |
 | `test_open_folders.py` | ✅ | Folder opening by name |
-| `test_project_launch.py` | ✅ | VS Code project launching |
+| `test_project_launch.py` | ✅ | VS Code: project launching |
 | `test_script_launch.py` | ✅ | Python script execution |
 
 ### System (`tests/system/`)
@@ -75,6 +76,14 @@
 | `test_session_stats.py` | ✅ | Session statistics tracking |
 | `test_status.py` | ✅ | Status report generation |
 | `test_time.py` | ✅ | Time retrieval |
+
+### Device (`tests/device/`)
+
+| File | Status | Description |
+|------|--------|-------------|
+| `test_device_nlp.py` | ✅ | NLP patterns for battery, volume, wifi, bluetooth |
+| `test_device_controller.py` | ✅ | Controller logic for brightness, volume, system info |
+| `test_device_integration.py` | ✅ | End-to-end device command flows |
 
 ### Integration (`tests/integration/`)
 
