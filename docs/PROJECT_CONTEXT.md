@@ -154,7 +154,7 @@ pytest tests/troubleshooter/ -v
 | Troubleshooter | ✅ Stable (v0.7.0) | 56 tests, standalone tool |
 | Documentation | ✅ Comprehensive | PROJECT_CONTEXT.md + ARCHITECTURE_DECISIONS.md added in v0.7.1 |
 | Self-listening cooldown | ✅ Implemented in v0.7.3 | TTS-active event plus post-playback silence window |
-| Bandit review | Open | Issue #60 needs a current scan and item-by-item review |
+| Bandit review | Resolved | Blocking Bandit scan passes; justified suppressions are documented |
 | Version string in docstring | ⚠️ Cosmetic | `kosmosic_orbiton.py` docstring shows `v0.6.2` — needs update |
 | Genesis-class (local LLM) | 🔜 Planned | v2.x roadmap |
 | Wake word customization | 🔜 Planned | Post-Tokyo |
@@ -164,10 +164,9 @@ pytest tests/troubleshooter/ -v
 
 ## 🐛 Known Issues
 
-1. **Bandit review** (#60) — historical findings in `troubleshooter.py` need a fresh scan and individual review before closure.
-2. **`help` command unreliable via voice** — Type `help` instead. NLP homophones (`hell`, `halp`, `helf`) partially mitigate.
-3. **`exam board` falls through to search** — Say `exam mode` or `exambored` instead.
-4. **Hardcoded Windows project paths** — `PROJECTS` dict in `kosmosic_orbiton.py` contains Windows-specific paths. Config file system planned for Odyssey-class.
+1. **`help` command unreliable via voice** — Type `help` instead. NLP homophones (`hell`, `halp`, `helf`) partially mitigate.
+2. **`exam board` falls through to search** — Say `exam mode` or `exambored` instead.
+3. **Hardcoded Windows project paths** — `PROJECTS` dict in `kosmosic_orbiton.py` contains Windows-specific paths. Config file system planned for Odyssey-class.
 
 ---
 

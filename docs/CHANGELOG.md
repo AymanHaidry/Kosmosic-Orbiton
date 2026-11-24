@@ -13,10 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replaced string-filter-plus-`eval()` math evaluation with a bounded AST interpreter and an explicit allowlist.
 - Improved compound spoken-number parsing and word-boundary-aware operator replacement.
 - Replaced the uncollected no-op post-TTS test stub with pytest-discoverable cooldown regression tests.
+- Hardened the troubleshooter command runner: shell mode is disabled, executables are resolved, timeouts are enforced, and silent exception swallowing is removed.
+- Fixed numeric-result comparison in the troubleshooter's math diagnostic.
+- Resolved the historical Bandit review (#60); the blocking scan now passes with narrowly justified B404/B603/B606 suppressions.
 
 ### Added
 - Direct `MathNormalizer` tests for spoken arithmetic, constants, and unsafe-input rejection.
-- Post-TTS tests for playback blocking, cooldown timing, expiry, and zero-duration behavior.
+- Post-TTS tests for playback blocking, cooldown timing, expiry, zero-duration behavior, and playback-failure recovery.
+- Regression coverage for the troubleshooter's shell-mode rejection.
 
 ### Documentation
 - Reconciled workflow and test documentation with the actual repository layout.

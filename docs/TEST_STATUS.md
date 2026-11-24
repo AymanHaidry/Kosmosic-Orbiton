@@ -15,6 +15,7 @@
 | System | ![System](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/system.yml/badge.svg) |
 | Integration | ![Integration](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/integration.yml/badge.svg) |
 | Troubleshooter | ![Troubleshooter](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/troubleshooter.yml/badge.svg) |
+| Bandit | ![Bandit](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/bandit.yml/badge.svg) |
 | Pylint | ![Pylint](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/pylint.yml/badge.svg) |
 
 ---
