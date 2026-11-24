@@ -109,18 +109,18 @@ Before you open a PR, make sure you can check every box:
 Run the full test suite:
 
 ```bash
-pytest tests/ -v
+python -m pytest tests/ -v
 ```
 
 All tests must pass. If you added a new command, add tests for it:
 
 | What you added | Test file to create/modify |
 |---|---|
-| New URL-opening command | `tests/url_engine/test_<command>_urls.py` |
-| New intent/parser pattern | `tests/core_logic/test_intent_parser.py` |
-| New file/folder behavior | `tests/launch/test_<feature>.py` |
-| New math/utility | `tests/compute/test_<feature>.py` (test `MathNormalizer` directly where applicable) |
-| New system feature | `tests/system/test_<feature>.py` |
+| New URL-opening command | `tests/unit/url_engine/test_<command>_urls.py` |
+| New intent/parser pattern | `tests/unit/core_logic/test_intent_parser.py` |
+| New file/folder behavior | `tests/unit/launch/test_<feature>.py` |
+| New math/utility | `tests/unit/compute/test_<feature>.py` (test `MathNormalizer` directly where applicable) |
+| New system feature | `tests/unit/system/test_<feature>.py` |
 | End-to-end flow | `tests/integration/test_<feature>_flow.py` |
 
 ### For voice commands
@@ -182,8 +182,8 @@ In `stag/config.py`, update `ALL_COMMANDS`:
 
 ### 5. Add tests
 
-- `tests/url_engine/test_translate_urls.py` — verify URL generation.
-- `tests/core_logic/test_intent_parser.py` — verify intent recognition.
+- `tests/unit/url_engine/test_translate_urls.py` — verify URL generation.
+- `tests/unit/core_logic/test_intent_parser.py` — verify intent recognition.
 - `tests/integration/test_translate_flow.py` — verify end-to-end flow.
 
 ### 6. Update this doc if needed

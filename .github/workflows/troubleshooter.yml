@@ -34,7 +34,7 @@ jobs:
 
     - name: Run troubleshooter tests
       run: |
-        pytest tests/unit/troubleshooter/ -v --cov=troubleshooter --cov-report=xml
+        pytest tests/troubleshooter/ -v --cov=troubleshooter --cov-report=xml
 
     - name: Upload coverage
       uses: codecov/codecov-action@v4

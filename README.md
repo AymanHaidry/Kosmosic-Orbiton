@@ -103,7 +103,7 @@ Compile the application modules without running the test suite:
 python -m compileall -q stag troubleshooter.py
 ```
 
-The existing test cases are retained under `tests/`. Their assertions have not been rewritten or validated against the new module boundaries; that is a separate pass after the application behavior is settled.
+Tests are separated by scope: `tests/unit/` contains focused module tests, `tests/integration/` covers multi-module command flows, and `tests/conftest.py` provides shared fixtures. Run the full suite with `python -m pytest tests/ -v`. CI also runs compile, lint, and security checks.
 
 ## License
 
