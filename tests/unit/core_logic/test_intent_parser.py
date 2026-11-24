@@ -1,6 +1,5 @@
 """Test intent recognition and routing."""
-import pytest
-from kosmosic_orbiton import IntentParser
+from stag.parser import IntentParser
 
 
 def test_search_intent(parser):
@@ -42,13 +41,13 @@ def test_airport_intent(parser):
 def test_track_intent(parser):
     intent, arg = parser.parse("track EK568")
     assert intent == "track"
-    assert arg == "ek568"  # Parser lowercases all input
+    assert arg == "ek568"
 
 
 def test_metar_intent(parser):
     intent, arg = parser.parse("metar VOBL")
     assert intent == "metar"
-    assert arg == "vobl"  # Parser lowercases all input
+    assert arg == "vobl"
 
 
 def test_maps_intent(parser):
@@ -94,9 +93,8 @@ def test_exam_mode_intent(parser):
 
 
 def test_exam_board_variant(parser):
-    """NLP fix: 'exam board' should map to exam_mode via NLP, not raw parser."""
-    result = parser.parse("exam board")
-    assert result is None  # Regex parser does not handle 'exam board' with space
+    """Exam-board wording is handled by NLP, not the strict regex parser."""
+    assert parser.parse("exam board") is None
 
 
 def test_time_intent(parser):
@@ -105,10 +103,9 @@ def test_time_intent(parser):
     assert arg == ""
 
 
-def test_kosmosic_intent(parser):
-    intent, arg = parser.parse("kosmosic")
-    assert intent == "kosmosic"
-    assert arg == ""
+def test_removed_kosmosic_study_command_is_not_recognized(parser):
+    """Cleanup Drive removes the retired Kosmosic study-app command."""
+    assert parser.parse("kosmosic") is None
 
 
 def test_help_intent(parser):
