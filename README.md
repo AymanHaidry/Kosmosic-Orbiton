@@ -1,250 +1,110 @@
-# 🎧 Orbiton — Voice Command Terminal
+# Orbiton
 
-> *"We put the world around your head."*
+A Python desktop voice assistant for hands-free commands, quick web lookups, files, maths, aviation tools, and system controls.
 
-**Company:** [Kosmosic](https://kosmosic.vercel.app)  
-**Product:** Orbiton  
-**Wake Word:** TOKYO  
-**Current Version:** v0.8.0 (Tokyo-class)  
-**Current Class:** [Tokyo-class](docs/ROADMAP.md#tokyo-class-current)
+**Company:** Kosmosic  
+**Release:** 0.8.0 · Tokyo generation  
+**Platforms:** Windows, macOS, Linux  
+**Python:** 3.11+
 
-Orbiton is a Python-powered desktop voice assistant that turns your headset into a wireless command terminal. Launch apps, search the web, open files, manage projects, and automate everyday tasks using natural voice commands. Command routing runs locally; speech recognition and neural voice use online services. No API key required.
+## Get started
 
----
-
-## 🚀 Quick Start
+1. Install Python 3.11 or newer.
+2. Download or clone this repository.
+3. Open a terminal in the project folder.
+4. Install Orbiton:
 
 ```bash
-# Clone the repo
-git clone https://github.com/AymanHaidry/Kosmosic-Orbiton.git
-cd Kosmosic-Orbiton
+python -m pip install -e .
+```
 
-# Install dependencies
-pip install -r requirements.txt  # speech_recognition, edge-tts, rich, etc.
+5. Start it:
 
-# Run Orbiton
+```bash
+orbiton
+```
+
+You can also launch it without installing the console command:
+
+```bash
 python -m stag
 ```
 
-Say **"TOKYO"** to wake the assistant, or type commands directly in the terminal.
+Orbiton uses Google Speech Recognition for voice input and Edge neural voices when available. These speech services require an internet connection. If a microphone backend is unavailable, the app remains usable in text mode.
 
----
+## What it can do
 
-## 🎯 CI Status
+- Search Google and YouTube; open Maps and Street View
+- Look up weather and aviation information
+- Open files, folders, projects, and Python scripts
+- Perform spoken arithmetic using a restricted expression evaluator
+- Recall user facts saved in a local profile
+- Retrieve general knowledge from Wikipedia
+- Control supported device settings on Windows and Linux
 
-| Category | Status |
-|----------|--------|
-| Intelligence | ![Intelligence](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/intelligence.yml/badge.svg) |
-| Core Logic | ![Core Logic](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/core-logic.yml/badge.svg) |
-| URL Engine | ![URL Engine](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/url-engine.yml/badge.svg) |
-| Compute | ![Compute](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/compute.yml/badge.svg) |
-| Launch | ![Launch](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/launch.yml/badge.svg) |
-| System | ![System](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/system.yml/badge.svg) |
-| Troubleshooter | ![Troubleshooter](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/troubleshooter.yml/badge.svg) |
-| Bandit | ![Bandit](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/bandit.yml/badge.svg) |
-| Integration | ![Integration](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/integration.yml/badge.svg) |
-| Pylint | ![Pylint](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/pylint.yml/badge.svg) |
+Say **TOKYO** to wake voice mode. In text mode, type **wake** first.
 
-See [docs/TEST_STATUS.md](docs/TEST_STATUS.md) for per-test details and [docs/WORKFLOWS.md](docs/WORKFLOWS.md) for CI configuration.
+## Configuration and privacy
 
----
+Application defaults live in `stag/config.py`. User facts are stored locally at:
 
-## 🎤 Voice Commands
+- Windows: `%USERPROFILE%\\.stag\\profile.json`
+- macOS/Linux: `~/.stag/profile.json`
 
-| Category | Command | Description |
-|----------|---------|-------------|
-| 🔍 Search | `search <query>` | Google search |
-| 🎥 YouTube | `youtube <query>` | Search YouTube |
-| 🧮 Math | `calculate <expr>` | Calculate and speak result — now understands spoken math: "two times two", "twenty five divided by five", "three squared" |
-| 🌤 Weather | `weather [city]` | Check weather |
-| ✈️ Airport | `airport <city>` | Search airport info |
-| 🛫 Track | `track <flight>` | Track flight on FlightRadar24 |
-| 📡 METAR | `metar <icao>` | Aviation weather report |
-| 📂 Files | `open <folder/file>` | Open files or folders |
-| 📁 Navigate | `go to <folder>` | Navigate filesystem |
-| 💻 Projects | `open project <name>` | Open VS Code: project |
-| 🐍 Run | `run <script>` | Run Python script |
-| 🗺 Maps | `maps <place>` | Google Maps search |
-| 🌍 Street View | `streetview` | Random amazing place |
-| 📋 Clipboard | `clipboard [youtube]` | Search clipboard content |
-| 💪 Motivate | `motivate me` | Toxic motivation roast |
-| 📊 Status | `status report` | Session statistics |
-| 🎓 Exam Mode | `exam mode` | Launch study tools |
-| 🕐 Time | `what time is it` | Current time |
-| 🧠 Memory | `who am i` | Recall stored user info |
-| 📚 Intel | `tell me about <topic>` | Knowledge lookup |
-| 🔄 Reboot | `reboot` | Restart Orbiton |
-| 😴 Sleep | `sleep` | Put Orbiton to sleep |
-| ☀️ Wake | `wake` / `wake up` / say **TOKYO** | Wake Orbiton |
-| 🔋 Device | `battery`               | Show battery level & status  |
-| 🔉 Device | `volume [up/down/mute]` | Get/set/mute system volume   |
-| 💡 Device | `brightness [level]`    | Get/set screen brightness    |
-| 🛜 Device | `wifi [scan/connect]`   | Scan networks or connect     |
-| 🔗 Device | `bluetooth`             | List paired devices / toggle |
-| 💪 Device | `system info`           | CPU, RAM, disk usage         |
+The profile is not uploaded by Orbiton. Voice recognition, neural speech, Wikipedia lookups, and web searches contact their respective online services. Avoid saving passwords or other sensitive secrets in the profile.
 
+## Project layout
 
----
+```text
+Orbiton/
+├── stag/                 # Application package
+│   ├── app.py            # Startup and input loop
+│   ├── commands.py       # User commands
+│   ├── config.py         # Defaults and command descriptions
+│   ├── device.py         # OS and hardware integrations
+│   ├── intelligence.py   # Online knowledge lookup
+│   ├── math_engine.py    # Safe arithmetic
+│   ├── memory.py         # Local user profile
+│   ├── nlp.py            # Speech normalization
+│   ├── parser.py         # Command matching
+│   ├── ui.py             # Terminal presentation
+│   └── voice.py          # Speech output
+├── docs/                 # Architecture and contributor docs
+├── tests/                # Automated checks
+├── website/              # Project website
+├── troubleshooter.py     # Interactive diagnostics
+├── requirements.txt      # Runtime and CI dependencies
+└── requirements-dev.txt  # Additional developer tools
+```
 
-## 🧠 Intelligence Module
+The old `kosmosic_orbiton.py` entry point remains as a compatibility launcher. New setups should use `orbiton` or `python -m stag`.
 
-Orbiton includes a pluggable intelligence system (`stag/ (NLP, math, intelligence modules)`) that handles:
+## Documentation
 
-- **NLP normalization** — "what's" → "what is", "exam board" → "exam mode"
-- **Knowledge lookup** — constellations, moon phases, aviation facts, space facts
-- **Wikimedia scraping** — live Wikipedia/Wiktionary queries with local caching
-- **Contextual routing** — decides whether to search, calculate, or answer directly
-- **Homophone correction** — handles misheard commands like "exambored" → "exam mode"
-- **Math normalization** — `MathNormalizer` converts spoken math ("two times", "divided by", "x") into safe Python expressions before evaluation
+- [User manual](MANUAL.md)
+- [Troubleshooting](TROUBLESHOOT.md)
+- [Project architecture](docs/PROJECT_CONTEXT.md)
+- [Roadmap](docs/ROADMAP.md)
+- [Changelog](docs/CHANGELOG.md)
+- [Contributing](docs/CONTRIBUTING.md)
+- [Security policy](SECURITY.md)
 
-Read more in [docs/PHILOSOPHY.md](docs/PHILOSOPHY.md).
+## Development
 
----
-
-## 🔧 Troubleshooting
-
-Orbiton now ships with a built-in interactive troubleshooter:
+Install development dependencies:
 
 ```bash
-python troubleshooter.py
+python -m pip install -r requirements-dev.txt
 ```
 
-This tool walks you through diagnosing and fixing common issues — from microphone problems and missing dependencies to the self-listening bug and TTS failures. No guesswork required.
-
-For the full troubleshooting reference, see [TROUBLESHOOT.md](TROUBLESHOOT.md) (root) or [docs/TROUBLESHOOT.md](docs/TROUBLESHOOT.md) (expanded edition).
-
----
-
-## 📖 Documentation
-
-| Doc | What it covers |
-|-----|---------------|
-| [MANUAL.md](MANUAL.md) | The complete, exhaustive guide to mastering Orbiton — commands, configuration, platform-specific tips, and hacking |
-| [TROUBLESHOOT.md](TROUBLESHOOT.md) | Every error, every fix, every edge case — diagnosed and solved |
-| [docs/PHILOSOPHY.md](docs/PHILOSOPHY.md) | Why Orbiton exists, privacy stance, open source philosophy |
-| [docs/ROADMAP.md](docs/ROADMAP.md) | Model classes (Tokyo → Odyssey → Genesis → Micron → Aphrodite → Singularity → Utopia), features, company vision |
-| [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) | How to contribute, testing rules, adding commands, code style |
-| [docs/CONTRIBUTORS.md](docs/CONTRIBUTORS.md) | List of contributors |
-| [docs/TEST_STATUS.md](docs/TEST_STATUS.md) | Per-test CI status and badges |
-| [docs/TESTS.md](docs/TESTS.md) | Test architecture, directory structure, writing new tests |
-| [docs/WORKFLOWS.md](docs/WORKFLOWS.md) | CI/CD workflow configuration and troubleshooting |
-| [docs/CHANGELOG.md](docs/CHANGELOG.md) | Version history |
-| [docs/VERSIONS.md](docs/VERSIONS.md) | Kosmosic versioning system and release rules |
-| [docs/DATA_FILES.md](docs/DATA_FILES.md) | Data file formats and structure reference |
-| [docs/CODE_OF_CONDUCT.md](docs/CODE_OF_CONDUCT.md) | Community standards |
-| [SECURITY.md](SECURITY.md) | Security policy and vulnerability reporting |
-
----
-
-## 🧪 Testing
+Compile the application modules without running the test suite:
 
 ```bash
-# Run all tests
-pytest tests/ -v
-
-# Run by category
-pytest tests/core_logic/ -v
-pytest tests/url_engine/ -v
-pytest tests/compute/ -v
-pytest tests/launch/ -v
-pytest tests/system/ -v
-pytest tests/integration/ -v
-pytest tests/troubleshooter/ -v
+python -m compileall -q stag troubleshooter.py
 ```
 
-See [docs/TESTS.md](docs/TESTS.md) for the full test architecture and [docs/TEST_STATUS.md](docs/TEST_STATUS.md) for current status.
+The automated test suite is under `tests/`. Test-suite reorganization is intentionally not part of this Cleanup Drive.
 
----
+## License
 
-## 🏗 Architecture
-
-```
-Kosmosic-Orbiton/
-├── kosmosic_orbiton.py          # Main entry point
-├── stag/ (NLP, math, intelligence modules)          # Intelligence / NLP module
-├── troubleshooter.py            # Interactive diagnostic tool
-├── requirements.txt             # Python dependencies
-├── MANUAL.md                    # Complete user manual
-├── TROUBLESHOOT.md              # Troubleshooting reference
-├── SECURITY.md                  # Security policy
-├── LICENSE.md                   # GPL v3.0 license
-├── docs/                        # Full documentation suite
-│   ├── CHANGELOG.md             # Version history
-│   ├── CODE_OF_CONDUCT.md       # Community standards
-│   ├── CONTRIBUTING.md          # Contribution guide
-│   ├── CONTRIBUTORS.md          # Contributors list
-│   ├── DATA_FILES.md            # Data file reference
-│   ├── LICENSE.md               # License copy
-│   ├── MANUAL.md                # Manual copy
-│   ├── PHILOSOPHY.md            # Design philosophy
-│   ├── README.md                # Readme copy
-│   ├── ROADMAP.md               # Product roadmap
-│   ├── TESTS.md                 # Test architecture
-│   ├── TEST_STATUS.md           # CI test status
-│   ├── TROUBLESHOOT.md          # Troubleshooting expanded
-│   ├── VERSIONS.md              # Versioning system
-│   └── WORKFLOWS.md             # CI/CD docs
-├── tests/                       # Full pytest suite
-│   ├── conftest.py              # Shared fixtures
-│   ├── core_logic/              # Intent & pattern tests
-│   ├── url_engine/              # URL generation tests
-│   ├── compute/                 # Math & security tests
-│   ├── launch/                  # File & project tests
-│   ├── system/                  # Status & time tests
-│   ├── integration/             # End-to-end flow tests
-│   └── troubleshooter/          # Diagnostic tool tests
-├── .github/workflows/           # CI/CD definitions
-└── website/                     # Project website
-```
-
----
-
-## ⚙️ Configuration
-
-Edit the `CONFIG` dict in `kosmosic_orbiton.py`:
-
-| Key | Default | Description |
-|-----|---------|-------------|
-| `wake_word` | `"tokyo"` | Voice wake trigger |
-| `voice` | `"en-US-AriaNeural"` | TTS voice profile |
-| `audio_timeout` | `8` | Seconds to listen |
-| `phrase_limit` | `6` | Max phrase duration |
-| `memory_file` | `~/.stag/profile.json` | User memory store |
-
----
-
-## 🖥 Platform Support
-
-| OS | Status | Notes |
-|----|--------|-------|
-| Windows | ✅ Full | File Explorer, PowerShell TTS, VS Code: projects |
-| macOS | ✅ Full | `open`, `say`, `afplay` |
-| Linux | ✅ Partial | `xdg-open`, `spd-say`, best-effort headphone detection |
-
----
-
-## 📝 Changelog
-
-See [docs/CHANGELOG.md](docs/CHANGELOG.md) for version history.
-
----
-
-## 🏢 About Kosmosic
-
-**Kosmosic** is the company behind Orbiton. We build tools that make your workspace smarter, faster, and slightly more judgmental.
-
-> *"Your ancestors built empires. You can't even close 3 Chrome tabs."* — Orbiton
-
----
-
-## 📜 License
-
-This project is licensed under the **GNU General Public License v3.0**.
-
-See [LICENSE.md](LICENSE.md) for the full text, or visit [https://www.gnu.org/licenses/gpl-3.0.html](https://www.gnu.org/licenses/gpl-3.0.html).
-
-> Orbiton is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
----
-
-© 2026 Kosmosic
+GNU General Public License v3.0. See [LICENSE.md](LICENSE.md).
