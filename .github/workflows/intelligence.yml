@@ -25,4 +25,4 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Run intelligence tests
-      run: pytest tests/intelligence/ -v --cov=stag.intelligence --cov-report=xml
+      run: pytest tests/unit/intelligence/ -v --cov=stag.intelligence --cov-report=xml

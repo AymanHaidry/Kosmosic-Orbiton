@@ -1,8 +1,12 @@
 """Application lifecycle and voice/text input loop."""
+import os
+import platform
 import queue
 import re
+import subprocess
 import threading
 import time
+import webbrowser
 
 import speech_recognition as sr
 

@@ -16,7 +16,7 @@ jobs:
       with:
         python-version: '3.13'
     - run: pip install pytest speechrecognition rich
-    - run: pytest tests/intelligence/ -v --tb=short
+    - run: pytest tests/unit/intelligence/ -v --tb=short
 
   test-compute:
     runs-on: ubuntu-latest
@@ -26,7 +26,7 @@ jobs:
       with:
         python-version: '3.13'
     - run: pip install pytest speechrecognition rich
-    - run: pytest tests/compute/ -v --tb=short
+    - run: pytest tests/unit/compute/ -v --tb=short
 
   test-core-logic:
     runs-on: ubuntu-latest
@@ -36,7 +36,7 @@ jobs:
       with:
         python-version: '3.13'
     - run: pip install pytest speechrecognition rich
-    - run: pytest tests/core_logic/ -v --tb=short
+    - run: pytest tests/unit/core_logic/ -v --tb=short
 
   test-integration:
     runs-on: ubuntu-latest
@@ -56,7 +56,7 @@ jobs:
       with:
         python-version: '3.13'
     - run: pip install pytest speechrecognition rich
-    - run: pytest tests/launch/ -v --tb=short
+    - run: pytest tests/unit/launch/ -v --tb=short
 
   test-system:
     runs-on: ubuntu-latest
@@ -66,7 +66,7 @@ jobs:
       with:
         python-version: '3.13'
     - run: pip install pytest speechrecognition rich
-    - run: pytest tests/system/ -v --tb=short
+    - run: pytest tests/unit/system/ -v --tb=short
 
   test-url-engine:
     runs-on: ubuntu-latest
@@ -76,7 +76,7 @@ jobs:
       with:
         python-version: '3.13'
     - run: pip install pytest speechrecognition rich
-    - run: pytest tests/url_engine/ -v --tb=short
+    - run: pytest tests/unit/url_engine/ -v --tb=short
 
   # ─── Per-test-file granularity (optional, for 151 separate statuses) ─
   # Uncomment below if you want EACH test file as its own check run:
@@ -88,6 +88,6 @@ jobs:
   #   - uses: actions/setup-python@v5
   #     with: { python-version: '3.13' }
   #   - run: pip install pytest speechrecognition rich
-  #   - run: pytest tests/compute/test_advanced_math.py -v --tb=short
+  #   - run: pytest tests/unit/compute/test_advanced_math.py -v --tb=short
   #
   # ... repeat for each of the 37 test files

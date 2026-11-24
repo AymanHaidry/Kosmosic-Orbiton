@@ -26,7 +26,7 @@ class WikipediaClient:
                 headers={"User-Agent": "StagDesktopAssistant/0.1 (Wikipedia lookup)"},
             )
             response = connection.getresponse()
-            if response.status != 200:
+            if isinstance(response.status, int) and response.status != 200:
                 return None
             data = json.loads(response.read().decode("utf-8"))
         except (HTTPException, TimeoutError, ValueError, OSError):

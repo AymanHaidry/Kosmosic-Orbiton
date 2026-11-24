@@ -30,7 +30,7 @@ jobs:
 
     - name: Run launch tests
       run: |
-        pytest tests/launch/ -v --cov=kosmosic_orbiton --cov-report=xml
+        pytest tests/unit/launch/ -v --cov=stag --cov-report=xml
 
     - name: Upload coverage
       uses: codecov/codecov-action@v4

@@ -30,7 +30,7 @@ jobs:
 
     - name: Run system tests
       run: |
-        pytest tests/system/ -v --cov=kosmosic_orbiton --cov-report=xml
+        pytest tests/unit/system/ -v --cov=stag --cov-report=xml
 
     - name: Upload coverage
       uses: codecov/codecov-action@v4

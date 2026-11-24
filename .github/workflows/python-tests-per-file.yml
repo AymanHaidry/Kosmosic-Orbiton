@@ -28,21 +28,21 @@ jobs:
         test-file: ${{ fromJson(needs.discover-tests.outputs.tests) }}
         os: [ubuntu-latest]
         include:
-        - test-file: tests/launch/test_clipboard.py
+        - test-file: tests/unit/launch/test_clipboard.py
           os: windows-latest
-        - test-file: tests/launch/test_exam_mode.py
+        - test-file: tests/unit/launch/test_exam_mode.py
           os: windows-latest
-        - test-file: tests/launch/test_file_search.py
+        - test-file: tests/unit/launch/test_file_search.py
           os: windows-latest
-        - test-file: tests/launch/test_folder_navigation.py
+        - test-file: tests/unit/launch/test_folder_navigation.py
           os: windows-latest
-        - test-file: tests/launch/test_latest_file.py
+        - test-file: tests/unit/launch/test_latest_file.py
           os: windows-latest
-        - test-file: tests/launch/test_open_folders.py
+        - test-file: tests/unit/launch/test_open_folders.py
           os: windows-latest
-        - test-file: tests/launch/test_project_launch.py
+        - test-file: tests/unit/launch/test_project_launch.py
           os: windows-latest
-        - test-file: tests/launch/test_script_launch.py
+        - test-file: tests/unit/launch/test_script_launch.py
           os: windows-latest
     name: ${{ matrix.test-file }}
     steps:
