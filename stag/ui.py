@@ -28,8 +28,9 @@ class NeuroInterface:
         self.session_start = datetime.now()
 
     def clear(self):
-        sys.stdout.write("\033[2J\033[H")
-        sys.stdout.flush()
+        if sys.stdout.isatty():
+            sys.stdout.write("\033[2J\033[H")
+            sys.stdout.flush()
 
     def show_boot_sequence(self):
         """Apple-style minimalist boot sequence"""

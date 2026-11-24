@@ -1,5 +1,4 @@
 """Command handlers; kept separate from the input and presentation loops."""
-import math
 import os
 import platform
 import random
