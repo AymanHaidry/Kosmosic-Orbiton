@@ -209,7 +209,7 @@ Edit the `CONFIG` dict in `kosmosic_orbiton.py`:
 | `voice` | `"en-US-AriaNeural"` | TTS voice profile |
 | `audio_timeout` | `8` | Seconds to listen |
 | `phrase_limit` | `6` | Max phrase duration |
-| `memory_file` | `~/.neuro_link_memory.json` | User memory store |
+| `memory_file` | `~/.stag/profile.json` | User memory store |
 
 ---
 

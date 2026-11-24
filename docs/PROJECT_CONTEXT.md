@@ -59,7 +59,8 @@ Kosmosic-Orbiton/
 │   ├── launch/                  # File & project tests
 │   ├── system/                  # Status & time tests
 │   ├── integration/             # End-to-end flow tests
-│   └── troubleshooter/          # Troubleshooter tests (56 tests)
+│   ├── troubleshooter/          # Troubleshooter tests
+│   └── intelligence/            # Online knowledge provider tests
 ├── .github/
 │   ├── workflows/               # CI/CD (7 test workflows + pylint)
 │   ├── CODEOWNERS
@@ -83,12 +84,13 @@ The main application. Contains:
 
 > ⚠️ **Note:** The docstring in this file still shows `v0.6.2` — cosmetic issue, does not affect functionality.
 
-### `stag/ package modules`
-The intelligence layer. Contains:
-- `NaturalLanguageProcessor` — contraction expansion, homophone correction, intent normalization
-- `MathNormalizer` — spoken math → Python expression conversion + `safe_eval()`
-- `get_intelligence()` — knowledge lookup (built-in facts + Wikimedia API)
-- `BUILTIN_INTEL` — moon phases, aviation facts, space facts
+### `stag/`
+The package contains:
+- `nlp.py` — speech normalization and intent extraction
+- `math_engine.py` — spoken arithmetic and bounded AST evaluation
+- `intelligence.py` — command routing and online Wikipedia summaries
+
+There is no bundled fact database, custom intel directory, or persistent Wikipedia cache.
 
 ### `troubleshooter.py`
 Standalone diagnostic tool. Contains:

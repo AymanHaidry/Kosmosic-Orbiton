@@ -63,7 +63,7 @@ It is built for:
 - People who want to multitask (voice command while hands stay on keyboard)
 - People who are tired of slopware and bloatware
 
-**Privacy stance:** Local. Local. Local. Your data lives in `~/.neuro_link_memory.json`, `~/.Stag intelligence package/`, and `~/.neuro_link_wiki_cache/`. Nothing phones home.
+**Privacy stance:** The user profile stays on this device. Knowledge lookups contact Wikipedia online, while speech recognition and neural TTS use their configured online providers.
 
 ---
 
@@ -407,7 +407,7 @@ This section documents **every single command** Orbiton understands. Each entry 
 **What it does:**
 1. Checks local knowledge bases (moon phases, aviation facts, space facts).
 2. If not found locally, queries Wikipedia REST API.
-3. Caches the result in `~/.neuro_link_wiki_cache/`.
+3. Caches the result in `no persistent cache`.
 4. Speaks the first ~500 characters of the answer.
 
 ---
@@ -549,7 +549,7 @@ This section documents **every single command** Orbiton understands. Each entry 
 #### `who am i`
 **Example:** `"who am i"`
 
-**What it does:** Recalls stored user information from `~/.neuro_link_memory.json`.
+**What it does:** Recalls stored user information from `~/.stag/profile.json`.
 
 **How memory works:** Orbiton can learn facts about you over time (e.g., your name, your favorite editor). This command retrieves them.
 
@@ -717,38 +717,15 @@ Output: "9.0"
 
 ---
 
-#### 3. KnowledgeEngine + WikimediaScraper
-**Job:** Answer questions by looking things up.
+#### 3. Online Knowledge Lookup
+**Job:** Retrieve general knowledge when you ask a question.
 
-**Local Knowledge:**
-Orbiton has built-in mini-databases for:
-- **Moon Phases** — New Moon, Waxing Crescent, First Quarter, Waxing Gibbous, Full Moon, Waning Gibbous, Last Quarter, Waning Crescent.
-- **Aviation Facts** — V1, V2, Mach, ICAO, Squawk, METAR, TAF, etc.
-- **Space Facts** — ISS orbit altitude, Mars distance, black hole definitions, light year definition, Big Bang summary.
+The previous bundled/custom fact database has been removed. Stag currently queries Wikipedia for a page summary and falls back to a browser search when no usable summary is returned. The next Functional Intelligence update expands this to the MediaWiki Action API and DuckDuckGo.
 
-*(Note: Constellations were removed in v0.5.0 to reduce bundle size. They now route to Wikipedia.)*
+No custom JSON intel files or local Wikipedia dump are loaded. There is no persistent Wikipedia cache.
 
-**Wikipedia Lookup:**
-If local knowledge does not have the answer, Orbiton:
-1. Queries `https://en.wikipedia.org/api/rest_v1/page/summary/<topic>`
-2. Saves the result to `~/.neuro_link_wiki_cache/<topic>.txt`
-3. Returns the first 500 characters
-4. Speaks the summary
+---
 
-**Custom Intel:**
-You can add your own knowledge bases by creating JSON files in `~/.Stag intelligence package/`:
-```bash
-mkdir -p ~/.Stag intelligence package
-```
-
-```json
-// ~/.Stag intelligence package/intel_chemistry.json
-{
-  "water": "H2O is the chemical formula for water.",
-  "oxygen": "Oxygen is a chemical element with symbol O and atomic number 8."
-}
-```
-Orbiton will automatically load these on startup.
 
 ---
 
@@ -785,7 +762,7 @@ CONFIG = {
 | `phrase_limit` | `6` | Maximum phrase duration in seconds. Prevents Orbiton from listening forever if you start rambling. |
 | `max_errors_before_reset` | `50` | If 50 consecutive errors occur (e.g., microphone disconnects), Orbiton automatically resets the audio listener to recover. |
 | `wake_word` | `"tokyo"` | The word that wakes Orbiton. Must be lowercase. |
-| `memory_file` | `~/.neuro_link_memory.json` | Where your personal facts are stored. |
+| `memory_file` | `~/.stag/profile.json` | Where your personal facts are stored. |
 | `voice` | `"en-US-AriaNeural"` | The Edge TTS voice profile. Change this to any Edge TTS voice (e.g., `"en-US-JennyNeural"`, `"en-GB-SoniaNeural"`). |
 
 ### How to Change the Wake Word
@@ -876,7 +853,7 @@ When you say `"open project <name>"`, Orbiton:
 Orbiton can remember facts about you. This is not AI memory. It is a simple JSON file that stores key-value pairs.
 
 ### The Memory File
-Location: `~/.neuro_link_memory.json`
+Location: `~/.stag/profile.json`
 
 Example contents:
 ```json
@@ -892,7 +869,7 @@ Example contents:
 Currently, memory is updated through code paths (e.g., if you tell Orbiton your name during a specific interaction). In future versions (Odyssey-class), this will be more conversational.
 
 ### How to Edit Memory Manually
-1. Open `~/.neuro_link_memory.json` in any text editor.
+1. Open `~/.stag/profile.json` in any text editor.
 2. Add, edit, or delete key-value pairs.
 3. Save the file.
 4. Orbiton reads this file on startup and when `who am i` is called.
@@ -912,37 +889,17 @@ This command reads the memory file and speaks back what it knows about you. If t
 
 ## 12. Knowledge & Wikipedia Lookup
 
-### Built-In Knowledge Bases
-Orbiton ships with three built-in knowledge categories:
+Stag does not ship a prewritten fact database. For a request such as "tell me about Jupiter", it retrieves a current Wikipedia summary over HTTPS. If the lookup is unavailable or has no suitable result, it opens a web search instead.
 
-1. **Moon Phases** — New Moon, Waxing Crescent, First Quarter, Waxing Gibbous, Full Moon, Waning Gibbous, Last Quarter, Waning Crescent.
-2. **Aviation Facts** — V1, V2, Mach, ICAO, Squawk, METAR, TAF, etc.
-3. **Space Facts** — ISS orbit altitude, Mars distance, black hole definitions, light year definition, Big Bang summary.
+- **Provider:** Wikipedia public page-summary endpoint (temporary implementation)
+- **Timeout:** 6 seconds
+- **Cache:** None; no local fact dump or custom intel folder
+- **Offline behavior:** General knowledge lookup is unavailable, but local commands still work
 
-### Wikipedia Integration
-For topics not in the built-in database, Orbiton queries Wikipedia's REST API:
-- **Endpoint:** `https://en.wikipedia.org/api/rest_v1/page/summary/<topic>`
-- **Timeout:** 5 seconds
-- **Cache:** Results are saved to `~/.neuro_link_wiki_cache/<topic>.txt`
-- **Return limit:** First 500 characters
-
-### Adding Custom Intel
-Create a JSON file in `~/.Stag intelligence package/` with the naming pattern `intel_<name>.json`:
-
-```bash
-mkdir -p ~/.Stag intelligence package
-```
-
-```json
-// ~/.Stag intelligence package/intel_chemistry.json
-{
-  "water": "H2O is the chemical formula for water.",
-  "oxygen": "Oxygen is a chemical element with symbol O and atomic number 8."
-}
-```
-Restart Orbiton. Now you can say `"tell me about oxygen"` and it will use your custom intel.
+The Functional Intelligence release will add MediaWiki Action API search and DuckDuckGo result retrieval, with source links shown alongside answers.
 
 ---
+
 
 ## 13. Platform-Specific Deep Dive
 
@@ -1347,7 +1304,7 @@ Stag/
 | `IntentParser` | Regex-based command recognition. Maps text to intent + argument. |
 | `NeuroInterface` | Terminal UI using `rich`. Shows success/error/status panels. |
 | `VoiceManager` | Text-to-speech. Handles Edge TTS and system fallbacks. |
-| `UserMemory` | Reads/writes `~/.neuro_link_memory.json`. |
+| `UserMemory` | Reads/writes `~/.stag/profile.json`. |
 | `AudioListener` | Speech recognition loop. Wake word detection, audio timeout. |
 
 #### `stag package`
@@ -1406,7 +1363,7 @@ You speak -> "tell me about black holes"
                          Found in local Space Facts? Yes -> Return fact.
                          Not found? -> WikimediaScraper.search_topic("black holes")
                                     |
-                         Cache result to ~/.neuro_link_wiki_cache/black_holes.txt
+                         Cache result to no persistent cacheblack_holes.txt
                                     |
                          Return first 500 chars
                                     |
@@ -1574,7 +1531,7 @@ Upload the video to the PR description or link it (YouTube unlisted, Google Driv
 | **Toxic Motivation** | Orbiton's roast engine. Harsh accountability statements designed to make you work. |
 | **Self-Listening Bug** | When Orbiton hears its own TTS output and triggers unintended commands. |
 | **CONFIG** | The configuration dictionary in `kosmosic_orbiton.py`. Controls timeouts, voice, wake word, etc. |
-| **Intel** | Knowledge base files. Built-in or custom JSON files in `~/.Stag intelligence package/`. |
+
 | **Session** | One continuous run of Orbiton from start to exit. |
 | **CI/CD** | Continuous Integration / Continuous Deployment. The GitHub Actions that run tests automatically. |
 | **Pytest** | The Python testing framework used by Orbiton. |
@@ -1582,7 +1539,7 @@ Upload the video to the PR description or link it (YouTube unlisted, Google Driv
 | **Odyssey-class** | Planned Generation 2. Local LLM, long-term memory, personalization. |
 | **Genesis-class** | Planned Generation 3. Agentic behavior, predictive execution. |
 | **Singularity-class** | Vision Generation 6. Full autonomy, multi-device ecosystem. |
-| **Kosmosic** | The company behind Orbiton. Also the name of the study dashboard. |
+
 | **Slopware** | A term used in the philosophy to describe bloated, low-quality software. Orbiton is the opposite. |
 
 ---
@@ -1612,11 +1569,11 @@ Upload the video to the PR description or link it (YouTube unlisted, Google Driv
 
 | File | Path | What It Stores |
 |------|------|----------------|
-| User Memory | `~/.neuro_link_memory.json` | Facts about you |
-| Wiki Cache | `~/.neuro_link_wiki_cache/` | Wikipedia lookups |
-| Custom Intel | `~/.Stag intelligence package/` | Your knowledge bases |
+| User Memory | `~/.stag/profile.json` | Facts about you |
+
+
 | Source Code | `Stag/kosmosic_orbiton.py` | Main application |
-| Intelligence | `Stag/stag package` | NLP & knowledge |
+| Intelligence | `stag/` | NLP, safe math, and online lookup |
 
 ### Keyboard Shortcuts (Terminal)
 

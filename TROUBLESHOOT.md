@@ -729,60 +729,29 @@ This must run BEFORE `eval()`.
 
 ---
 
-## 11. Knowledge & Wikipedia Lookup Failures
+## 11. Knowledge Lookup Failures
 
-### Symptom: `"tell me about black holes"` says "I don't know anything about that"
-**Diagnosis:**
-1. **Local knowledge miss:** "black holes" is not in the built-in Space Facts database (it might be under "black hole" singular).
-2. **Wikipedia miss:** The Wikipedia REST API might not have a page for that exact term, or the network timed out.
+### Symptom: A "tell me about" request falls back to web search
+**Cause:** Wikipedia has no suitable summary for that query, the network is unavailable, or the request timed out.
 
 **Fixes:**
-1. Try singular form: `"tell me about black hole"`
-2. Check your internet connection.
-3. Try a different topic: `"tell me about the moon"` (this is in built-in knowledge).
-4. Add custom intel:
-   ```bash
-   mkdir -p ~/.stag intelligence package
-   cat > ~/.stag intelligence package/intel_astro.json << 'EOF'
-   {
-     "black holes": "A black hole is a region of spacetime where gravity is so strong that nothing can escape."
-   }
-   EOF
-   ```
-   Restart Orbiton.
+1. Check your internet connection.
+2. Try a shorter, more specific topic.
+3. Open the returned browser search result if Wikipedia has no summary.
 
-### Symptom: Wikipedia lookup is very slow
-**Cause:** Network latency to `en.wikipedia.org` or DNS resolution issues.  
-**Fix:**
-```bash
-# Test Wikipedia API speed
-curl -w "@curl-format.txt" -o /dev/null -s "https://en.wikipedia.org/api/rest_v1/page/summary/Python"
-# If it takes >5 seconds, Orbiton will timeout.
-```
-**Workaround:** Use local intel files for topics you query frequently. They load instantly.
-
-### Symptom: Wikipedia lookup returns gibberish or HTML
-**Cause:** Wikipedia changed their API response format, or the page does not exist and returns an error page.  
-**Fix:** Update to the latest version of Orbiton. If the API format changed, the `WikimediaScraper` class needs updating.
-
-### Symptom: Cache files grow huge over time
-**Cause:** Every Wikipedia query creates a `.txt` file in `~/.neuro_link_wiki_cache/`. There is no automatic cleanup.  
-**Fix:** Manually clean the cache:
-```bash
-rm -rf ~/.neuro_link_wiki_cache/*
-```
-Or add a cron job to clean it monthly.
+Stag no longer loads bundled facts, custom `intel_*.json` files, Wikipedia dumps, or a persistent local cache. There is no cache directory to clean.
 
 ---
+
 
 ## 12. Memory System Issues
 
 ### Symptom: `"who am i"` says "I don't know you yet"
-**Cause:** The memory file `~/.neuro_link_memory.json` is empty or missing.  
+**Cause:** The local profile `~/.stag/profile.json` is empty or missing.  
 **Fix:**
 ```bash
 # Create the memory file manually
-cat > ~/.neuro_link_memory.json << 'EOF'
+cat > ~/.stag/profile.json << 'EOF'
 {
   "name": "Your Name",
   "favorite_language": "Python",
@@ -797,16 +766,16 @@ Restart Orbiton.
 **Fix:**
 ```bash
 # Validate the JSON
-python -m json.tool ~/.neuro_link_memory.json
+python -m json.tool ~/.stag/profile.json
 # If it says "Expecting property name enclosed in double quotes", fix the JSON.
 
 # Or reset it completely:
-echo '{}' > ~/.neuro_link_memory.json
+echo '{}' > ~/.stag/profile.json
 ```
 
 ### Symptom: Orbiton remembers wrong information
 **Cause:** The memory file was edited incorrectly, or multiple users share the same file.  
-**Fix:** Edit `~/.neuro_link_memory.json` directly and correct the facts. There is no "forget" command in Tokyo-class.
+**Fix:** Edit `~/.stag/profile.json` directly and correct the facts. Profile editing and memory controls will be expanded in the Functional Intelligence release.
 
 ---
 
@@ -921,14 +890,14 @@ aplay -l
 pactl info
 ```
 
-#### Symptom: Permission denied when writing to `~/.neuro_link_memory.json`
+#### Symptom: Permission denied when writing to `~/.stag/profile.json`
 **Cause:** Your home directory permissions are wrong, or the file was created as root.  
 **Fix:**
 ```bash
-ls -la ~/.neuro_link_memory.json
+ls -la ~/.stag/profile.json
 # If it shows root as owner:
-sudo chown $USER:$USER ~/.neuro_link_memory.json
-chmod 644 ~/.neuro_link_memory.json
+sudo chown $USER:$USER ~/.stag/profile.json
+chmod 644 ~/.stag/profile.json
 ```
 
 ---
@@ -1104,9 +1073,8 @@ pip install -r requirements.txt
 ### Procedure 3: All data files are corrupted
 ```bash
 # Reset all user data
-rm -f ~/.neuro_link_memory.json
-rm -rf ~/.neuro_link_wiki_cache/
-rm -rf ~/.stag intelligence package/
+rm -f ~/.stag/profile.json
+# Legacy backup files are not deleted automatically.
 # Orbiton will recreate these on next run
 ```
 
@@ -1150,7 +1118,7 @@ Run this checklist in order. Stop when you find the issue.
 - [ ] **Internet works** (for Edge TTS and Wikipedia; not required for core commands)
 - [ ] **Typing commands works** (if typing fails, it is not a mic issue)
 - [ ] **TTS works when tested directly** (`edge-tts` command from Section 7)
-- [ ] **No corrupted data files** (`python -m json.tool ~/.neuro_link_memory.json`)
+- [ ] **No corrupted data files** (`python -m json.tool ~/.stag/profile.json`)
 - [ ] **Tests pass** (`pytest tests/ -v`)
 
 ---
