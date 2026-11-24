@@ -262,7 +262,7 @@ Each category has its own workflow in `.github/workflows/`. See WORKFLOWS.md for
 | `system.yml` | `tests/system/` | Ubuntu |
 | `integration.yml` | `tests/integration/` | Ubuntu |
 | `troubleshooter.yml` | `tests/troubleshooter/` | Ubuntu |
-| `pylint.yml` | `kosmosic_orbiton.py` + `neuro_link_intel.py` + `troubleshooter.py` | Ubuntu |
+| `pylint.yml` | `kosmosic_orbiton.py` + `stag/` + `troubleshooter.py` | Ubuntu |
 
 * * *
 

@@ -1,4 +1,4 @@
-# Contributing to Kosmosic Orbiton
+# Contributing to Orbiton
 
 Thanks for checking out Orbiton. Whether you are fixing a bug, adding a command, or just cleaning up code, this guide will get you started.
 
@@ -61,7 +61,7 @@ pip install -r requirements.txt   # or: pip install speechrecognition rich edge-
 ### Run it locally
 
 ```bash
-python kosmosic_orbiton.py
+python -m stag
 ```
 
 Say **"Tokyo"** to wake it up, then try any command.
@@ -161,7 +161,7 @@ def handle_translate(self, query: str):
 (r"^(?:translate|translation|what does)\s+(.+)", "translate"),
 ```
 
-### 3. Add NLP support in `neuro_link_intel.py` (optional but recommended)
+### 3. Add NLP support in `stag/` (optional but recommended)
 
 If the command is commonly misheard, add homophones:
 
@@ -203,7 +203,7 @@ We do not enforce a formatter, but keep it consistent with what is already there
 If you are unsure, run:
 
 ```bash
-python -m py_compile kosmosic_orbiton.py neuro_link_intel.py
+python -m py_compile kosmosic_orbiton.py stag/
 ```
 
 If it compiles, you are probably fine.
