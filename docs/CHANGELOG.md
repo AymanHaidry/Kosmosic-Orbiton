@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- Split the former monolithic entry point into focused modules under `stag/` for app lifecycle, commands, UI, voice, memory, devices, parsing, configuration, and intelligence.
+- Added an installable `orbiton` console command and retained `kosmosic_orbiton.py` as a compatibility launcher.
+- Added text-only startup fallback when microphone initialization is unavailable.
+- Use unique temporary audio files for neural speech and remove them after playback.
+- Added `.gitignore`, `pyproject.toml`, and a clearer project README.
 - Removed the Kosmosic study-dashboard command and all direct app integration.
 - Split the former intelligence monolith into `stag/nlp.py`, `stag/math_engine.py`, and `stag/intelligence.py`.
 - Removed bundled/custom local intel loading; knowledge lookups now use Wikipedia rather than a preloaded fact database.

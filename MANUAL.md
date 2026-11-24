@@ -405,10 +405,10 @@ This section documents **every single command** Orbiton understands. Each entry 
 - `"tell me about black holes"`
 
 **What it does:**
-1. Checks local knowledge bases (moon phases, aviation facts, space facts).
-2. If not found locally, queries Wikipedia REST API.
-3. Returns the summary without writing a persistent local cache.
-4. Speaks the first ~500 characters of the answer.
+1. Queries Wikipedia for a live page summary.
+2. Displays the returned extract and its source URL.
+3. Falls back to a normal web search when Wikipedia has no suitable summary or is unavailable.
+4. Does not load a bundled facts database or write a persistent Wikipedia cache.
 
 ---
 
@@ -466,7 +466,7 @@ This section documents **every single command** Orbiton understands. Each entry 
 | runway objects | `C:\\Projects\\runway-objects` |
 | udestini | `C:\\Projects\\udestini` |
 
-**How to add your own:** Edit the `PROJECTS` dictionary in `kosmosic_orbiton.py` or wait for the config file system (Genesis-class).
+**How to add your own:** Edit the `PROJECTS` dictionary in `stag/config.py` or wait for the config file system (Genesis-class).
 
 ---
 
@@ -731,7 +731,7 @@ No custom JSON intel files or local Wikipedia dump are loaded. There is no persi
 
 ## 9. Configuration: Making Orbiton Yours
 
-All configuration lives in the `CONFIG` dictionary at the top of `kosmosic_orbiton.py`. In the future (Genesis-class), this will move to an external JSON/YAML file.
+Runtime defaults live in the `CONFIG` dictionary in `stag/config.py`. In the future (Genesis-class), this will move to an external JSON/YAML file.
 
 ### The CONFIG Dictionary
 
@@ -766,7 +766,7 @@ CONFIG = {
 | `voice` | `"en-US-AriaNeural"` | The Edge TTS voice profile. Change this to any Edge TTS voice (e.g., `"en-US-JennyNeural"`, `"en-GB-SoniaNeural"`). |
 
 ### How to Change the Wake Word
-1. Open `kosmosic_orbiton.py` in a text editor.
+1. Open `stag/config.py` in a text editor.
 2. Find the `CONFIG` dictionary.
 3. Change `"wake_word": "tokyo"` to `"wake_word": "computer"` (or whatever you want).
 4. Save the file.
@@ -775,7 +775,7 @@ CONFIG = {
 **Important:** The wake word must be a single word. Multi-word wake words (like "hey orbiton") are not supported in Tokyo-class.
 
 ### How to Change the Voice
-1. Open `kosmosic_orbiton.py`.
+1. Open `stag/config.py` for settings, or the relevant module under `stag/` for code.
 2. Find `"voice": "en-US-AriaNeural"`.
 3. Replace with any valid Edge TTS voice. Popular options:
    - `en-US-AriaNeural` (default, friendly)
@@ -788,7 +788,7 @@ CONFIG = {
 **Full list of Edge TTS voices:** Visit `https://speech.microsoft.com/portal/voicegallery` or run `edge-tts --list-voices` in your terminal.
 
 ### How to Add Project Shortcuts
-1. Open `kosmosic_orbiton.py`.
+1. Open `stag/config.py` for settings, or the relevant module under `stag/` for code.
 2. Find the `PROJECTS` dictionary:
 ```python
 PROJECTS = {
@@ -964,7 +964,7 @@ Every command has three parts:
 ### Step-by-Step: Adding a "Translate" Command
 
 #### Step 1: Add the Handler
-Open `kosmosic_orbiton.py` and add a method to the `CommandEngine` class:
+Open `kosmosic_orbiton.py` and add a method to the `CommandEngine` class in `stag/commands.py`:
 
 ```python
 def handle_translate(self, query: str):
@@ -993,7 +993,7 @@ Open `stag package` and add to `NaturalLanguageProcessor.HOMOPHONES`:
 ```
 
 #### Step 4: Add to Help Table
-Find `ALL_COMMANDS` in `kosmosic_orbiton.py` and add:
+Find `ALL_COMMANDS` in `stag/config.py` and add:
 
 ```python
 ("🌍 Translate", "translate <text>", "Google Translate anything"),
@@ -1228,7 +1228,7 @@ pip uninstall edge-tts
 ### File / Project Issues
 
 #### `"open project X"` says project not found
-**Fix:** Edit the `PROJECTS` dictionary in `kosmosic_orbiton.py` to point to your actual project paths. The default paths are `C:\\Projects\\...` which probably do not exist on your machine.
+**Fix:** Edit the `PROJECTS` dictionary in `stag/config.py` to point to your actual project paths. The default paths are `C:\\Projects\\...` which probably do not exist on your machine.
 
 #### `code` command not found
 **Fix:** Add VS Code to your system PATH. See [Platform-Specific Deep Dive](#13-platform-specific-deep-dive).
@@ -1261,61 +1261,47 @@ pip uninstall edge-tts
 ## 17. Architecture Reference
 
 ### File Structure
+
+```text
+Orbiton/
+├── stag/
+│   ├── app.py            # Startup, text input, microphone loop
+│   ├── commands.py       # Command handlers
+│   ├── config.py         # Defaults, shortcuts, help metadata
+│   ├── device.py         # OS and hardware integrations
+│   ├── intelligence.py   # Wikipedia lookup and routing
+│   ├── math_engine.py    # Safe arithmetic
+│   ├── memory.py         # Local profile
+│   ├── nlp.py            # Speech normalization
+│   ├── parser.py         # Command patterns
+│   ├── ui.py             # Terminal display
+│   └── voice.py          # Text-to-speech
+├── docs/                 # Project and contributor documentation
+├── tests/                # Automated checks
+├── website/              # Public website
+├── troubleshooter.py     # Interactive diagnostics
+├── requirements.txt      # Runtime and current CI dependencies
+├── requirements-dev.txt  # Additional development tools
+└── pyproject.toml        # Install metadata and `orbiton` command
 ```
-Stag/
-├── kosmosic_orbiton.py          # Main entry point. CommandEngine, UI, voice loop.
-├── stag package          # Intelligence module. NLP, math, knowledge.
-├── requirements.txt             # Python dependencies.
-├── CHANGELOG.md                 # Version history.
-├── PHILOSOPHY.md                # Why Orbiton exists.
-├── ROADMAP.md                   # Future generations.
-├── CONTRIBUTING.md              # How to contribute.
-├── CONTRIBUTORS.md              # Who built this.
-├── TEST_STATUS.md               # Per-test CI status.
-├── TESTS.md                     # Test architecture docs.
-├── WORKFLOWS.md                 # CI/CD configuration.
-├── tests/                       # Full pytest suite.
-│   ├── conftest.py              # Shared fixtures.
-│   ├── core_logic/              # Intent & pattern tests.
-│   ├── url_engine/              # URL generation tests.
-│   ├── compute/                 # Math & security tests.
-│   ├── launch/                  # File & project tests.
-│   ├── system/                  # Status & time tests.
-│   └── integration/             # End-to-end flow tests.
-└── .github/workflows/           # CI/CD definitions.
-    ├── core-logic.yml
-    ├── url-engine.yml
-    ├── compute.yml
-    ├── launch.yml
-    ├── system.yml
-    ├── integration.yml
-    ├── pylint.yml
-    ├── filediff.yml
-    └── python-tests.yml
-```
+
+The recommended launch command is `orbiton` after installation, or `python -m stag` from the repository root. `kosmosic_orbiton.py` remains only as a compatibility launcher.
 
 ### Class Breakdown
 
-#### `kosmosic_orbiton.py`
-
-| Class | Responsibility |
-|-------|---------------|
-| `CommandEngine` | The heart. Routes commands, manages state, handles execution. |
-| `IntentParser` | Regex-based command recognition. Maps text to intent + argument. |
-| `NeuroInterface` | Terminal UI using `rich`. Shows success/error/status panels. |
-| `VoiceManager` | Text-to-speech. Handles Edge TTS and system fallbacks. |
-| `UserMemory` | Reads/writes `~/.stag/profile.json`. |
-| `AudioListener` | Speech recognition loop. Wake word detection, audio timeout. |
-
-#### `stag package`
-
-| Class | Responsibility |
-|-------|---------------|
-| `NaturalLanguageProcessor` | Cleans speech: contractions, fillers, homophones. |
-| `MathNormalizer` | Converts spoken math to safe Python expressions. |
-| `KnowledgeEngine` | Local knowledge base lookup. |
-| `WikimediaScraper` | Wikipedia REST API queries with local caching. |
-| `IntelligenceOrchestrator` | Combines all intelligence modules. Decides: command? knowledge? search? |
+| Module | Main responsibility |
+|---|---|
+| `stag/app.py` | Application startup, input loop, wake/sleep state |
+| `stag/commands.py` | `CommandEngine` and command execution |
+| `stag/parser.py` | `IntentParser` and regex command matching |
+| `stag/ui.py` | `NeuroInterface` terminal presentation |
+| `stag/voice.py` | `VoiceManager`, queued speech output |
+| `stag/memory.py` | `UserMemory`, local profile persistence |
+| `stag/device.py` | `DeviceController` and headphone detection |
+| `stag/nlp.py` | `NaturalLanguageProcessor` |
+| `stag/math_engine.py` | `MathNormalizer` and restricted AST evaluation |
+| `stag/intelligence.py` | `IntelligenceOrchestrator` and Wikipedia client |
+| `stag/config.py` | Runtime defaults and command catalogue |
 
 ### Data Flow (Voice Command)
 
@@ -1572,7 +1558,7 @@ Upload the video to the PR description or link it (YouTube unlisted, Google Driv
 | User Memory | `~/.stag/profile.json` | Facts about you |
 
 
-| Source Code | `Stag/kosmosic_orbiton.py` | Main application |
+| Source Code |  `stag/app.py` | Main application |
 | Intelligence | `stag/` | NLP, safe math, and online lookup |
 
 ### Keyboard Shortcuts (Terminal)

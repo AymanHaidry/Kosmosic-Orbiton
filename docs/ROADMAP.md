@@ -37,8 +37,7 @@ See [VERSIONS.md](VERSIONS.md) for the full versioning system and release rules.
 - Toxic motivation engine
 - Session status and time
 - User memory (learns facts about you)
-- Local knowledge base (moon phases, aviation facts, space facts)
-- Wikimedia scraping with caching
+- Live Wikipedia page-summary lookups (no bundled fact database or persistent cache)
 - Cross-platform: Windows, macOS, Linux
 - **Device control suite** — battery, volume, brightness, WiFi, Bluetooth, system info
 
