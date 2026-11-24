@@ -11,7 +11,7 @@ This document records all major architectural decisions made during the developm
 **Version:** v0.1.0
 
 ### Decision
-Orbiton is built entirely in Python 3.10+.
+Orbiton is built entirely in Python 3.11+.
 
 ### Context
 The project needed a language that supports rapid prototyping, has mature libraries for speech recognition and TTS, and runs cross-platform without compilation.

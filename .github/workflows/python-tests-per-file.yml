@@ -1,4 +1,4 @@
-name: Orbiton Test Suite — 207 Individual Tests
+name: Orbiton Test Suite — Per-File Regression Tests
 
 on:
   push:
