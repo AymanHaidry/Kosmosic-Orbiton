@@ -44,3 +44,20 @@ def test_zero_second_cooldown_unblocks_immediately():
  with patch("kosmosic_orbiton.time.time",return_value=50.0):
   voice._tts_worker()
   assert voice.is_listening_blocked() is False
+
+def test_worker_recovers_from_tts_failure_and_finishes_queue():
+    voice = make_manager(silence=1.0)
+
+    def fail(_text):
+        raise RuntimeError("audio backend failed")
+
+    voice._speak_now = fail
+    voice.tts_queue.put("hello")
+    voice.tts_queue.put(None)
+
+    with patch("kosmosic_orbiton.time.time", return_value=70.0):
+        voice._tts_worker()
+
+    assert voice.post_tts_until == 71.0
+    assert not voice.tts_active.is_set()
+    assert voice.tts_queue.unfinished_tasks == 0

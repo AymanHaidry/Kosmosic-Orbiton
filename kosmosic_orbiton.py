@@ -580,19 +580,23 @@ class VoiceManager:
         self._thread.start()
 
     def _tts_worker(self):
-        """Background thread for TTS to avoid blocking."""
+        """Background thread for TTS; recover cleanly from playback failures."""
         while True:
             text = self.tts_queue.get()
             if text is None:
+                self.tts_queue.task_done()
                 break
             self.tts_active.set()
             try:
                 self._speak_now(text)
+            except Exception:
+                # A failed audio backend must not kill the worker thread.
+                pass
             finally:
                 self.tts_active.clear()
                 with self._lock:
                     self.post_tts_until = time.time() + self.post_tts_silence
-            self.tts_queue.task_done()
+                self.tts_queue.task_done()
 
     def is_listening_blocked(self) -> bool:
         """Return True if mic should stay off (TTS playing or cooling down)."""

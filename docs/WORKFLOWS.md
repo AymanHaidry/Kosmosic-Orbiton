@@ -6,8 +6,8 @@
 
 ## Current Workflows
 
-| Workflow | File | What it tests | Runs on | Trigger |
-|----------|------|--------------|---------|---------|
+| Workflow | File | Purpose |
+|----------|------|---------|
 | Core Logic | `.github/workflows/core-logic.yml` | Intent parsing, command patterns, NLP |
 | URL Engine | `.github/workflows/url-engine.yml` | URL generation |
 | Compute | `.github/workflows/compute.yml` | Arithmetic and math safety |
