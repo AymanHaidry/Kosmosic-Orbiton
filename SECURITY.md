@@ -60,6 +60,7 @@ Instead, report privately via one of these channels:
 | Area | Status | Note |
 |------|--------|------|
 | Math expression evaluation | AST allowlist | `MathNormalizer.safe_eval()` interprets numeric literals, arithmetic operators, selected constants, and permitted functions; it does not call `eval()` |
+| Troubleshooter commands | Argument-vector only | `run_cmd()` resolves executables, rejects shell mode, and uses explicit timeouts |
 | Clipboard access | Platform-native | Uses PowerShell (`Get-Clipboard`), `pbpaste`, or `xclip` — no custom crypto |
 | Network requests | Standard library only | `urllib.request` for Wikipedia API, no external HTTP clients |
 | File system access | User-scoped | Restricted to `Path.home()` and subdirectories in `handle_open_file` |
@@ -68,7 +69,7 @@ Instead, report privately via one of these channels:
 ### Supply chain
 
 - `requirements.txt` specifies minimum dependency versions; it is not an exact lockfile.
-- Bandit static analysis is configured in `.github/workflows/bandit.yml`. A dependency vulnerability audit is not currently a required CI check.
+- Bandit static analysis is configured in `.github/workflows/bandit.yml`. The `run_cmd()` wrapper has one documented B603 suppression: it accepts only argument vectors, resolves the executable, and always disables shell execution. A dependency vulnerability audit is not currently a required CI check.
 - No compiled extensions or binary wheels in the dependency tree.
 
 ---

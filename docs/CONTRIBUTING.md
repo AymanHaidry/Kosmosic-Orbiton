@@ -46,7 +46,7 @@ Orbiton is a **voice-first command terminal** built for people who want the worl
 
 ### Prerequisites
 
-- Python 3.10+
+- Python 3.11+ (CI currently uses Python 3.13)
 - A microphone (for voice testing)
 - Git
 
@@ -54,7 +54,7 @@ Orbiton is a **voice-first command terminal** built for people who want the worl
 
 ```bash
 git clone https://github.com/AymanHaidry/Kosmosic-Orbiton.git
-cd Kosmic-Orbiton
+cd Kosmosic-Orbiton
 pip install -r requirements.txt   # or: pip install speechrecognition rich edge-tts
 ```
 
@@ -117,7 +117,7 @@ All tests must pass. If you added a new command, add tests for it:
 | New URL-opening command | `tests/url_engine/test_<command>_urls.py` |
 | New intent/parser pattern | `tests/core_logic/test_intent_parser.py` |
 | New file/folder behavior | `tests/launch/test_<feature>.py` |
-| New math/utility | `tests/compute/test_<feature>.py` |
+| New math/utility | `tests/compute/test_<feature>.py` (test `MathNormalizer` directly where applicable) |
 | New system feature | `tests/system/test_<feature>.py` |
 | End-to-end flow | `tests/integration/test_<feature>_flow.py` |
 
@@ -222,13 +222,12 @@ If it compiles, you are probably fine.
 
 ## Known Issues & Future Work
 
-These are things we know about and are not fixing right now. If you want to tackle one, open a PR:
+The self-listening cooldown was added in v0.7.3. Remaining known work includes:
 
-- **Self-listening on PC.** Orbiton hears its own TTS output and sometimes triggers a random intel response.
 - **"Help" command unresponsive.** Saying "help" does not always execute the help handler.
 - **Exam mode vs "exam board" NLP.** The regex catches "exambored" but "exam board" (two words) still falls through to NLP. Could be tighter.
 - **No Linux headphone auto-detect.** `get_connected_headphones()` works on Windows and macOS but Linux support is best-effort.
-- **Edge TTS requires internet.** Fallback to system TTS is silent if edge-tts is installed but offline.
+- **Edge TTS requires internet.** The application attempts system TTS when the Edge TTS request fails.
 - **Hardcoded Windows project paths** in `PROJECTS` dict.
 
 **See the full roadmap:** [ROADMAP.md](ROADMAP.md)
