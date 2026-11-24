@@ -9,7 +9,8 @@
 
 import sys
 import os
-import subprocess
+import subprocess  # nosec B404
+import shutil
 import json
 import platform
 import time
@@ -76,13 +77,22 @@ def ask_yes_no(prompt, default="y"):
         print(f"  {Colors.YELLOW}Please enter y or n.{Colors.RESET}")
 
 def run_cmd(cmd, shell=False, timeout=10, capture=True):
-    """Run a shell command safely. Returns (success, stdout, stderr)."""
+    """Run a resolved executable with an argument list; shell execution is disabled."""
+    if shell:
+        return False, "", "Shell execution is disabled; pass an argument list."
+    if not isinstance(cmd, (list, tuple)) or not cmd:
+        return False, "", "Command must be a non-empty argument list."
+    command = list(cmd)
+    executable = command[0]
+    resolved = shutil.which(executable)
+    if not resolved:
+        return False, "", f"Command not found: {executable}"
+    command[0] = resolved
     try:
-        if shell and isinstance(cmd, list):
-            cmd = " ".join(cmd)
-        result = subprocess.run(
-            cmd,
-            shell=shell,
+        # The wrapper resolves the executable and always passes an argument vector.
+        result = subprocess.run(  # nosec B603
+            command,
+            shell=False,
             capture_output=capture,
             text=True,
             timeout=timeout
@@ -96,12 +106,12 @@ def run_cmd(cmd, shell=False, timeout=10, capture=True):
         return False, "", str(e)
 
 def check_python_version():
-    """Check if Python is 3.10+."""
+    """Check if Python is 3.11+."""
     version = sys.version_info
-    ok = version.major == 3 and version.minor >= 10
+    ok = version.major == 3 and version.minor >= 11
     ver_str = f"{version.major}.{version.minor}.{version.micro}"
     if ok:
-        print(f"  {Colors.ok(f'Python {ver_str}')} (3.10+ required)")
+        print(f"  {Colors.ok(f'Python {ver_str}')} (3.11+ required)")
     else:
         print(f"  {Colors.fail(f'Python {ver_str}')} (3.10+ REQUIRED — you need to upgrade)")
     return ok, ver_str
@@ -409,8 +419,9 @@ def install_from_requirements():
             lines = [line.strip() for line in f if line.strip() and not line.startswith("#")]
         for line in lines:
             print(f"     {Colors.DIM}- {line}{Colors.RESET}")
-    except Exception:
-        pass
+    except OSError as exc:
+        print(f"  {Colors.warn(f'Could not read requirements.txt: {exc}')}")
+        return False
 
     if ask_yes_no("Install ALL dependencies from requirements.txt now?"):
         print(f"  {Colors.CYAN}Running: pip install -r requirements.txt{Colors.RESET}")
@@ -728,11 +739,14 @@ def flow_tts_silent():
             # Try to play it
             plat = sys.platform
             if plat == "win32":
-                play_cmd = ["start", "", "troubleshooter_test.mp3"]
-                shell = True
+                try:
+                    # Launch only the fixed local diagnostic file with its default player.
+                    os.startfile(str(Path("troubleshooter_test.mp3").resolve()))  # nosec B606
+                    ok2 = True
+                except OSError:
+                    ok2 = False
             elif plat == "darwin":
-                play_cmd = ["afplay", "troubleshooter_test.mp3"]
-                shell = False
+                ok2, _, _ = run_cmd(["afplay", "troubleshooter_test.mp3"], timeout=10)
             else:
                 # Try multiple Linux players
                 for player in ["mpg123", "ffplay", "vlc", "xdg-open"]:
@@ -747,14 +761,13 @@ def flow_tts_silent():
                     results["audio_player"] = None
                 # Clean up
                 try:
-                    Path("troubleshooter_test.mp3").unlink()
-                except:
-                    pass
+                    Path("troubleshooter_test.mp3").unlink(missing_ok=True)
+                except OSError as exc:
+                    print(f"  {Colors.warn(f'Could not remove test audio: {exc}')}")
                 print_docs_links()
                 return results
 
             if plat in ("win32", "darwin"):
-                ok2, _, _ = run_cmd(play_cmd, shell=shell, timeout=10)
                 if ok2:
                     print(f"  {Colors.ok('Audio playback')} works")
                     results["audio_playback"] = True
@@ -764,9 +777,9 @@ def flow_tts_silent():
 
                 # Clean up
                 try:
-                    Path("troubleshooter_test.mp3").unlink()
-                except:
-                    pass
+                    Path("troubleshooter_test.mp3").unlink(missing_ok=True)
+                except OSError as exc:
+                    print(f"  {Colors.warn(f'Could not remove test audio: {exc}')}")
         else:
             print(f"  {Colors.fail('Edge TTS direct test')} failed: {err}")
             results["edge_tts_direct"] = False
@@ -818,7 +831,7 @@ def flow_commands_wrong():
             for spoken, expected in test_cases:
                 normalized = MathNormalizer.normalize(spoken)
                 result = MathNormalizer.safe_eval(normalized)
-                ok = result == expected or (expected in result)
+                ok = str(result) == expected
                 status = Colors.ok(f"'{spoken}' -> {result}") if ok else Colors.fail(f"'{spoken}' -> {result} (expected {expected})")
                 print(f"    {status}")
                 if not ok:

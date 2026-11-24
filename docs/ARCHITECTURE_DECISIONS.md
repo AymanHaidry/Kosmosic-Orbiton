@@ -11,7 +11,7 @@ This document records all major architectural decisions made during the developm
 **Version:** v0.1.0
 
 ### Decision
-Orbiton is built entirely in Python 3.10+.
+Orbiton is built entirely in Python 3.11+.
 
 ### Context
 The project needed a language that supports rapid prototyping, has mature libraries for speech recognition and TTS, and runs cross-platform without compilation.
@@ -157,7 +157,7 @@ A single companion module provides clean separation of concerns without the over
 **Version:** v0.6.2
 
 ### Decision
-Replace raw `eval()` with a `safe_eval()` whitelist-based evaluator in `MathNormalizer`, combined with `MathNormalizer.normalize()` to convert spoken math to Python expressions.
+Replace raw `eval()` with a bounded AST interpreter in `MathNormalizer.safe_eval()`, combined with `MathNormalizer.normalize()` to convert spoken math into a restricted expression tree.
 
 ### Context
 The original `calculate` command used `eval()` directly on user speech input, creating a code injection vulnerability. Spoken math ("two times two", "three squared") also failed to parse.
@@ -169,7 +169,7 @@ The original `calculate` command used `eval()` directly on user speech input, cr
 - **Custom parser** — Maximum control but high implementation cost
 
 ### Rationale
-A whitelist-based `safe_eval()` that only allows numeric literals, operators, and `math` module functions provides sufficient safety for a voice assistant use case. `MathNormalizer` handles the spoken-to-symbolic conversion layer.
+A bounded AST interpreter accepts numeric literals, arithmetic operators, `math.pi`/`math.e`, and explicitly permitted functions (`sqrt`, `cbrt`, `factorial`, `abs`, and `round`). Expression length, AST node count, exponent size, factorial input, and result magnitude are bounded. `MathNormalizer` handles the spoken-to-symbolic conversion layer.
 
 ### Tradeoffs
 - ✅ Eliminates code injection risk
@@ -291,5 +291,5 @@ City/concept names are memorable, internationally recognizable, and convey a sen
 
 ---
 
-*Last updated: 2026-06-12 by Orbiton Workflow Agent (scheduled health scan)*  
+*Last updated: 2026-11-24 by Orbiton Workflow Agent (scheduled health scan)*  
 *For the full roadmap, see [ROADMAP.md](ROADMAP.md)*

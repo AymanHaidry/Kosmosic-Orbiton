@@ -1,8 +1,8 @@
 # 🔧 THE ORBITON TROUBLESHOOTING BIBLE
 ## *Every Error, Every Fix, Every Edge Case — Diagnosed and Solved*
 
-> **Version:** 0.6.2 (Tokyo-class)  
-> **Last Updated:** 2026-06-08  
+> **Version:** 0.8.0 (Tokyo-class)  
+> **Last Updated:** 2026-11-24  
 > **Purpose:** If something is broken, this document tells you exactly why and exactly how to fix it. No guesswork. No Stack Overflow rabbit holes.
 
 ---

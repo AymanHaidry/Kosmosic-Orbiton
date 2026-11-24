@@ -19,7 +19,7 @@ Orbiton is a **Python-powered desktop voice assistant** that turns your headset 
 **Company:** Kosmosic  
 **Website:** [theorbiton.vercel.app](https://theorbiton.vercel.app)  
 **License:** GNU GPL v3.0  
-**Current Version:** v0.7.1 (Tokyo-class)  
+**Current Version:** v0.8.0 (Tokyo-class)  
 **Repository:** [github.com/AymanHaidry/Kosmosic-Orbiton](https://github.com/AymanHaidry/Kosmosic-Orbiton)
 
 ---
@@ -51,7 +51,7 @@ Kosmosic-Orbiton/
 │   ├── WORKFLOWS.md             # CI/CD docs
 │   ├── ARCHITECTURE_DECISIONS.md # ADR log
 │   └── PROJECT_CONTEXT.md      # This file
-├── tests/                       # pytest suite (207 tests)
+├── tests/                       # pytest suite (category-based)
 │   ├── conftest.py
 │   ├── core_logic/              # Intent & pattern tests
 │   ├── url_engine/              # URL generation tests
@@ -104,7 +104,7 @@ Standalone diagnostic tool. Contains:
 ## 🧪 Testing
 
 **Test runner:** pytest  
-**Total tests:** 207  
+**Test count:** confirm with `pytest --collect-only -q` or the latest CI run.  
 **Coverage:** pytest-cov
 
 ```bash
@@ -127,11 +127,15 @@ pytest tests/troubleshooter/ -v
 
 ## 📦 Dependencies
 
+**Supported Python:** 3.11+ (GitHub Actions currently tests Python 3.13).
+
 | Package | Version | Purpose |
 |---------|---------|--------|
 | `SpeechRecognition` | ≥3.10.0 | Voice input (Google Web Speech API) |
 | `edge-tts` | ≥6.1.0 | Neural TTS (Microsoft Edge voices) |
 | `rich` | ≥13.0.0 | Terminal UI (colors, tables, panels) |
+| `pygame` | ≥2.5.0 | Audio playback for Edge TTS |
+| `psutil` | ≥5.9.0 | Optional system metrics and device information |
 | `pytest` | ≥8.0.0 | Test runner |
 | `pytest-cov` | ≥5.0.0 | Coverage reporting |
 
@@ -141,16 +145,16 @@ pytest tests/troubleshooter/ -v
 
 ---
 
-## 🚦 Current Status (v0.7.1 — Tokyo-class)
+## 🚦 Current Status (v0.8.0 — Tokyo-class)
 
 | Area | Status | Notes |
 |------|--------|-------|
-| Core voice commands | ✅ Stable | 207 tests passing |
+| Core voice commands | Implemented | See live GitHub Actions checks for test status |
 | Math engine | ✅ Stable | MathNormalizer handles spoken math |
 | Troubleshooter | ✅ Stable (v0.7.0) | 56 tests, standalone tool |
 | Documentation | ✅ Comprehensive | PROJECT_CONTEXT.md + ARCHITECTURE_DECISIONS.md added in v0.7.1 |
-| Self-listening bug | ⚠️ Partial fix | TTS output can trigger phantom commands — use headphones |
-| Bandit security findings | 🔴 Open | 20+ findings in troubleshooter.py — see issue #60 |
+| Self-listening cooldown | ✅ Implemented in v0.7.3 | TTS-active event plus post-playback silence window |
+| Bandit review | Resolved | Blocking Bandit scan passes; justified suppressions are documented |
 | Version string in docstring | ⚠️ Cosmetic | `kosmosic_orbiton.py` docstring shows `v0.6.2` — needs update |
 | Genesis-class (local LLM) | 🔜 Planned | v2.x roadmap |
 | Wake word customization | 🔜 Planned | Post-Tokyo |
@@ -160,12 +164,9 @@ pytest tests/troubleshooter/ -v
 
 ## 🐛 Known Issues
 
-1. **Self-listening bug** (#27) — TTS output triggers phantom voice commands when using speakers. **Workaround:** Use headphones/headset.
-2. **Bandit security findings** (#60) — 20+ `subprocess` and `input()` findings in `troubleshooter.py`. Low real-world risk (local tool), but must be addressed before v1.0.
-3. **`help` command unreliable via voice** — Type `help` instead. NLP homophones (`hell`, `halp`, `helf`) partially mitigate.
-4. **`exam board` falls through to search** — Say `exam mode` or `exambored` instead.
-5. **Version string in `kosmosic_orbiton.py` docstring** — Shows `v0.6.2` but repo is at `v0.7.1`. Cosmetic only — does not affect runtime.
-6. **Hardcoded Windows project paths** — `PROJECTS` dict in `kosmosic_orbiton.py` contains Windows-specific paths. Config file system planned for Odyssey-class.
+1. **`help` command unreliable via voice** — Type `help` instead. NLP homophones (`hell`, `halp`, `helf`) partially mitigate.
+2. **`exam board` falls through to search** — Say `exam mode` or `exambored` instead.
+3. **Hardcoded Windows project paths** — `PROJECTS` dict in `kosmosic_orbiton.py` contains Windows-specific paths. Config file system planned for Odyssey-class.
 
 ---
 
@@ -218,4 +219,4 @@ See [SECURITY.md](../SECURITY.md) for the vulnerability reporting policy.
 
 ---
 
-*Last updated: 2026-06-14 by Orbiton Workflow Agent (scheduled daily health scan)*
+*Last reviewed: 2026-11-24. Confirm test totals and workflow status from live CI.*

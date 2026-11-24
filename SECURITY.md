@@ -59,7 +59,8 @@ Instead, report privately via one of these channels:
 
 | Area | Status | Note |
 |------|--------|------|
-| Code execution via `eval()` in `calculate` | Mitigated | `MathNormalizer.safe_eval()` whitelists only `0-9 + - * / % . ( )` |
+| Math expression evaluation | AST allowlist | `MathNormalizer.safe_eval()` interprets numeric literals, arithmetic operators, selected constants, and permitted functions; it does not call `eval()` |
+| Troubleshooter commands | Argument-vector only | `run_cmd()` resolves executables, rejects shell mode, and uses explicit timeouts |
 | Clipboard access | Platform-native | Uses PowerShell (`Get-Clipboard`), `pbpaste`, or `xclip` — no custom crypto |
 | Network requests | Standard library only | `urllib.request` for Wikipedia API, no external HTTP clients |
 | File system access | User-scoped | Restricted to `Path.home()` and subdirectories in `handle_open_file` |
@@ -67,8 +68,8 @@ Instead, report privately via one of these channels:
 
 ### Supply chain
 
-- Dependencies are pinned in `requirements.txt`.
-- CI runs `pip-audit` or equivalent on every PR (if configured).
+- `requirements.txt` specifies minimum dependency versions; it is not an exact lockfile.
+- Bandit static analysis is configured in `.github/workflows/bandit.yml`. The troubleshooter's subprocess import, argument-vector runner, and fixed Windows default-player launch have documented Bandit suppressions (B404, B603, B606). The runner resolves executable paths, rejects shell mode, and applies timeouts; cleanup and file-read failures are handled explicitly. A dependency vulnerability audit is not currently a required CI check.
 - No compiled extensions or binary wheels in the dependency tree.
 
 ---
@@ -83,4 +84,4 @@ Instead, report privately via one of these channels:
 
 ---
 
-Last updated: 2026-06-07
+Last updated: 2026-11-24

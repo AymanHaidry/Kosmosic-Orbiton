@@ -39,7 +39,8 @@ Say **"TOKYO"** to wake the assistant, or type commands directly in the terminal
 | Compute | ![Compute](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/compute.yml/badge.svg) |
 | Launch | ![Launch](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/launch.yml/badge.svg) |
 | System | ![System](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/system.yml/badge.svg) |
-| Device | ![Device](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/device.yml/badge.svg) |
+| Troubleshooter | ![Troubleshooter](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/troubleshooter.yml/badge.svg) |
+| Bandit | ![Bandit](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/bandit.yml/badge.svg) |
 | Integration | ![Integration](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/integration.yml/badge.svg) |
 | Pylint | ![Pylint](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/pylint.yml/badge.svg) |
 
@@ -147,7 +148,6 @@ pytest tests/url_engine/ -v
 pytest tests/compute/ -v
 pytest tests/launch/ -v
 pytest tests/system/ -v
-pytest tests/device/ -v
 pytest tests/integration/ -v
 pytest tests/troubleshooter/ -v
 ```
@@ -191,7 +191,6 @@ Kosmosic-Orbiton/
 │   ├── compute/                 # Math & security tests
 │   ├── launch/                  # File & project tests
 │   ├── system/                  # Status & time tests
-│   ├── device/                  # Device control tests
 │   ├── integration/             # End-to-end flow tests
 │   └── troubleshooter/          # Diagnostic tool tests
 ├── .github/workflows/           # CI/CD definitions

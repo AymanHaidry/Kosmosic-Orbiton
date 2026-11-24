@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Replaced string-filter-plus-`eval()` math evaluation with a bounded AST interpreter and an explicit allowlist.
+- Improved compound spoken-number parsing and word-boundary-aware operator replacement.
+- Replaced the uncollected no-op post-TTS test stub with pytest-discoverable cooldown regression tests.
+- Hardened the troubleshooter command runner: shell mode is disabled, executables are resolved, timeouts are enforced, and silent exception swallowing is removed.
+- Fixed numeric-result comparison in the troubleshooter's math diagnostic.
+- Resolved the historical Bandit review (#60); the blocking scan now passes with narrowly justified B404/B603/B606 suppressions.
+
+### Added
+- Direct `MathNormalizer` tests for spoken arithmetic, constants, and unsafe-input rejection.
+- Post-TTS tests for playback blocking, cooldown timing, expiry, zero-duration behavior, and playback-failure recovery.
+- Regression coverage for the troubleshooter's shell-mode rejection.
+
+### Documentation
+- Reconciled workflow and test documentation with the actual repository layout.
+- Removed references to the nonexistent `tests/device/` directory and `device.yml` workflow.
+- Added the Troubleshooter category to the README architecture tree and CI badge, and documented its category-specific test command.
+
+
 ### Planned
 - Genesis-class intelligence (local LLM integration)
 - Micron-class lite version (ROI-dependent)
@@ -20,8 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Website for downloads and intel sharing
 - Config file system (JSON/YAML) to replace hardcoded `CONFIG` dict
 - Plugin architecture for third-party commands
-- Resolve self-listening bug (#27) before v1.0
-- Resolve Bandit security findings in `troubleshooter.py` (#60) before v1.0
 
 
 
@@ -40,7 +57,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Device NLP patterns** in `neuro_link_intel.py` — recognizes "batery", "volium", "wify", "blutooth", etc.
 - **Rich display panels** for all device info — colored bars, tables, status icons
 - **5 new toxic roasts** for device commands
-- **Device test suite** — `tests/device/` with NLP, controller, and integration tests
 
 ### Changed
 - Version bump to v0.8.0 (Tokyo-class)
@@ -110,7 +126,7 @@ Deterministic: mic stays off for exact duration of playback + fixed buffer, unli
 - `requirements.txt` reformatted with section comments
 - All root-level doc links in `README.md` updated to `docs/` paths
 - `docs/TESTS.md` updated with troubleshooter test category
-- `docs/VERSIONS.md` Tokyo-class version range: `1.x.x` → `0.x.x -> 1.x.x`
+- `docs/VERSIONS.md` clarifies Tokyo-class as `0.x.x` and Odyssey-class as `1.x.x`
 - `MANUAL.md` version header updated to v0.7
 
 ---
@@ -244,7 +260,7 @@ Deterministic: mic stays off for exact duration of playback + fixed buffer, unli
 
 | Class | Version | Status |
 |-------|---------|--------|
-| Tokyo-class | 0.1.0 → 0.7.1 | Current |
+| Tokyo-class | 0.1.0 → 0.8.0 | Current |
 | Odyssey-class | 1.x.x | Planned |
 | Genesis-class | 2.x.x | Planned |
 | Micron-class | 3.x.x | Planned (ROI-dependent) |
@@ -266,4 +282,4 @@ For the full roadmap, see [ROADMAP.md](ROADMAP.md).
 
 ---
 
-*Last updated: 2026-06-14 by Orbiton Workflow Agent (scheduled daily health scan)*
+*Last reviewed: 2026-11-24*

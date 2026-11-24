@@ -1,8 +1,8 @@
 # 📖 THE ORBITON MANUAL
 ## *The Complete, Exhaustive, No-Bullshit Guide to Mastering Kosmosic Orbiton*
 
-> **Version:** 0.8 (Tokyo-class)  
-> **Last Updated:** 2026-06-08  
+> **Version:** 0.8.0 (Tokyo-class)  
+> **Last Updated:** 2026-11-24  
 > **Read Time:** ~45 minutes if you are thorough. 5 minutes if you are panicking.  
 > **Target Audience:** Everyone. A 3rd grader. A 48-year-old senior dev. A cat walking on a keyboard. If you can read, you can master this.
 
@@ -1097,7 +1097,7 @@ pytest tests/core_logic/test_intent_parser.py -v
 
 ## 15. Testing & Quality Assurance
 
-Orbiton has a full pytest suite with 151+ tests across 7 CI workflows.
+Orbiton has a category-based pytest suite. Use `pytest --collect-only -q` for the current collection count; GitHub Actions runs the categories independently.
 
 ### Running Tests Locally
 
@@ -1111,6 +1111,7 @@ pytest tests/url_engine/ -v
 pytest tests/compute/ -v
 pytest tests/launch/ -v
 pytest tests/system/ -v
+pytest tests/troubleshooter/ -v
 pytest tests/integration/ -v
 
 # Run a single test
@@ -1425,7 +1426,7 @@ You speak -> "tell me about black holes"
 
 Orbiton evolves through **generations**, each named after a model class.
 
-### Generation 1 — Tokyo (Current, v0.7)
+### Generation 1 — Tokyo (Current, v0.8.0)
 **Status:** Active development.  
 **What works:** Voice commands, web search, file management, aviation tools, toxic motivation, local knowledge, Wikipedia scraping, cross-platform support.  
 **Known bugs:** Self-listening, help command unresponsive, exam board NLP, Linux headphone detection, Edge TTS offline fallback, hardcoded Windows paths.

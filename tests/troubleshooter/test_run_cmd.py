@@ -26,7 +26,7 @@ def test_timeout():
     assert "timed out" in err.lower()
 
 
-def test_shell_mode():
+def test_shell_mode_is_rejected():
     ok, out, err = run_cmd("echo hello", shell=True)
-    assert ok is True
-    assert "hello" in out
+    assert ok is False
+    assert "disabled" in err.lower()
