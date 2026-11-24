@@ -54,8 +54,8 @@ def get_connected_headphones() -> Optional[str]:
             name2 = result2.stdout.strip()
             if name2:
                 return name2
-        except Exception:
-            pass
+        except (OSError, subprocess.SubprocessError, ValueError):
+            return None
 
     elif system == "Darwin":
         try:
@@ -69,8 +69,8 @@ def get_connected_headphones() -> Optional[str]:
                     if isinstance(val, dict) and val.get("device_connected") == "Yes":
                         if any(x in key.lower() for x in ["jbl", "headphone", "earbud", "airpods", "sony", "bose"]):
                             return key
-        except Exception:
-            pass
+        except (OSError, subprocess.SubprocessError, ValueError):
+            return None
 
     elif system == "Linux":
         try:
@@ -84,8 +84,8 @@ def get_connected_headphones() -> Optional[str]:
                     name = line.split("Name:")[1].strip()
                     if any(x in name.lower() for x in ["jbl", "headphone", "earbud", "airpods", "sony", "bose"]):
                         return name
-        except Exception:
-            pass
+        except (OSError, subprocess.SubprocessError, ValueError):
+            return None
 
     return None
 
@@ -210,7 +210,7 @@ class DeviceController:
             try:
                 cls._run(["amixer", "set", "Master", f"{level}%"], check=True)
                 return {"success": True, "level": level}
-            except:
+            except (OSError, subprocess.SubprocessError):
                 try:
                     cls._run(["pactl", "set-sink-volume", "@DEFAULT_SINK@", f"{level}%"])
                     return {"success": True, "level": level}
@@ -236,7 +236,7 @@ class DeviceController:
                 state = "mute" if muted else "unmute"
                 cls._run(["amixer", "set", "Master", state], check=True)
                 return {"success": True, "muted": muted}
-            except:
+            except (OSError, subprocess.SubprocessError):
                 try:
                     flag = "1" if muted else "0"
                     cls._run(["pactl", "set-sink-mute", "@DEFAULT_SINK@", flag])
@@ -269,15 +269,15 @@ class DeviceController:
                     result2 = cls._run(["brightnessctl", "m"])
                     max_b = int(result2.stdout.strip())
                     return {"percent": round((curr / max_b) * 100, 1)}
-            except:
-                pass
+            except (OSError, subprocess.SubprocessError, ValueError) as exc:
+                brightnessctl_error = str(exc)
             try:
                 result = cls._run(["xrandr", "--verbose"])
                 match = re.search(r'Brightness: (\d+\.\d+)', result.stdout)
                 if match:
                     return {"percent": round(float(match.group(1)) * 100, 1)}
             except Exception as e:
-                return {"error": str(e)}
+                return {"error": f"brightnessctl: {brightnessctl_error}; xrandr: {e}"}
         return {"error": f"Brightness not supported on {cls.SYSTEM}"}
 
     @classmethod
@@ -295,7 +295,7 @@ class DeviceController:
             try:
                 cls._run(["brightnessctl", "set", f"{level}%"], check=True)
                 return {"success": True, "level": level}
-            except:
+            except (OSError, subprocess.SubprocessError):
                 try:
                     result = cls._run(["xrandr"])
                     output = result.stdout.split('\n')[0].split(' ')[0]

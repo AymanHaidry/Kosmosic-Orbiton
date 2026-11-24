@@ -25,6 +25,7 @@ class VoiceManager:
         self.tts_active = threading.Event()
         self.post_tts_until = 0.0
         self.post_tts_silence = max(0.0, float(post_tts_silence))
+        self.last_error = None
         self._lock = threading.Lock()
         self._thread = threading.Thread(target=self._tts_worker, daemon=True)
         self._thread.start()
@@ -39,9 +40,10 @@ class VoiceManager:
             self.tts_active.set()
             try:
                 self._speak_now(text)
-            except Exception:
+            except Exception as exc:
                 # A failed audio backend must not kill the worker thread.
-                pass
+                self.last_error = f"Speech playback failed: {exc}"
+                print(self.last_error, file=sys.stderr)
             finally:
                 with self._lock:
                     self.post_tts_until = time.time() + self.post_tts_silence
@@ -85,10 +87,10 @@ class VoiceManager:
                 finally:
                     try:
                         os.remove(mp3_path)
-                    except OSError:
-                        pass
-            except Exception:
-                pass
+                    except OSError as exc:
+                        self.last_error = f"Could not remove temporary speech file: {exc}"
+            except Exception as exc:
+                self.last_error = f"Neural speech unavailable: {exc}"
         self._system_speak(text)
 
     async def _edge_speak(self, text: str, path: str):
