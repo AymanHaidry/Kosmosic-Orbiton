@@ -53,7 +53,7 @@ jobs:
         with:
           python-version: '3.13'
       - run: pip install -r requirements-dev.txt
-      - run: pytest tests/<category>/ -v --tb=short
+      - run: pytest tests/unit/<category>/ -v --tb=short
 ```
 
 ---

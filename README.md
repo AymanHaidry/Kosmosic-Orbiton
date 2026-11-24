@@ -103,7 +103,7 @@ Compile the application modules without running the test suite:
 python -m compileall -q stag troubleshooter.py
 ```
 
-The automated test suite is under `tests/`. Test-suite reorganization is intentionally not part of this Cleanup Drive.
+The existing test cases are retained under `tests/`. Their assertions have not been rewritten or validated against the new module boundaries; that is a separate pass after the application behavior is settled.
 
 ## License
 

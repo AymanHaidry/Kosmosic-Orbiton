@@ -103,4 +103,4 @@ python -m pip install -r requirements-dev.txt
 
 ## Testing status
 
-The existing tests remain under `tests/`. The Cleanup Drive is restructuring the application package first; test-suite regrouping and test rewrites are a separate follow-up. Do not infer that the suite has been revalidated merely from this documentation update.
+The existing suite is grouped under `tests/unit/` and `tests/integration/`. Its assertions have not been rewritten for the new module boundaries, and a full test run has not been used as a completion gate for this Cleanup Drive. A dedicated test-rewrite and verification pass follows once the application behavior is settled.
