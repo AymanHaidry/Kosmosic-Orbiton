@@ -9,7 +9,7 @@
 
 import sys
 import os
-import subprocess  # nosec B404 - calls are centralized in the argument-vector-only run_cmd wrapper
+import subprocess  # nosec B404
 import shutil
 import json
 import platform
@@ -89,7 +89,7 @@ def run_cmd(cmd, shell=False, timeout=10, capture=True):
         return False, "", f"Command not found: {executable}"
     command[0] = resolved
     try:
-        # Argument vector + resolved executable; no shell expansion or user-built command string.
+        # The wrapper resolves the executable and always passes an argument vector.
         result = subprocess.run(  # nosec B603
             command,
             shell=False,
@@ -419,8 +419,9 @@ def install_from_requirements():
             lines = [line.strip() for line in f if line.strip() and not line.startswith("#")]
         for line in lines:
             print(f"     {Colors.DIM}- {line}{Colors.RESET}")
-    except Exception:
-        pass
+    except OSError as exc:
+        print(f"  {Colors.warn(f'Could not read requirements.txt: {exc}')}")
+        return False
 
     if ask_yes_no("Install ALL dependencies from requirements.txt now?"):
         print(f"  {Colors.CYAN}Running: pip install -r requirements.txt{Colors.RESET}")
@@ -739,7 +740,8 @@ def flow_tts_silent():
             plat = sys.platform
             if plat == "win32":
                 try:
-                    os.startfile(str(Path("troubleshooter_test.mp3").resolve()))
+                    # Launch only the fixed local diagnostic file with its default player.
+                    os.startfile(str(Path("troubleshooter_test.mp3").resolve()))  # nosec B606
                     ok2 = True
                 except OSError:
                     ok2 = False
@@ -759,9 +761,9 @@ def flow_tts_silent():
                     results["audio_player"] = None
                 # Clean up
                 try:
-                    Path("troubleshooter_test.mp3").unlink()
-                except:
-                    pass
+                    Path("troubleshooter_test.mp3").unlink(missing_ok=True)
+                except OSError as exc:
+                    print(f"  {Colors.warn(f'Could not remove test audio: {exc}')}")
                 print_docs_links()
                 return results
 
@@ -775,9 +777,9 @@ def flow_tts_silent():
 
                 # Clean up
                 try:
-                    Path("troubleshooter_test.mp3").unlink()
-                except:
-                    pass
+                    Path("troubleshooter_test.mp3").unlink(missing_ok=True)
+                except OSError as exc:
+                    print(f"  {Colors.warn(f'Could not remove test audio: {exc}')}")
         else:
             print(f"  {Colors.fail('Edge TTS direct test')} failed: {err}")
             results["edge_tts_direct"] = False
