@@ -5,6 +5,7 @@ import platform
 import random
 import re
 import subprocess
+import shutil
 import sys
 import time
 import webbrowser
@@ -211,15 +212,45 @@ class CommandEngine:
 
     def handle_project(self, name: str):
         path = PROJECTS.get(name.lower())
-        if path and os.path.exists(path):
-            subprocess.Popen(["code", path], shell=True,
-                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            msg = f"Opening project {name} in VS Code"
-            self.ui.show_success(msg)
-            self.speak(msg)
-        else:
+        if not path or not os.path.exists(path):
             self.ui.show_error(f"Project not found: {name}")
             self.speak(f"I could not find the project {name}.")
+            return
+
+        executable = None
+        if sys.platform == "win32":
+            candidates = [
+                Path(os.environ.get("LOCALAPPDATA", "")) / "Programs/Microsoft VS Code/Code.exe",
+                Path(os.environ.get("PROGRAMFILES", "C:/Program Files")) / "Microsoft VS Code/Code.exe",
+                Path(os.environ.get("PROGRAMFILES(X86)", "C:/Program Files (x86)")) / "Microsoft VS Code/Code.exe",
+            ]
+            executable = next((str(candidate) for candidate in candidates if candidate.is_file()), None)
+            if executable is None:
+                candidate = shutil.which("code.exe")
+                if candidate and Path(candidate).suffix.lower() == ".exe":
+                    executable = candidate
+        else:
+            executable = shutil.which("code")
+
+        if not executable:
+            self.ui.show_error("VS Code was not found. Install it or add its CLI to PATH.")
+            self.speak("I could not find Visual Studio Code.")
+            return
+
+        try:
+            subprocess.Popen(
+                [executable, str(path)],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                shell=False,
+            )
+        except OSError as exc:
+            self.ui.show_error(f"Could not launch VS Code: {exc}")
+            return
+
+        msg = f"Opening project {name} in VS Code"
+        self.ui.show_success(msg)
+        self.speak(msg)
 
     def handle_run(self, name: str):
         home = Path.home()

@@ -1,5 +1,4 @@
 """Terminal presentation layer."""
-import os
 import platform
 import sys
 import time
@@ -29,7 +28,8 @@ class NeuroInterface:
         self.session_start = datetime.now()
 
     def clear(self):
-        os.system("cls" if sys.platform == "win32" else "clear")
+        sys.stdout.write("\033[2J\033[H")
+        sys.stdout.flush()
 
     def show_boot_sequence(self):
         """Apple-style minimalist boot sequence"""

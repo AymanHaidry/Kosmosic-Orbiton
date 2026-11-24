@@ -4,9 +4,8 @@ No bundled fact database or custom intel directory is loaded. Knowledge is
 retrieved from Wikipedia at request time.
 """
 import json
-from urllib.error import HTTPError, URLError
+from http.client import HTTPSConnection, HTTPException
 from urllib.parse import quote
-from urllib.request import Request, urlopen
 
 from .nlp import NaturalLanguageProcessor
 
@@ -20,21 +19,27 @@ class WikipediaClient:
         topic = (topic or "").strip()
         if not topic:
             return None
-        url = self.BASE_URL + quote(topic.replace(" ", "_"), safe="")
-        request = Request(
-            url,
-            headers={"User-Agent": "StagDesktopAssistant/0.1 (Wikipedia lookup)"},
-        )
+        page = quote(topic.replace(" ", "_"), safe="")
+        connection = HTTPSConnection("en.wikipedia.org", timeout=6)
         try:
-            with urlopen(request, timeout=6) as response:
-                data = json.loads(response.read().decode("utf-8"))
-        except (HTTPError, URLError, TimeoutError, ValueError, OSError):
+            connection.request(
+                "GET",
+                f"/api/rest_v1/page/summary/{page}",
+                headers={"User-Agent": "StagDesktopAssistant/0.1 (Wikipedia lookup)"},
+            )
+            response = connection.getresponse()
+            if response.status != 200:
+                return None
+            data = json.loads(response.read().decode("utf-8"))
+        except (HTTPException, TimeoutError, ValueError, OSError):
             return None
+        finally:
+            connection.close()
         extract = data.get("extract")
         if not isinstance(extract, str) or not extract.strip():
             return None
         title = data.get("title") or topic
-        page_url = data.get("content_urls", {}).get("desktop", {}).get("page", url)
+        page_url = data.get("content_urls", {}).get("desktop", {}).get("page", f"https://en.wikipedia.org/wiki/{page}")
         return f"{title}: {extract.strip()}\nSource: {page_url}"
 
 
