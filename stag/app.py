@@ -2,11 +2,16 @@
 import os
 import platform
 import queue
+import random
 import re
+import shutil
 import subprocess
+import sys
 import threading
 import time
 import webbrowser
+from datetime import datetime
+from pathlib import Path
 
 import speech_recognition as sr
 
