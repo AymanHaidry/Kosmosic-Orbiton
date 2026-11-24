@@ -290,7 +290,7 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
         <em>around your head.</em>
       </h1>
       <p class="hero-sub">
-        Your headset becomes a command terminal. Launch apps, search, automate — all with your voice. No cloud. No bloat.
+        Your headset becomes a command terminal. Launch apps, search, and automate with your voice. Local-first command routing, with transparent online speech services.
       </p>
       <div class="hero-btns">
         <a href="#download" class="btn btn-fill">
@@ -353,10 +353,10 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
           hunt for folders, or type the same search query for the hundredth time.
         </p>
         <p>
-          Every command is processed <strong>locally</strong>. Your voice never leaves your machine.
-          There are no API keys to manage, no cloud dashboards to monitor, and no privacy
-          policy written by lawyers you will never meet. Just a Python process listening
-          through your headset, waiting for the word <em>TOKYO</em>.
+          Command routing and operating-system actions run locally. Voice recognition currently
+          uses Google&rsquo;s online speech service, and Edge TTS sends text to Microsoft&rsquo;s
+          service when enabled. System TTS is the fallback. No API key is required, but online
+          providers process the data needed for their service.
         </p>
         <p>
           We are <strong>Kosmosic</strong>. We build tools that make your workspace smarter,
@@ -433,8 +433,8 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
     <div class="feature-scene reveal">
       <div class="scene-visual"><div class="scene-icon">&#128274;</div></div>
       <div class="scene-text">
-        <h3>Zero Cloud, Zero Telemetry</h3>
-        <p>Everything runs locally. Your voice never leaves your machine. No API keys. No privacy policy to dread.</p>
+        <h3>Local-first, transparent services</h3>
+        <p>Command routing and OS actions run locally. Google handles online speech recognition; Microsoft&rsquo;s Edge TTS handles neural voice output when enabled. System TTS is the fallback, and no API key is required.</p>
       </div>
     </div>
 
@@ -450,7 +450,7 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
       <div class="scene-visual"><div class="scene-icon">&#128483;</div></div>
       <div class="scene-text">
         <h3>Edge TTS Voices</h3>
-        <p>Orbiton talks back using neural text-to-speech. Aria, Jenny, or any Edge voice you prefer. Configure your voice profile in <code>CONFIG["voice"]</code>.</p>
+        <p>Orbiton can use Microsoft&rsquo;s online Edge TTS voices such as Aria and Jenny. If the service is unavailable, it falls back to system TTS. Configure your voice profile in <code>CONFIG["voice"]</code>.</p>
       </div>
     </div>
 
@@ -546,26 +546,28 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
     </div>
     <div class="arch-tree reveal">
 <span class="d">Kosmosic-Orbiton/</span>
-&#9500;&#9472;&#9472; <span class="f">kosmosic_orbiton.py</span>          <span class="c"># Main entry point &mdash; voice loop, routing, OS integration</span>
-&#9500;&#9472;&#9472; <span class="f">neuro_link_intel.py</span>          <span class="c"># Intelligence / NLP module &mdash; normalization, math, knowledge</span>
-&#9500;&#9472;&#9472; <span class="f">requirements.txt</span>             <span class="c"># Dependencies: speech_recognition, edge-tts, rich</span>
-&#9500;&#9472;&#9472; <span class="f">CHANGELOG.md</span>                 <span class="c"># Version history</span>
-&#9500;&#9472;&#9472; <span class="f">PHILOSOPHY.md</span>                <span class="c"># Why Orbiton exists</span>
-&#9500;&#9472;&#9472; <span class="f">ROADMAP.md</span>                   <span class="c"># Where we are going</span>
-&#9500;&#9472;&#9472; <span class="f">CONTRIBUTING.md</span>              <span class="c"># How to contribute</span>
-&#9500;&#9472;&#9472; <span class="f">CONTRIBUTORS.md</span>              <span class="c"># Who built this</span>
-&#9500;&#9472;&#9472; <span class="f">TEST_STATUS.md</span>               <span class="c"># Per-test CI status</span>
-&#9500;&#9472;&#9472; <span class="f">TESTS.md</span>                     <span class="c"># Test architecture docs</span>
-&#9500;&#9472;&#9472; <span class="f">WORKFLOWS.md</span>                 <span class="c"># CI/CD configuration</span>
-&#9500;&#9472;&#9472; <span class="d">tests/</span>                         <span class="c"># Full pytest suite</span>
-&#9474;   &#9500;&#9472;&#9472; <span class="f">conftest.py</span>              <span class="c"># Shared fixtures</span>
-&#9474;   &#9500;&#9472;&#9472; <span class="d">core_logic/</span>              <span class="c"># Intent &amp; pattern tests</span>
-&#9474;   &#9500;&#9472;&#9472; <span class="d">url_engine/</span>              <span class="c"># URL generation tests</span>
-&#9474;   &#9500;&#9472;&#9472; <span class="d">compute/</span>               <span class="c"># Math &amp; security tests</span>
-&#9474;   &#9500;&#9472;&#9472; <span class="d">launch/</span>                <span class="c"># File &amp; project tests</span>
-&#9474;   &#9500;&#9472;&#9472; <span class="d">system/</span>                <span class="c"># Status &amp; time tests</span>
-&#9474;   &#9492;&#9472;&#9472; <span class="d">integration/</span>           <span class="c"># End-to-end flow tests</span>
-&#9492;&#9472;&#9472; <span class="d">.github/workflows/</span>            <span class="c"># CI/CD definitions</span>
+&#9500;&#9472;&#9472; <span class="f">kosmosic_orbiton.py</span>          <span class="c"># Main entry point — voice loop, routing, OS integration</span>
+&#9500;&#9472;&#9472; <span class="f">neuro_link_intel.py</span>          <span class="c"># NLP, spoken math, knowledge lookup</span>
+&#9500;&#9472;&#9472; <span class="f">requirements.txt</span>             <span class="c"># Python dependencies</span>
+&#9500;&#9472;&#9472; <span class="f">README.md</span>                    <span class="c"># Project overview</span>
+&#9500;&#9472;&#9472; <span class="f">MANUAL.md</span>                    <span class="c"># User guide</span>
+&#9500;&#9472;&#9472; <span class="f">TROUBLESHOOT.md</span>              <span class="c"># Troubleshooting reference</span>
+&#9500;&#9472;&#9472; <span class="d">website/</span>
+&#9474;   &#9492;&#9472;&#9472; <span class="f">index.html</span>                 <span class="c"># Project website</span>
+&#9500;&#9472;&#9472; <span class="d">docs/</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="f">PROJECT_CONTEXT.md</span>         <span class="c"># Current architecture and status</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="f">CHANGELOG.md</span>               <span class="c"># Release history</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="f">TESTS.md / TEST_STATUS.md</span>  <span class="c"># Test architecture and CI status</span>
+&#9474;   &#9492;&#9472;&#9472; <span class="f">WORKFLOWS.md</span>               <span class="c"># GitHub Actions inventory</span>
+&#9500;&#9472;&#9472; <span class="d">tests/</span>                         <span class="c"># pytest suite</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="d">core_logic/</span>                <span class="c"># Intent and command patterns</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="d">url_engine/</span>                <span class="c"># URL generation</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="d">compute/</span>                   <span class="c"># Arithmetic and safety</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="d">launch/</span>                    <span class="c"># File and project launching</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="d">system/</span>                    <span class="c"># TTS cooldown and system behavior</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="d">integration/</span>               <span class="c"># End-to-end flows</span>
+&#9474;   &#9492;&#9472;&#9472; <span class="d">troubleshooter/</span>            <span class="c"># Diagnostic tool tests</span>
+&#9492;&#9472;&#9472; <span class="d">.github/workflows/</span>             <span class="c"># Test, lint, security CI</span>
     </div>
     <div class="arch-cards">
       <div class="arch-card reveal">
@@ -580,7 +582,7 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
       </div>
       <div class="arch-card reveal">
         <h4>&#129514; Test Suite</h4>
-        <p>Six test categories covering core logic, URL generation, compute safety, file launching, system status, and full integration flows. Run with <code>pytest tests/ -v</code>.</p>
+        <p>Seven test categories cover core logic, URL generation, compute safety, file launching, system status, integration flows, and the troubleshooter. Run with <code>pytest tests/ -v</code>.</p>
         <span class="tag">tests/</span>
       </div>
       <div class="arch-card reveal">
@@ -655,7 +657,7 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
     <div class="section-head reveal">
       <div class="kicker">Quality Assurance</div>
       <h2>Tested like infrastructure.</h2>
-      <p>Every command category has dedicated test coverage. We do not ship broken voice pipelines.</p>
+      <p>Core command areas have automated coverage. Platform-specific device behavior and external-service fallback paths still have some coverage gaps.</p>
     </div>
     <div class="test-grid">
       <div class="test-card reveal">
@@ -692,7 +694,7 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
         <div class="ico">&#128268;</div>
         <h4>Integration</h4>
         <p>End-to-end voice flows</p>
-        <span class="badge b-wip">Active</span>
+        <span class="badge b-ok">Passing</span>
       </div>
       <div class="test-card reveal">
         <div class="ico">&#127912;</div>
@@ -701,10 +703,16 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
         <span class="badge b-ok">Passing</span>
       </div>
       <div class="test-card reveal">
-        <div class="ico">&#128230;</div>
-        <h4>Packaging</h4>
-        <p>Cross-platform builds</p>
-        <span class="badge b-wip">In Progress</span>
+        <div class="ico">&#128737;</div>
+        <h4>Troubleshooter</h4>
+        <p>Diagnostics and safe command execution</p>
+        <span class="badge b-ok">Passing</span>
+      </div>
+      <div class="test-card reveal">
+        <div class="ico">&#128737;</div>
+        <h4>Bandit</h4>
+        <p>Python security analysis</p>
+        <span class="badge b-ok">Passing</span>
       </div>
     </div>
   </div>
@@ -721,7 +729,7 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
       <div class="rm-item reveal">
         <div class="rm-dot on"></div>
         <div class="rm-content">
-          <span class="rm-stat s-live">Live Now &mdash; v0.x &rarr; v1.x</span>
+          <span class="rm-stat s-live">Live Now &mdash; v0.x (current release: v0.8.0)</span>
           <h4>Generation 1 &mdash; Tokyo</h4>
           <p>Basic reasoning, voice commands, web search, file management, aviation tools, and the toxic motivation engine. The foundation. Fast, local, and brutally honest.</p>
         </div>
@@ -729,7 +737,7 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
       <div class="rm-item reveal">
         <div class="rm-dot off"></div>
         <div class="rm-content">
-          <span class="rm-stat s-plan">Planned &mdash; v2.x</span>
+          <span class="rm-stat s-plan">Planned &mdash; v1.x</span>
           <h4>Generation 2 &mdash; Odyssey</h4>
           <p>Large-scale growth. Advanced reasoning, local LLM integration, long-term memory, and a personalization engine. The beginning of true intelligence.</p>
         </div>
@@ -737,7 +745,7 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
       <div class="rm-item reveal">
         <div class="rm-dot off"></div>
         <div class="rm-content">
-          <span class="rm-stat s-plan">Planned &mdash; v3.x</span>
+          <span class="rm-stat s-plan">Planned &mdash; v2.x</span>
           <h4>Generation 3 &mdash; Genesis</h4>
           <p>Agentic behavior and true automation. Long-running tasks, predictive execution, multi-step workflows, and a scraper living on your PC with OTA intel updates.</p>
         </div>
@@ -745,7 +753,7 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
       <div class="rm-item reveal">
         <div class="rm-dot off"></div>
         <div class="rm-content">
-          <span class="rm-stat s-plan">Planned &mdash; v4.x</span>
+          <span class="rm-stat s-plan">Planned &mdash; v3.x</span>
           <h4>Generation 4 &mdash; Micron</h4>
           <p>Lite version for constrained environments. All core functionality stripped of heavy dependencies, for older hardware or minimal installs. ROI-dependent.</p>
         </div>
@@ -753,7 +761,7 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
       <div class="rm-item reveal">
         <div class="rm-dot off"></div>
         <div class="rm-content">
-          <span class="rm-stat s-plan">Planned &mdash; v5.x</span>
+          <span class="rm-stat s-plan">Planned &mdash; v4.x</span>
           <h4>Generation 5 &mdash; Aphrodite</h4>
           <p>Expansion beyond the original vision. IoT integration, multi-language support, various voices, wake word customization, PC management, email, calls, and calendar.</p>
         </div>
@@ -761,7 +769,7 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
       <div class="rm-item reveal">
         <div class="rm-dot off"></div>
         <div class="rm-content">
-          <span class="rm-stat s-plan">Vision &mdash; v6.x</span>
+          <span class="rm-stat s-plan">Vision &mdash; v5.x</span>
           <h4>Generation 6 &mdash; Singularity</h4>
           <p>Full autonomy. The second user of your computer. Multi-device ecosystem, predictive everything, self-maintenance, multi-device continuity, wearables, smart glasses, and SBCs.</p>
         </div>
@@ -769,7 +777,7 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
       <div class="rm-item reveal">
         <div class="rm-dot off"></div>
         <div class="rm-content">
-          <span class="rm-stat s-plan">Final Vision &mdash; v7.x</span>
+          <span class="rm-stat s-plan">Final Vision &mdash; v6.x</span>
           <h4>Generation 7 &mdash; Utopia</h4>
           <p>Final evolution. The absolute top. Orbiton becomes an ecosystem. Replaces bloatware AIs. Lives on every device you own. Knows what you need before you ask.</p>
         </div>
