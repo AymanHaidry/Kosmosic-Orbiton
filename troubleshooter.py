@@ -583,12 +583,14 @@ def flow_wont_start():
                 pip_name = "speechrecognition" if mod == "speech_recognition" else mod
                 install_module(mod, pip_name)
 
-    # Check 4: neuro_link_intel.py exists and imports
+    # Check 4: stag/intelligence.py exists and imports
     print(f"\n{Colors.BOLD}Checking intelligence module...{Colors.RESET}")
-    results["neuro_link_intel"] = check_file_exists("neuro_link_intel.py")
+    results["stag intelligence"] = check_file_exists("neuro_link_intel.py")
     if results["neuro_link_intel"]:
         try:
-            from neuro_link_intel import get_intelligence, NaturalLanguageProcessor, MathNormalizer
+            from stag.intelligence import get_intelligence
+            from stag.nlp import NaturalLanguageProcessor
+            from stag.math_engine import MathNormalizer
             print(f"  {Colors.ok('neuro_link_intel')} imports successfully")
             results["neuro_link_intel_import"] = True
         except Exception as e:
@@ -820,7 +822,7 @@ def flow_commands_wrong():
     elif choice == "3":
         print(f"\n{Colors.BOLD}Checking calculate command...{Colors.RESET}")
         try:
-            from neuro_link_intel import MathNormalizer
+            from stag.math_engine import MathNormalizer
             test_cases = [
                 ("two times two", "4"),
                 ("twenty five divided by five", "5.0"),

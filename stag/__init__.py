@@ -1,0 +1,1 @@
+"""Stag desktop assistant package."""

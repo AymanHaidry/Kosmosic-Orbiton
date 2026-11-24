@@ -51,7 +51,9 @@ except ImportError:
     PSUTIL_AVAILABLE = False
 
 # ─── INTELLIGENCE MODULE ───────────────────────────────────
-from neuro_link_intel import get_intelligence, NaturalLanguageProcessor, MathNormalizer
+from stag.intelligence import get_intelligence
+from stag.nlp import NaturalLanguageProcessor
+from stag.math_engine import MathNormalizer
 
 # ─── CONFIGURATION ───────────────────────────────────────────
 CONFIG = {
@@ -65,7 +67,7 @@ CONFIG = {
     "phrase_limit": 6,
     "max_errors_before_reset": 50,
     "wake_word": "tokyo",
-    "memory_file": str(Path.home() / ".neuro_link_memory.json"),
+    "memory_file": str(Path.home() / ".stag" / "profile.json"),
     "voice": "en-US-AriaNeural",
     "post_tts_silence": 0.5,
 }
@@ -127,12 +129,9 @@ PROJECTS: Dict[str, str] = {
 }
 
 # Kosmosic URLs
-KOSMOSIC_URL = "https://kosmosic.vercel.app"
-KOSMOSIC_APP = "https://kosmosic.vercel.app/app"
 
 # Master command list for help display
 ALL_COMMANDS = [
-    ("🎓 Study", "kosmosic", "Open Kosmosic study dashboard"),
     ("🔍 Search", "search <query>", "Google search anything"),
     ("🎥 YouTube", "youtube <query>", "Search YouTube"),
     ("🧮 Math", "calculate <expr>", "Calculate and speak result"),
@@ -293,7 +292,7 @@ class NeuroInterface:
 
     def show_command_table(self):
         if not self.console:
-            print("\nCommands: search, youtube, calculate, weather, airport, track, metar, open, run, motivate, streetview, maps, clipboard, status, exam mode, kosmosic, help, reboot, who am i, sleep, wake, tell me about")
+            print("\nCommands: search, youtube, calculate, weather, airport, track, metar, open, run, motivate, streetview, maps, clipboard, status, exam mode, help, reboot, who am i, sleep, wake, tell me about")
             print("Device: battery, volume, brightness, wifi, bluetooth, system")
             return
         table = Table(title="Available Commands", box=box.SIMPLE_HEAD)
@@ -511,8 +510,15 @@ class NeuroInterface:
 class UserMemory:
     """Stores user facts from statements like I am..., I like..., etc."""
     def __init__(self, filepath: str):
-        self.filepath = filepath
+        self.filepath = Path(filepath)
+        self.legacy_filepath = Path.home() / ".neuro_link_memory.json"
         self.facts: Dict[str, str] = {}
+        if not self.filepath.exists() and self.legacy_filepath.exists():
+            self.filepath.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                shutil.copy2(self.legacy_filepath, self.filepath)
+            except OSError:
+                pass
         self.load()
 
     def load(self):
@@ -525,6 +531,7 @@ class UserMemory:
 
     def save(self):
         try:
+            self.filepath.parent.mkdir(parents=True, exist_ok=True)
             with open(self.filepath, "w", encoding="utf-8") as f:
                 json.dump(self.facts, f, indent=2, ensure_ascii=False)
         except Exception as e:
@@ -1424,21 +1431,15 @@ class CommandEngine:
         self.ui.show_success(msg)
         self.speak(msg)
 
-    def handle_kosmosic(self):
-        self.open_chrome(KOSMOSIC_APP)
-        msg = "Opening Kosmosic study dashboard. Time to grind."
-        self.ui.show_success(msg)
-        self.speak(msg)
-
     def handle_help(self):
         self.ui.show_help()
-        self.speak("Here is the full command list. You can say search, youtube, calculate, weather, airport, track flight, metar, open files, navigate folders, open projects, run scripts, maps, street view, clipboard search, motivate me, status report, exam mode, kosmosic, who am I, tell me about, battery, volume, brightness, wifi, bluetooth, system, reboot, help, sleep, or wake.")
+        self.speak("Here is the full command list. You can say search, youtube, calculate, weather, airport, track flight, metar, open files, navigate folders, open projects, run scripts, maps, street view, clipboard search, motivate me, status report, exam mode, who am I, tell me about, battery, volume, brightness, wifi, bluetooth, system, reboot, help, sleep, or wake.")
 
     def handle_reboot(self):
         self.speak("Rebooting Orbiton. See you in a moment.")
         self.ui.show_info("🔄 Rebooting...")
         time.sleep(1)
-        subprocess.Popen([sys.executable, __file__], 
+        subprocess.Popen([sys.executable, str(Path(__file__).resolve().with_name("stag.py"))], 
                         creationflags=subprocess.CREATE_NEW_CONSOLE if sys.platform == "win32" else 0)
         sys.exit(0)
 
@@ -1737,7 +1738,6 @@ class IntentParser:
         (r"^(?:status|stats|report|diagnostic)", "status"),
         (r"^(?:exam mode|focus mode|launch mode|exambored|exambord|exum mode|eggsam mode)", "exam_mode"),
         (r"^(?:what time|current time|time is it|tell me the time)", "time"),
-        (r"^(?:kosmosic|study dashboard|open kosmosic|kosmic|cosmic|cosmosic|kozmosic)", "kosmosic"),
         (r"^(?:help|commands|what can you do|show commands|help me|hell|hellp|halp|helf|elpe)", "help"),
         (r"^(?:reboot|restart|reload|rekognize|reeboot|rebbot|rebote)", "reboot"),
         (r"^(?:who am i|about me|my info|what do you know about me|whoami|huami|hooami)", "whoami"),
