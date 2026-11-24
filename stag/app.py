@@ -103,13 +103,22 @@ def main():
     engine = CommandEngine(ui, voice, memory, intel)
     parser = IntentParser()
     recognizer = sr.Recognizer()
-    microphone = sr.Microphone()
+    microphone = None
+    try:
+        microphone = sr.Microphone()
+        ui.show_info("Calibrating for ambient noise... (stay quiet)")
+        with microphone as source:
+            recognizer.adjust_for_ambient_noise(source, duration=2)
+    except Exception as exc:
+        microphone = None
+        ui.show_info(f"Microphone unavailable; text input remains enabled ({exc})")
 
-    ui.show_info("Calibrating for ambient noise... (stay quiet)")
-    with microphone as source:
-        recognizer.adjust_for_ambient_noise(source, duration=2)
-    ui.show_info("Ready. Say TOKYO or press headset button to wake me.")
-    voice.speak("Orbiton online. Say Tokyo or press your headset button to wake me.")
+    if microphone is not None:
+        ui.show_info("Ready. Say TOKYO or press headset button to wake me.")
+        voice.speak("Orbiton online. Say Tokyo or press your headset button to wake me.")
+    else:
+        ui.show_info("Text mode ready. Type WAKE to start issuing commands.")
+        voice.speak("Orbiton online. Type wake to begin.")
 
     consecutive_errors = 0
     asleep = True
@@ -159,6 +168,10 @@ def main():
                 continue
 
             # ─── 3. VOICE INPUT ───────────────────────────────────────
+            if microphone is None:
+                time.sleep(0.1)
+                continue
+
             if asleep:
                 ui.show_listening(active=False)
             else:

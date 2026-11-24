@@ -7,6 +7,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
+from .config import ALL_COMMANDS
+
 try:
     from rich.console import Console
     from rich.panel import Panel

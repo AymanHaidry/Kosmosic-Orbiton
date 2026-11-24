@@ -1,5 +1,7 @@
 """Speech output and playback lifecycle."""
 import asyncio
+import base64
+import tempfile
 import os
 import platform
 import queue
@@ -57,26 +59,35 @@ class VoiceManager:
         """Actually speak the text."""
         if EDGE_TTS_AVAILABLE:
             try:
-                import tempfile
-                mp3_path = os.path.join(tempfile.gettempdir(), "neuro_link_tts.mp3")
-                asyncio.run(self._edge_speak(text, mp3_path))
-                if sys.platform == "win32":
+                with tempfile.NamedTemporaryFile(
+                    prefix="stag-tts-", suffix=".mp3", delete=False
+                ) as temporary_audio:
+                    mp3_path = temporary_audio.name
+                try:
+                    asyncio.run(self._edge_speak(text, mp3_path))
+                    if sys.platform == "win32":
+                        try:
+                            import pygame
+                            if not pygame.mixer.get_init():
+                                pygame.mixer.init()
+                            pygame.mixer.music.load(mp3_path)
+                            pygame.mixer.music.play()
+                            while pygame.mixer.music.get_busy():
+                                time.sleep(0.05)
+                        except ImportError:
+                            os.startfile(mp3_path)
+                            time.sleep(2)
+                    elif sys.platform == "darwin":
+                        subprocess.run(["afplay", mp3_path], capture_output=True, timeout=120)
+                    else:
+                        subprocess.run(["mpg123", mp3_path], capture_output=True, timeout=120)
+                    time.sleep(0.2)
+                    return
+                finally:
                     try:
-                        import pygame
-                        pygame.mixer.init()
-                        pygame.mixer.music.load(mp3_path)
-                        pygame.mixer.music.play()
-                        while pygame.mixer.music.get_busy():
-                            time.sleep(0.05)
-                    except ImportError:
-                        os.startfile(mp3_path)
-                        time.sleep(2)
-                elif sys.platform == "darwin":
-                    subprocess.run(["afplay", mp3_path], capture_output=True)
-                else:
-                    subprocess.run(["mpg123", mp3_path], capture_output=True)
-                time.sleep(0.5)
-                return
+                        os.remove(mp3_path)
+                    except OSError:
+                        pass
             except Exception:
                 pass
         self._system_speak(text)
@@ -87,12 +98,18 @@ class VoiceManager:
 
     def _system_speak(self, text: str):
         if platform.system() == "Windows":
-            safe = text.replace("'", "'`'").replace('"', '`"`')
+            encoded = base64.b64encode(text.encode("utf-16le")).decode("ascii")
+            script = (
+                "Add-Type -AssemblyName System.Speech; "
+                "$bytes = [Convert]::FromBase64String('" + encoded + "'); "
+                "$message = [Text.Encoding]::Unicode.GetString($bytes); "
+                "(New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak($message)"
+            )
             subprocess.run(
-                ["powershell", "-c",
-                 f'Add-Type -AssemblyName System.Speech; '
-                 f'(New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak("{safe}")'],
-                capture_output=True
+                ["powershell", "-NoProfile", "-NonInteractive", "-Command", script],
+                capture_output=True,
+                timeout=120,
+                check=False,
             )
         elif platform.system() == "Darwin":
             subprocess.run(["say", text], capture_output=True)
