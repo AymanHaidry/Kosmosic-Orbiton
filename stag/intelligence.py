@@ -13,8 +13,6 @@ from .nlp import NaturalLanguageProcessor
 class WikipediaClient:
     """Bounded client for Wikipedia's public page-summary endpoint."""
 
-    BASE_URL = "https://en.wikipedia.org/api/rest_v1/page/summary/"
-
     def search_topic(self, topic):
         topic = (topic or "").strip()
         if not topic:
