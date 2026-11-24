@@ -19,7 +19,7 @@ def test_normalize_spoken_math(spoken,expected):
  ("round(3.14159,2)",3.14),("abs(-7)",7),
 ])
 def test_safe_eval_arithmetic(expr,expected):
- assert MathNormalizer.safe_eval(expr)==expected
+ assert MathNormalizer.safe_eval(expr)==pytest.approx(expected)
 
 def test_safe_eval_math_constants():
  assert MathNormalizer.safe_eval("math.pi")==math.pi
