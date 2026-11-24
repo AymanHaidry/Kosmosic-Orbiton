@@ -23,7 +23,7 @@ cd Kosmosic-Orbiton
 pip install -r requirements.txt  # speech_recognition, edge-tts, rich, etc.
 
 # Run Orbiton
-python kosmosic_orbiton.py
+python -m stag
 ```
 
 Say **"TOKYO"** to wake the assistant, or type commands directly in the terminal.
@@ -75,7 +75,6 @@ See [docs/TEST_STATUS.md](docs/TEST_STATUS.md) for per-test details and [docs/WO
 | 🔄 Reboot | `reboot` | Restart Orbiton |
 | 😴 Sleep | `sleep` | Put Orbiton to sleep |
 | ☀️ Wake | `wake` / `wake up` / say **TOKYO** | Wake Orbiton |
-| 🎓 Kosmosic | `kosmosic` | Open study dashboard |
 | 🔋 Device | `battery`               | Show battery level & status  |
 | 🔉 Device | `volume [up/down/mute]` | Get/set/mute system volume   |
 | 💡 Device | `brightness [level]`    | Get/set screen brightness    |
@@ -88,7 +87,7 @@ See [docs/TEST_STATUS.md](docs/TEST_STATUS.md) for per-test details and [docs/WO
 
 ## 🧠 Intelligence Module
 
-Orbiton includes a pluggable intelligence system (`neuro_link_intel.py`) that handles:
+Orbiton includes a pluggable intelligence system (`stag/ (NLP, math, intelligence modules)`) that handles:
 
 - **NLP normalization** — "what's" → "what is", "exam board" → "exam mode"
 - **Knowledge lookup** — constellations, moon phases, aviation facts, space facts
@@ -161,7 +160,7 @@ See [docs/TESTS.md](docs/TESTS.md) for the full test architecture and [docs/TEST
 ```
 Kosmosic-Orbiton/
 ├── kosmosic_orbiton.py          # Main entry point
-├── neuro_link_intel.py          # Intelligence / NLP module
+├── stag/ (NLP, math, intelligence modules)          # Intelligence / NLP module
 ├── troubleshooter.py            # Interactive diagnostic tool
 ├── requirements.txt             # Python dependencies
 ├── MANUAL.md                    # Complete user manual

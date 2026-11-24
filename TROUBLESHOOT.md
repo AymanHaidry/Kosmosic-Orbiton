@@ -42,7 +42,7 @@ python -c "import sys; print('Python:', sys.version); print('Platform:', sys.pla
 python -c "import speech_recognition; print('speech_recognition: OK')"
 python -c "import rich; print('rich: OK')"
 python -c "import edge_tts; print('edge_tts: OK')"
-python -c "from neuro_link_intel import get_intelligence; print('neuro_link_intel: OK')"
+python -c "from stag get_intelligence; print('stag intelligence package: OK')"
 ```
 
 If all five lines print `OK`, your environment is healthy. If any line fails, the fix is in the section matching that module name.
@@ -119,7 +119,7 @@ pip install speechrecognition
 ```bash
 # Verify you are in the right directory
 ls
-# You should see: kosmosic_orbiton.py, neuro_link_intel.py, requirements.txt
+# You should see: kosmosic_orbiton.py, stag/intelligence.py, requirements.txt
 
 # If requirements.txt is truly missing, create it:
 cat > requirements.txt << 'EOF'
@@ -134,7 +134,7 @@ pip install -r requirements.txt
 
 ## 3. Python Environment Issues
 
-### Symptom: `python kosmosic_orbiton.py` opens in Notepad or another app instead of running
+### Symptom: `python -m stag` opens in Notepad or another app instead of running
 **Cause:** On Windows, `python` might not be associated with the Python interpreter. You might have typed the command in PowerShell but Windows thinks it is a file to open.  
 **Fix:**
 ```bash
@@ -175,15 +175,15 @@ cd ..
 rm -rf Kosmosic-Orbiton
 git clone https://github.com/AymanHaidry/Kosmosic-Orbiton.git
 cd Kosmosic-Orbiton
-python kosmosic_orbiton.py
+python -m stag
 ```
 
 ---
 
 ## 4. Import & Module Errors
 
-### Symptom: `ImportError: cannot import name 'get_intelligence' from 'neuro_link_intel'`
-**Cause:** You are running Orbiton from the wrong directory, or `neuro_link_intel.py` is missing/corrupted.  
+### Symptom: `ImportError: cannot import name 'get_intelligence' from 'stag intelligence package'`
+**Cause:** You are running Orbiton from the wrong directory, or `stag/intelligence.py` is missing/corrupted.  
 **Fix:**
 ```bash
 # Verify you are in the repo root
@@ -191,8 +191,8 @@ pwd
 # Should end with /Kosmosic-Orbiton (or \Kosmosic-Orbiton on Windows)
 
 # Verify the file exists
-ls neuro_link_intel.py
-# or on Windows: dir neuro_link_intel.py
+ls stag/intelligence.py
+# or on Windows: dir stag/intelligence.py
 
 # If missing, re-clone the repo
 ```
@@ -239,11 +239,11 @@ pip install pyaudio
 ```
 
 ### Symptom: `ImportError: cannot import name 'NaturalLanguageProcessor'`
-**Cause:** `neuro_link_intel.py` is an old version or was modified incorrectly.  
+**Cause:** `stag/intelligence.py` is an old version or was modified incorrectly.  
 **Fix:**
 ```bash
 # Check if the class exists in the file
-grep -n "class NaturalLanguageProcessor" neuro_link_intel.py
+grep -n "class NaturalLanguageProcessor" stag/intelligence.py
 # If no output, your file is corrupted. Re-clone.
 ```
 
@@ -521,7 +521,7 @@ edge-tts --list-voices
 **Fix:**
 ```bash
 # Type the wake word to test if the logic works
-python kosmosic_orbiton.py
+python -m stag
 # Then type: tokyo
 # If this works, the issue is speech recognition accuracy
 ```
@@ -534,12 +534,12 @@ python kosmosic_orbiton.py
 3. Say `"hell"`, `"halp"`, `"helf"`, or `"elpe"` — these are mapped to help via NLP.
 4. If typing `help` also does nothing, check if the `handle_help` method exists in `kosmosic_orbiton.py`.
 
-**Permanent fix:** Edit `neuro_link_intel.py` and add more homophones for help, or increase the regex priority of the help pattern in `IntentParser.PATTERNS`.
+**Permanent fix:** Edit `stag/intelligence.py` and add more homophones for help, or increase the regex priority of the help pattern in `IntentParser.PATTERNS`.
 
 ### Symptom: `"exam board"` opens Google instead of exam mode
 **Status:** Known bug. The NLP catches `"exambored"` (one word) but `"exam board"` (two words) falls through to the general search intent.  
 **Workaround:** Say `"exam mode"` clearly, or say `"exambored"`.  
-**Fix:** Edit `neuro_link_intel.py` and add to `HOMOPHONES`:
+**Fix:** Edit `stag/intelligence.py` and add to `HOMOPHONES`:
 ```python
 "exam board": "exam mode",
 ```
@@ -554,7 +554,7 @@ git pull origin main
 If you are already on v0.6.2+ and it still fails:
 1. Check that `MathNormalizer` is imported in `kosmosic_orbiton.py`:
    ```python
-   from neuro_link_intel import get_intelligence, NaturalLanguageProcessor, MathNormalizer
+   from stag get_intelligence, NaturalLanguageProcessor, MathNormalizer
    ```
 2. Check that `handle_calculate` uses `MathNormalizer`:
    ```python
@@ -706,7 +706,7 @@ except Exception as e:
 
 **Fix for developers:** Add constants to `MathNormalizer`:
 ```python
-# In neuro_link_intel.py, add to WORD_NUMBERS or create a CONSTANTS dict
+# In stag/intelligence.py, add to WORD_NUMBERS or create a CONSTANTS dict
 CONSTANTS = {
     "pi": "3.14159",
     "e": "2.71828",
@@ -742,8 +742,8 @@ This must run BEFORE `eval()`.
 3. Try a different topic: `"tell me about the moon"` (this is in built-in knowledge).
 4. Add custom intel:
    ```bash
-   mkdir -p ~/.neuro_link_intel
-   cat > ~/.neuro_link_intel/intel_astro.json << 'EOF'
+   mkdir -p ~/.stag intelligence package
+   cat > ~/.stag intelligence package/intel_astro.json << 'EOF'
    {
      "black holes": "A black hole is a region of spacetime where gravity is so strong that nothing can escape."
    }
@@ -1007,7 +1007,7 @@ pytest tests/ -v
 **Fix:**
 ```bash
 # Run pylint locally first
-pylint kosmosic_orbiton.py neuro_link_intel.py
+pylint kosmosic_orbiton.py stag/intelligence.py
 
 # Fix the reported issues. Common ones:
 # - Trailing whitespace: remove spaces at end of lines
@@ -1106,7 +1106,7 @@ pip install -r requirements.txt
 # Reset all user data
 rm -f ~/.neuro_link_memory.json
 rm -rf ~/.neuro_link_wiki_cache/
-rm -rf ~/.neuro_link_intel/
+rm -rf ~/.stag intelligence package/
 # Orbiton will recreate these on next run
 ```
 
@@ -1123,7 +1123,7 @@ source fresh_env/bin/activate
 
 # Reinstall everything
 pip install speechrecognition edge-tts rich
-python kosmosic_orbiton.py
+python -m stag
 ```
 
 ### Procedure 5: Microphone permissions are irrevocably broken (macOS)

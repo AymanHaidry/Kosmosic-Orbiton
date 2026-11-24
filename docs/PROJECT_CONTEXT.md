@@ -1,4 +1,4 @@
-# Project Context — Orbiton by Kosmosic
+# Project Context — Orbiton
 
 > This document provides a comprehensive overview of the Orbiton project for new contributors, AI tools, and anyone who needs to quickly understand the codebase.
 
@@ -29,7 +29,7 @@ Orbiton is a **Python-powered desktop voice assistant** that turns your headset 
 ```
 Kosmosic-Orbiton/
 ├── kosmosic_orbiton.py          # Main entry point — voice loop, command dispatch
-├── neuro_link_intel.py          # Intelligence module — NLP, knowledge, math
+├── stag/ package modules          # Intelligence module — NLP, knowledge, math
 ├── troubleshooter.py            # Standalone diagnostic tool
 ├── requirements.txt             # Python dependencies
 ├── MANUAL.md                    # Complete user manual (root copy)
@@ -83,7 +83,7 @@ The main application. Contains:
 
 > ⚠️ **Note:** The docstring in this file still shows `v0.6.2` — cosmetic issue, does not affect functionality.
 
-### `neuro_link_intel.py`
+### `stag/ package modules`
 The intelligence layer. Contains:
 - `NaturalLanguageProcessor` — contraction expansion, homophone correction, intent normalization
 - `MathNormalizer` — spoken math → Python expression conversion + `safe_eval()`
