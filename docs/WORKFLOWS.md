@@ -127,7 +127,7 @@ jobs:
 | `subprocess` patch fails on Windows | Wrong patch target | See `tests/launch/` for `_patch_open_explorer()` pattern |
 | `Path.exists()` returns False | CI doesn't have real folders | Mock `Path.exists` and `Path.is_dir` in tests |
 | Tests pass locally but fail in CI | OS difference | Ensure tests work on both Windows and Ubuntu |
-| Pylint fails | Code style issues | Run `pylint kosmosic_orbiton.py stag/` locally |
+| Pylint fails | Code style issues | Run `pylint stag/ troubleshooter.py` locally |
 
 ---
 

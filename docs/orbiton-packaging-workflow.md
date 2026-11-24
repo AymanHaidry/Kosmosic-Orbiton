@@ -398,7 +398,7 @@ pip install pyinstaller
 pyinstaller --clean orbiton.spec
 
 # 3. Or build one-file executable (slower startup, easier distribution)
-pyinstaller --onefile --icon=assets/icon.ico --name=Orbiton -m stag
+pyinstaller --onefile --icon=assets/icon.ico --name=Orbiton kosmosic_orbiton.py
 
 # 4. Output is in `dist/Orbiton/` (folder) or `dist/Orbiton.exe` (onefile)
 
@@ -413,7 +413,7 @@ pip install -r requirements.txt
 pip install pyinstaller
 
 # 2. Build app bundle (creates Orbiton.app)
-pyinstaller --clean --windowed --icon=assets/icon.icns --name=Orbiton -m stag
+pyinstaller --clean --windowed --icon=assets/icon.icns --name=Orbiton kosmosic_orbiton.py
 
 # 3. For Apple Silicon + Intel universal binary:
 # Install universal2 Python, then:

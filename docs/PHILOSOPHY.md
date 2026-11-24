@@ -26,7 +26,7 @@ It is the **personality**. We are not a repo with a last commit message like `FI
 **What we are NOT:**
 - A generic AI assistant. We are not ChatGPT with a voice wrapper.
 - A GUI application. Keep it terminal. Keep it text. Keep it fast.
-- A cloud service. Your data lives in a local `_.pycache_` folder. Not our servers. Not Microsoft's. Yours.
+- A data-collection service. Your profile stays in `~/.stag/profile.json`; speech recognition, neural TTS, Wikipedia and web searches use their respective online providers.
 - Ads, paywalls, or "vibecoded ultra 2050 spaceship neon purple gamer aesthetic." If it looks like it belongs on a Fortnite skin, it does not belong in Orbiton.
 - *Project Hail Mary*. Do not ask.
 

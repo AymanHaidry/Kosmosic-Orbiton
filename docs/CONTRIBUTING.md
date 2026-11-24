@@ -34,7 +34,7 @@ Orbiton is a **voice-first command terminal** built for people who want the worl
 **What we are NOT:**
 - A general-purpose chatbot (use ChatGPT for that).
 - A GUI application (keep it terminal + voice).
-- A cloud service. Your data lives in a local `_.pycache_` folder. Not our servers. Not Microsoft's. Yours.
+- A data-collection service. The user profile stays on-device; speech recognition, neural TTS, Wikipedia and web searches use their respective online providers.
 - Ads, paywalls, or "vibecoded ultra 2050 spaceship neon purple gamer aesthetic." If it looks like it belongs on a Fortnite skin, it does not belong in Orbiton.
 - *Project Hail Mary*. Do not ask.
 

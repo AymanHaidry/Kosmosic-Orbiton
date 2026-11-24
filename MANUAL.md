@@ -143,7 +143,7 @@ When you run `python -m stag`, here is exactly what happens:
 
 1. **Python starts** and imports the code.
 2. **Optional imports load** — it tries to load `rich` (for pretty UI) and `edge-tts` (for voice). If they are missing, it degrades gracefully.
-3. **The intelligence module loads** — `stag package` is imported. NLP, math, and knowledge engines wake up.
+3. **The intelligence module loads** — `stag/` is imported. NLP, math, and knowledge engines wake up.
 4. **The Apple-style boot sequence prints** — `● → Loading → ✓ Ready`
 5. **Orbiton begins listening** — it waits for the wake word or typed input.
 
@@ -622,7 +622,7 @@ Many power users type complex commands (like `open project hex link`) but use vo
 
 ## 8. The Neuro-Link Intelligence System
 
-Orbiton's brain is `stag package`. It is not magic. It is a collection of Python classes that clean up your messy speech and figure out what you actually want.
+Orbiton's brain is `stag/`. It is not magic. It is a collection of Python classes that clean up your messy speech and figure out what you actually want.
 
 ### The Three Brains
 
@@ -964,7 +964,7 @@ Every command has three parts:
 ### Step-by-Step: Adding a "Translate" Command
 
 #### Step 1: Add the Handler
-Open `kosmosic_orbiton.py` and add a method to the `CommandEngine` class in `stag/commands.py`:
+Open `stag/commands.py` and add a method to the `CommandEngine` class:
 
 ```python
 def handle_translate(self, query: str):
@@ -984,7 +984,7 @@ Find the `IntentParser.PATTERNS` list and add:
 ```
 
 #### Step 3: Add NLP Support (Optional)
-Open `stag package` and add to `NaturalLanguageProcessor.HOMOPHONES`:
+Open `stag/nlp.py` and add to `NaturalLanguageProcessor.HOMOPHONES`:
 
 ```python
 "translait": "translate",
@@ -1505,7 +1505,7 @@ Upload the video to the PR description or link it (YouTube unlisted, Google Driv
 |------|------------|
 | **Wake Word** | The word that activates Orbiton from sleep. Default: `"tokyo"`. |
 | **Tokyo-class** | The current generation of Orbiton (v0.x). Basic reasoning and voice commands. |
-| **Neuro-Link** | Orbiton's intelligence module (`stag package`). NLP, math, knowledge. |
+| **Neuro-Link** | Orbiton's intelligence module (`stag/`). NLP, math, knowledge. |
 | **TTS** | Text-to-Speech. The technology that makes Orbiton talk back to you. |
 | **Edge TTS** | Microsoft's neural text-to-speech engine. Requires internet. |
 | **NLP** | Natural Language Processing. The system that cleans up your messy speech. |
@@ -1516,7 +1516,7 @@ Upload the video to the PR description or link it (YouTube unlisted, Google Driv
 | **ICAO** | International Civil Aviation Organization. The four-letter airport codes (e.g., `KJFK`, `EGLL`). |
 | **Toxic Motivation** | Orbiton's roast engine. Harsh accountability statements designed to make you work. |
 | **Self-Listening Bug** | When Orbiton hears its own TTS output and triggers unintended commands. |
-| **CONFIG** | The configuration dictionary in `kosmosic_orbiton.py`. Controls timeouts, voice, wake word, etc. |
+| **CONFIG** | The configuration dictionary in `stag/config.py`. Controls timeouts, voice, wake word, etc. |
 
 | **Session** | One continuous run of Orbiton from start to exit. |
 | **CI/CD** | Continuous Integration / Continuous Deployment. The GitHub Actions that run tests automatically. |

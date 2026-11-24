@@ -145,7 +145,7 @@ py -m stag
 python3 -m stag
 
 # Or use the full path
-C:\Users\You\AppData\Local\Programs\Python\Python311\python.exe kosmosic_orbiton.py
+C:\Users\You\AppData\Local\Programs\Python\Python311\python.exe -m stag
 ```
 
 ### Symptom: `python` command not found
@@ -532,7 +532,7 @@ python -m stag
 1. Type `help` instead of saying it.
 2. Say it twice.
 3. Say `"hell"`, `"halp"`, `"helf"`, or `"elpe"` — these are mapped to help via NLP.
-4. If typing `help` also does nothing, check if the `handle_help` method exists in `kosmosic_orbiton.py`.
+4. If typing `help` also does nothing, check if the `handle_help` method exists in `stag/commands.py`.
 
 **Permanent fix:** Edit `stag/intelligence.py` and add more homophones for help, or increase the regex priority of the help pattern in `IntentParser.PATTERNS`.
 
@@ -552,7 +552,7 @@ git pull origin main
 ```
 
 If you are already on v0.6.2+ and it still fails:
-1. Check that `MathNormalizer` is imported in `kosmosic_orbiton.py`:
+1. Check that `MathNormalizer` is imported in `stag/commands.py`:
    ```python
    from stag get_intelligence, NaturalLanguageProcessor, MathNormalizer
    ```
@@ -626,7 +626,7 @@ The alias mapping is in `stag/commands.py`. If your OS language is not English, 
 
 ### Symptom: `"open project hex link"` says "Project not found"
 **Cause:** The `PROJECTS` dictionary points to `C:\Projects\hex-link`, which probably does not exist on your machine.  
-**Fix:** Edit `kosmosic_orbiton.py`:
+**Fix:** Edit the relevant module under `stag/` (for command routing, use `stag/commands.py`):
 ```python
 PROJECTS = {
     "hex link": r"C:\\Users\\You\\Projects\\hex-link",  # Change this
@@ -1127,7 +1127,7 @@ Run this checklist in order. Stop when you find the issue.
 
 ### If This Document Did Not Solve Your Problem
 
-1. **Check the source code.** The docstrings are decent. Start with `kosmosic_orbiton.py` -> `CommandEngine`.
+1. **Check the source code.** The docstrings are decent. Start with `stag/commands.py` -> `CommandEngine`.
 2. **Run the tests.** `pytest tests/ -v` will tell you exactly what is broken.
 3. **Open an issue** on GitHub: https://github.com/AymanHaidry/Kosmosic-Orbiton/issues
    - Include your OS, Python version, and the exact error message.
