@@ -8,15 +8,23 @@
 
 | Workflow | File | What it tests | Runs on | Trigger |
 |----------|------|--------------|---------|---------|
-| Core Logic | `.github/workflows/core-logic.yml` | Intent parsing, command patterns, NLP | Ubuntu | push, PR |
-| URL Engine | `.github/workflows/url-engine.yml` | URL generation for all web commands | Ubuntu | push, PR |
-| Compute | `.github/workflows/compute.yml` | Math expressions, security, constants | Ubuntu | push, PR |
-| Launch | `.github/workflows/launch.yml` | File operations, projects, scripts | Windows | push, PR |
-| System | `.github/workflows/system.yml` | Status, time, motivation, hardware | Ubuntu | push, PR |
-| Integration | `.github/workflows/integration.yml` | End-to-end command flows | Ubuntu | push, PR |
-| Pylint | `.github/workflows/pylint.yml` | Code quality for main files | Ubuntu | push, PR |
+| Core Logic | `.github/workflows/core-logic.yml` | Intent parsing, command patterns, NLP |
+| URL Engine | `.github/workflows/url-engine.yml` | URL generation |
+| Compute | `.github/workflows/compute.yml` | Arithmetic and math safety |
+| Launch | `.github/workflows/launch.yml` | File, project, and script operations |
+| System | `.github/workflows/system.yml` | Time, status, motivation, TTS cooldown |
+| Integration | `.github/workflows/integration.yml` | End-to-end command flows |
+| Troubleshooter | `.github/workflows/troubleshooter.yml` | Diagnostic-tool tests |
+| Pylint | `.github/workflows/pylint.yml` | Static code-quality checks |
+| Bandit | `.github/workflows/bandit.yml` | Python security linting |
+| Python Tests | `.github/workflows/python-tests.yml` | Aggregate test workflow |
+| Python Tests per File | `.github/workflows/python-tests-per-file.yml` | Per-file test matrix |
+| FileDiff | `.github/workflows/filediff.yml` | Repository diff automation |
+| Static | `.github/workflows/static.yml` | Static repository checks |
 
 ---
+
+There is no `device.yml` workflow or `tests/device/` directory on `main`; device-control code exists, but a dedicated test category has not been added.
 
 ## Why Windows for Launch?
 

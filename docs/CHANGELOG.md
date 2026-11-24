@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Replaced string-filter-plus-`eval()` math evaluation with a bounded AST interpreter and an explicit allowlist.
+- Improved compound spoken-number parsing and word-boundary-aware operator replacement.
+- Replaced the uncollected no-op post-TTS test stub with pytest-discoverable cooldown regression tests.
+
+### Added
+- Direct `MathNormalizer` tests for spoken arithmetic, constants, and unsafe-input rejection.
+- Post-TTS tests for playback blocking, cooldown timing, expiry, and zero-duration behavior.
+
+### Documentation
+- Reconciled workflow and test documentation with the actual repository layout.
+- Removed references to the nonexistent `tests/device/` directory and `device.yml` workflow.
+
+
 ### Planned
 - Genesis-class intelligence (local LLM integration)
 - Micron-class lite version (ROI-dependent)
