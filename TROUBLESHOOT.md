@@ -119,7 +119,7 @@ pip install speechrecognition
 ```bash
 # Verify you are in the right directory
 ls
-# You should see: kosmosic_orbiton.py, stag/intelligence.py, requirements.txt
+# You should see: stag/app.py, stag/commands.py, requirements.txt
 
 # If requirements.txt is truly missing, create it:
 cat > requirements.txt << 'EOF'
@@ -139,10 +139,10 @@ pip install -r requirements.txt
 **Fix:**
 ```bash
 # Use the full python command
-py kosmosic_orbiton.py
+py -m stag
 
 # Or explicitly call python3
-python3 kosmosic_orbiton.py
+python3 -m stag
 
 # Or use the full path
 C:\Users\You\AppData\Local\Programs\Python\Python311\python.exe kosmosic_orbiton.py
@@ -160,14 +160,14 @@ C:\Users\You\AppData\Local\Programs\Python\Python311\python.exe kosmosic_orbiton
 **Fix:**
 ```bash
 python --version
-# Must say 3.10+ or 3.11+. If it says 2.7, you are using the wrong Python.
+# Must say 3.11 or newer.
 
 # Use python3 explicitly
-python3 kosmosic_orbiton.py
+python3 -m stag
 ```
 
-### Symptom: `SyntaxError` on the first line of `kosmosic_orbiton.py`
-**Cause:** The file was saved with wrong encoding, or line endings were corrupted (e.g., downloaded as a web page instead of raw code).  
+### Symptom: `SyntaxError` in a module under `stag/`
+**Cause:** A source file may be incomplete, corrupted, or downloaded as a web page instead of raw code.  
 **Fix:**
 ```bash
 # Re-clone the repo fresh
@@ -342,7 +342,7 @@ pacmd set-default-source <your-mic-name>
 3. The speech recognizer hears the TTS words and interprets them as a new command.
 4. Orbiton executes that phantom command.
 
-**This is the #1 most reported bug in Tokyo-class.**
+This is a known microphone/TTS interaction to diagnose on the affected system.
 
 ### Immediate Fixes (Do These Now)
 
@@ -366,7 +366,7 @@ Cardioid mics (most headset mics) only pick up sound from one direction. Point t
 **Workaround 5: Mute the mic during TTS playback**
 There is no built-in mute-during-TTS feature yet, but you can simulate it by adding a sleep delay after TTS:
 
-Edit `kosmosic_orbiton.py` and find the `speak()` method. Add a small delay after speech:
+Edit `stag/voice.py` and find the `VoiceManager` playback methods. Add a small delay after speech:
 ```python
 def speak(self, text: str):
     # ... existing TTS code ...
@@ -376,7 +376,7 @@ def speak(self, text: str):
 **Workaround 6: Disable TTS temporarily**
 If you only need visual feedback and not voice feedback:
 ```python
-# In kosmosic_orbiton.py, find the VoiceManager class
+# In stag/voice.py, find the VoiceManager class
 # and make speak() return early:
 def speak(self, text: str):
     return  # TTS disabled
@@ -486,7 +486,7 @@ pip install edge-tts
 ### Symptom: TTS is too fast / too slow / wrong accent
 **Fix:** Change the voice in CONFIG:
 ```python
-# In kosmosic_orbiton.py
+# In the relevant module under stag/
 CONFIG = {
     # ... other keys ...
     "voice": "en-US-JennyNeural",  # Slower, more professional
@@ -621,7 +621,7 @@ Orbiton resolves paths in this order:
 Say: `"open C:\Users\YourName\Downloads"` (Windows) or `"open /Users/YourName/Downloads"` (macOS).
 
 **Step 4: Check if the alias is correct**
-The alias mapping is hardcoded in `kosmosic_orbiton.py`. If your OS language is not English, the folder names might be different (e.g., `Téléchargements` on French Windows).  
+The alias mapping is in `stag/commands.py`. If your OS language is not English, the folder names might be different (e.g., `Téléchargements` on French Windows).  
 **Fix:** Use the absolute path, or edit the alias mapping in the source code.
 
 ### Symptom: `"open project hex link"` says "Project not found"
@@ -787,7 +787,7 @@ echo '{}' > ~/.stag/profile.json
 **Cause:** Chrome is not at the expected path, or Chrome is not installed.  
 **Fix:**
 ```python
-# In kosmosic_orbiton.py, update CONFIG:
+# In stag/config.py, update CONFIG:
 CONFIG = {
     "chrome_path": {
         "Windows": r"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
@@ -948,7 +948,7 @@ Ctrl+C
 ## 15. CI/CD & Testing Failures
 
 ### Symptom: `pytest tests/ -v` fails with `ModuleNotFoundError`
-**Cause:** The tests cannot find `kosmosic_orbiton.py` because it is not in the Python path.  
+**Cause:** The tests cannot find the application package because the command was run outside the repository root.  
 **Fix:**
 ```bash
 # Ensure you are in the repo root
@@ -976,7 +976,7 @@ pytest tests/ -v
 **Fix:**
 ```bash
 # Run pylint locally first
-pylint kosmosic_orbiton.py stag/intelligence.py
+pylint stag/
 
 # Fix the reported issues. Common ones:
 # - Trailing whitespace: remove spaces at end of lines
@@ -1012,7 +1012,7 @@ pattern = r"^calculate\s+(.+)"
 1. Add the misheard variant to `NaturalLanguageProcessor.HOMOPHONES`.
 2. Test what the speech recognizer actually hears by adding debug output:
    ```python
-   # In kosmosic_orbiton.py, temporarily add:
+   # In the relevant module under stag/, temporarily add:
    print(f"DEBUG: Recognized text: {recognized_text}")
    ```
 3. Map whatever it hears to your command.

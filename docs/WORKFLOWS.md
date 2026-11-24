@@ -52,7 +52,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-      - run: pip install pytest speechrecognition rich
+      - run: pip install -r requirements-dev.txt
       - run: pytest tests/<category>/ -v --tb=short
 ```
 
@@ -98,7 +98,7 @@ Badge to add:
 
 ## Pylint Workflow
 
-The pylint workflow is special — it doesn't run tests, it checks code quality:
+The pylint workflow is special — it doesn't run tests, it checks code quality across the application package and diagnostic tool:
 
 ```yaml
 name: Pylint
@@ -113,8 +113,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-      - run: pip install pylint
-      - run: pylint kosmosic_orbiton.py stag/
+      - run: pip install -r requirements-dev.txt
+      - run: pylint stag/ troubleshooter.py
 ```
 
 ---

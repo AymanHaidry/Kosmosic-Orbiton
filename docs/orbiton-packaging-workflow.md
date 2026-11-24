@@ -33,9 +33,8 @@ pip install pyinstaller
 ### Project Structure Assumptions
 ```
 Kosmosic-Orbiton/
-├── stag/                    # NLP, math and intelligence modules
-├── kosmosic_orbiton.py          # Main entry point
-├── stag/          # Intelligence module
+├── stag/                    # Application package (app, commands, UI, voice, NLP, etc.)
+├── kosmosic_orbiton.py          # Backward-compatible launcher
 ├── requirements.txt             # Dependencies
 ├── assets/
 │   ├── icon.ico                 # Windows icon (256x256)
@@ -399,7 +398,7 @@ pip install pyinstaller
 pyinstaller --clean orbiton.spec
 
 # 3. Or build one-file executable (slower startup, easier distribution)
-pyinstaller --onefile --icon=assets/icon.ico --name=Orbiton kosmosic_orbiton.py
+pyinstaller --onefile --icon=assets/icon.ico --name=Orbiton -m stag
 
 # 4. Output is in `dist/Orbiton/` (folder) or `dist/Orbiton.exe` (onefile)
 
@@ -414,7 +413,7 @@ pip install -r requirements.txt
 pip install pyinstaller
 
 # 2. Build app bundle (creates Orbiton.app)
-pyinstaller --clean --windowed --icon=assets/icon.icns --name=Orbiton kosmosic_orbiton.py
+pyinstaller --clean --windowed --icon=assets/icon.icns --name=Orbiton -m stag
 
 # 3. For Apple Silicon + Intel universal binary:
 # Install universal2 Python, then:

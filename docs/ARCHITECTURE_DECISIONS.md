@@ -308,3 +308,23 @@ Split NLP, safe arithmetic, and online knowledge routing into separately testabl
 
 ### Rationale
 The former file combined unrelated concerns and created a misleading impression that general knowledge was preloaded. Focused modules improve testability and make the live-research provider easier to replace.
+
+
+---
+
+## ADR-012: Modular Application Package
+
+**Date:** 2026-11-24  
+**Status:** Accepted  
+**Version:** Cleanup Drive
+
+### Decision
+Move application responsibilities into focused modules under `stag/`: app lifecycle, commands, configuration, device integrations, intelligence, memory, NLP, parsing, terminal UI, and voice output. Keep `kosmosic_orbiton.py` as a compatibility launcher and expose an installable `orbiton` console command.
+
+### Rationale
+The previous entry point mixed nearly every concern in one file. A package makes responsibilities visible, lets contributors locate code without searching a monolith, and provides a stable public launch command without forcing a breaking change on existing scripts.
+
+### Consequences
+- New code should import from `stag.*`.
+- The recommended launch commands are `orbiton` or `python -m stag`.
+- The compatibility launcher remains until the separate rebrand work decides its final public name.
