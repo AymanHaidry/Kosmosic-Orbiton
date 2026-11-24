@@ -69,7 +69,7 @@ Instead, report privately via one of these channels:
 ### Supply chain
 
 - `requirements.txt` specifies minimum dependency versions; it is not an exact lockfile.
-- Bandit static analysis is configured in `.github/workflows/bandit.yml`. The troubleshooter's subprocess import, argument-vector runner, and fixed Windows default-player launch have documented Bandit suppressions (B404, B603, B606). The runner resolves executable paths, rejects shell mode, and applies timeouts; cleanup and file-read failures are handled explicitly. A dependency vulnerability audit is not currently a required CI check.
+- Bandit static analysis is configured in `.github/workflows/bandit.yml`. The `run_cmd()` wrapper has one documented B603 suppression: it accepts only argument vectors, resolves the executable, and always disables shell execution. A dependency vulnerability audit is not currently a required CI check.
 - No compiled extensions or binary wheels in the dependency tree.
 
 ---
