@@ -127,6 +127,8 @@ pytest tests/troubleshooter/ -v
 
 ## 📦 Dependencies
 
+**Supported Python:** 3.11+ (GitHub Actions currently tests Python 3.13).
+
 | Package | Version | Purpose |
 |---------|---------|--------|
 | `SpeechRecognition` | ≥3.10.0 | Voice input (Google Web Speech API) |

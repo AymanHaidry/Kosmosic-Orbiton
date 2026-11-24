@@ -60,7 +60,7 @@ The beginning of large-scale growth.
 
 Advanced reasoning, local LLM integration, long-term memory, personalization engine, agentic tasks.
 
-Version Range: `2.x.x`
+Version Range: `1.x.x`
 
 ### Generation 3 — Genesis
 
@@ -68,7 +68,7 @@ Agentic behavior and true automation.
 
 Long-running tasks, predictive execution, multi-step workflows, scraper living on your PC, OTA intel updates.
 
-Version Range: `3.x.x`
+Version Range: `2.x.x`
 
 ### Generation 4 — Micron
 
@@ -76,7 +76,7 @@ Lite version for constrained environments.
 
 All core functionality, stripped of heavy dependencies, for older hardware or minimal installs. Only built if Odyssey and Genesis prove ROI.
 
-Version Range: `4.x.x`
+Version Range: `3.x.x`
 
 ### Generation 5 — Aphrodite
 
@@ -84,7 +84,7 @@ Expansion beyond the original vision.
 
 IoT integration, multi-language support, various voices, wake word customization, PC management, email, calls, calendar.
 
-Version Range: `5.x.x`
+Version Range: `4.x.x`
 
 ### Generation 6 — Singularity
 
@@ -92,7 +92,7 @@ Full autonomy. The second user of your computer.
 
 Multi-device ecosystem, predictive everything, self-maintenance, multi-device continuity, wearables, smart glasses, SBCs.
 
-Version Range: `6.x.x`
+Version Range: `5.x.x`
 
 ### Generation 7 — Utopia
 
@@ -100,7 +100,7 @@ Final evolution. The absolute top.
 
 Orbiton becomes an ecosystem. Replaces bloatware AIs. Lives on every device you own. Knows what you need before you ask.
 
-Version Range: `7.x.x`
+Version Range: `6.x.x`
 
 ---
 
@@ -115,7 +115,7 @@ Increase the Generation number when:
 * Major redesigns occur
 * A new era of Kosmosic begins
 
-Example: `1.9.7` → `2.0.0` (Tokyo → Odyssey)
+Example: `0.9.7` → `1.0.0` (Tokyo → Odyssey)
 
 ---
 
@@ -148,11 +148,11 @@ Example: `1.4.2` → `1.4.3` (added documentation)
 
 Releases may be referred to using either:
 
-**Kosmosic Tokyo 1.4.3**
+**Kosmosic Tokyo 0.8.0**
 
 or
 
-**v1.4.3 "Tokyo"**
+**v0.8.0 "Tokyo"**
 
 Both formats are considered official.
 
