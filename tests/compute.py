@@ -13,6 +13,5 @@ def calculate_expression(expression):
         r"\bsqrt\s+(.+)$", r"square root of \1",
         normalized_input, flags=re.IGNORECASE,
     )
-    normalized_input = re.sub(r"\be\b", "math.e", normalized_input)
     normalized = MathNormalizer.normalize(normalized_input)
     return MathNormalizer.safe_eval(normalized)
