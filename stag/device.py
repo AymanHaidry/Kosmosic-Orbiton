@@ -262,6 +262,7 @@ class DeviceController:
             except Exception as e:
                 return {"error": str(e)}
         elif cls.SYSTEM == "Linux":
+            brightnessctl_error = "brightnessctl returned no brightness data"
             try:
                 result = cls._run(["brightnessctl", "g"])
                 if result.returncode == 0:
