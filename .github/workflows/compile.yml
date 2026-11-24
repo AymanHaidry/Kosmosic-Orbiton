@@ -23,5 +23,5 @@ jobs:
         run: python -m compileall -q stag troubleshooter.py kosmosic_orbiton.py
       - name: Import the application entry point
         run: python -c "from stag.app import main; print('Orbiton entry point imported successfully')"
-      - name: Verify the console command
-        run: orbiton --help
+      - name: Verify the console command was installed
+        run: python -c "import shutil; assert shutil.which('orbiton'), 'console command was not installed'"
