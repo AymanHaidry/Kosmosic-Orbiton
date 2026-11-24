@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Removed the Kosmosic study-dashboard command and all direct app integration.
+- Split the former intelligence monolith into `stag/nlp.py`, `stag/math_engine.py`, and `stag/intelligence.py`.
+- Removed bundled/custom local intel loading; knowledge lookups now use Wikipedia rather than a preloaded fact database.
+- Migrated the user profile to `~/.stag/profile.json` while preserving the legacy JSON file as a backup.
+
 ### Fixed
 - Replaced string-filter-plus-`eval()` math evaluation with a bounded AST interpreter and an explicit allowlist.
 - Improved compound spoken-number parsing and word-boundary-aware operator replacement.

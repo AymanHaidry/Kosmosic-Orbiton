@@ -2,7 +2,7 @@
 * @AymanHaidry
 
 # Intelligence module — also requires review
-neuro_link_intel.py @AymanHaidry
+stag/ @AymanHaidry
 tests/compute/ @AymanHaidry
 
 # CI changes — require review

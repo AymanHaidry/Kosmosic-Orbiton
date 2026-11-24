@@ -23,4 +23,4 @@ jobs:
       - name: Install Bandit
         run: python -m pip install --upgrade bandit
       - name: Scan troubleshooter
-        run: bandit -r troubleshooter.py -f txt
+        run: bandit -r troubleshooter.py stag/ -f txt

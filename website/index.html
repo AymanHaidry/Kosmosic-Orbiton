@@ -524,7 +524,6 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
           <tr><td><span class="cat c-sys">&#128260; Control</span></td><td><code>reboot</code></td><td>Restart Orbiton session</td></tr>
           <tr><td><span class="cat c-sys">&#128164; Control</span></td><td><code>sleep</code></td><td>Put Orbiton to sleep</td></tr>
           <tr><td><span class="cat c-sys">&#9728; Control</span></td><td><code>wake / wake up / TOKYO</code></td><td>Wake Orbiton from sleep</td></tr>
-          <tr><td><span class="cat c-sys">&#127891; Control</span></td><td><code>kosmosic</code></td><td>Open the study dashboard</td></tr>
           <tr><td><span class="cat c-device">&#128267; Device</span></td><td><code>battery</code></td><td>Show battery level &amp; status</td></tr>
           <tr><td><span class="cat c-device">&#128266; Device</span></td><td><code>volume [up/down/mute]</code></td><td>Get/set/mute system volume</td></tr>
           <tr><td><span class="cat c-device">&#128161; Device</span></td><td><code>brightness [level]</code></td><td>Get/set screen brightness</td></tr>
@@ -546,8 +545,11 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
     </div>
     <div class="arch-tree reveal">
 <span class="d">Kosmosic-Orbiton/</span>
-&#9500;&#9472;&#9472; <span class="f">kosmosic_orbiton.py</span>          <span class="c"># Main entry point — voice loop, routing, OS integration</span>
-&#9500;&#9472;&#9472; <span class="f">neuro_link_intel.py</span>          <span class="c"># NLP, spoken math, knowledge lookup</span>
+&#9500;&#9472;&#9472; <span class="f">kosmosic_orbiton.py</span>          <span class="c"># Current app entry point</span>
+&#9500;&#9472;&#9472; <span class="d">stag/</span>                       <span class="c"># NLP, safe math, online knowledge</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="f">nlp.py</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="f">math_engine.py</span>
+&#9474;   &#9492;&#9472;&#9472; <span class="f">intelligence.py</span>
 &#9500;&#9472;&#9472; <span class="f">requirements.txt</span>             <span class="c"># Python dependencies</span>
 &#9500;&#9472;&#9472; <span class="f">README.md</span>                    <span class="c"># Project overview</span>
 &#9500;&#9472;&#9472; <span class="f">MANUAL.md</span>                    <span class="c"># User guide</span>
@@ -578,7 +580,7 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
       <div class="arch-card reveal">
         <h4>&#129504; Neuro-Link</h4>
         <p>NLP normalization, homophone correction, math expression parsing, Wikimedia scraping with local caching, and contextual routing to decide whether to search, calculate, or answer directly.</p>
-        <span class="tag">neuro_link_intel.py</span>
+        <span class="tag">stag/ (NLP, maths, intelligence)</span>
       </div>
       <div class="arch-card reveal">
         <h4>&#129514; Test Suite</h4>

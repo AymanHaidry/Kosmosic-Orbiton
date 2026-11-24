@@ -30,7 +30,7 @@ Relates to #
 - [ ] Edge cases handled
 
 ## 📊 Code Quality
-- [ ] `pylint` score ≥ 8.4 (`pylint kosmosic_orbiton.py neuro_link_intel.py`)
+- [ ] `pylint` score ≥ 8.4 (`pylint kosmosic_orbiton.py stag/`)
 - [ ] No new `R` or `C` pylint warnings (or justified)
 - [ ] Follows existing code style and patterns
 - [ ] No hardcoded paths or secrets
@@ -49,7 +49,7 @@ Relates to #
 <!-- If breaking, explain migration path. -->
 
 ## 🎤 Voice / NLP Impact
-<!-- Only check if this touches `neuro_link_intel.py` or voice commands -->
+<!-- Only check if this touches `stag/` or voice commands -->
 - [ ] No voice/NLP changes
 - [ ] New command added: `_________________`
 - [ ] Command modified: `_________________`
