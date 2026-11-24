@@ -9,7 +9,7 @@
 
 import sys
 import os
-import subprocess
+import subprocess  # nosec B404 - calls are centralized in the argument-vector-only run_cmd wrapper
 import shutil
 import json
 import platform
