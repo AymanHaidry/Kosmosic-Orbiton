@@ -39,6 +39,7 @@ Say **"TOKYO"** to wake the assistant, or type commands directly in the terminal
 | Compute | ![Compute](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/compute.yml/badge.svg) |
 | Launch | ![Launch](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/launch.yml/badge.svg) |
 | System | ![System](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/system.yml/badge.svg) |
+| Troubleshooter | ![Troubleshooter](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/troubleshooter.yml/badge.svg) |
 | Integration | ![Integration](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/integration.yml/badge.svg) |
 | Pylint | ![Pylint](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/pylint.yml/badge.svg) |
 
