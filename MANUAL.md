@@ -35,7 +35,7 @@
 
 ## 1. What Is Orbiton?
 
-Orbiton is a **Python-powered desktop voice assistant** that turns your computer (and ideally your headset) into a wireless command terminal. You speak, it acts. No cloud. No bloat. No subscriptions.
+Orbiton is a **Python-powered desktop voice assistant** that turns your computer (and ideally your headset) into a wireless command terminal. You speak, it acts. No account or subscription is required. Speech recognition, neural speech, Wikipedia and web searches use their respective online services.
 
 ### The One-Sentence Pitch
 > *"We put the world around your head."*
@@ -1335,25 +1335,20 @@ You speak -> Microphone -> AudioListener
 
 ```
 You speak -> "tell me about black holes"
-                                    |
-                         NLP normalize -> "tell me about black holes"
-                                    |
-                         IntelligenceOrchestrator.process()
-                                    |
-                         Is it a time query? No.
-                         Is it a weather query? No.
-                         Is it a general knowledge question? Yes.
-                                    |
-                         KnowledgeEngine.lookup("black holes")
-                                    |
-                         Found in local Space Facts? Yes -> Return fact.
-                         Not found? -> WikimediaScraper.search_topic("black holes")
-                                    |
-                         No local cache is written.
-                                    |
-                         Return first 500 chars
-                                    |
-                         VoiceManager.speak("A black hole is a region of spacetime...")
+                                     |
+                          IntelligenceOrchestrator.process()
+                                     |
+                          WikipediaClient.search_topic("black holes")
+                                     |
+                          Summary found? -> Return extract + source URL.
+                          No summary or network unavailable? -> Open web search.
+                                     |
+                          No bundled fact database or persistent cache.
+                                     |
+                          VoiceManager.speak(summary)
+```
+
+
 ```
 
 ---

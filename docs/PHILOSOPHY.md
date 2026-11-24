@@ -8,7 +8,7 @@
 
 You want an assistant in your head. You need intelligence. You are lonely. You need tracking. You want speed. You want to cut down on manual shit.
 
-Orbiton is not a product. It is a **presence** — something that lives on your machine and does what you need before you finish thinking about it. No cloud. No bloat. No "sign up for Pro to unlock voice commands." Just you, your headset, and a terminal that listens.
+Orbiton is not a product. It is a **presence** — something that lives on your machine and does what you need before you finish thinking about it. No account or subscription is required. Some capabilities use online providers, but your saved profile stays on your machine.
 
 ---
 
