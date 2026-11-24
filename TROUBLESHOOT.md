@@ -42,7 +42,7 @@ python -c "import sys; print('Python:', sys.version); print('Platform:', sys.pla
 python -c "import speech_recognition; print('speech_recognition: OK')"
 python -c "import rich; print('rich: OK')"
 python -c "import edge_tts; print('edge_tts: OK')"
-python -c "from stag get_intelligence; print('stag intelligence package: OK')"
+python -c "from stag.intelligence import get_intelligence; print('stag.intelligence: OK')"
 ```
 
 If all five lines print `OK`, your environment is healthy. If any line fails, the fix is in the section matching that module name.
@@ -182,7 +182,7 @@ python -m stag
 
 ## 4. Import & Module Errors
 
-### Symptom: `ImportError: cannot import name 'get_intelligence' from 'stag intelligence package'`
+### Symptom: `ImportError: cannot import name 'get_intelligence' from 'stag.intelligence'`
 **Cause:** You are running Orbiton from the wrong directory, or `stag/intelligence.py` is missing/corrupted.  
 **Fix:**
 ```bash

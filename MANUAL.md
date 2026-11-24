@@ -407,7 +407,7 @@ This section documents **every single command** Orbiton understands. Each entry 
 **What it does:**
 1. Checks local knowledge bases (moon phases, aviation facts, space facts).
 2. If not found locally, queries Wikipedia REST API.
-3. Caches the result in `no persistent cache`.
+3. Returns the summary without writing a persistent local cache.
 4. Speaks the first ~500 characters of the answer.
 
 ---
@@ -747,7 +747,7 @@ CONFIG = {
     "phrase_limit": 6,
     "max_errors_before_reset": 50,
     "wake_word": "tokyo",
-    "memory_file": str(Path.home() / ".neuro_link_memory.json"),
+    "memory_file": str(Path.home() / ".stag" / "profile.json"),
     "voice": "en-US-AriaNeural",
 }
 ```
@@ -1363,7 +1363,7 @@ You speak -> "tell me about black holes"
                          Found in local Space Facts? Yes -> Return fact.
                          Not found? -> WikimediaScraper.search_topic("black holes")
                                     |
-                         Cache result to no persistent cacheblack_holes.txt
+                         No local cache is written.
                                     |
                          Return first 500 chars
                                     |
