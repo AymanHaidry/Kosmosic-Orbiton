@@ -989,12 +989,11 @@ def flow_other():
 
     print(f"\n{Colors.BOLD}Files:{Colors.RESET}")
     results["main_file"] = check_file_exists("kosmosic_orbiton.py")
-    results["intel_file"] = check_file_exists("stag/intelligence.py")
+    results["intelligence_module"] = check_file_exists("stag/intelligence.py")
 
     print(f"\n{Colors.BOLD}Data Files:{Colors.RESET}")
     home = Path.home()
     results["memory_json"] = check_json_file(home / ".stag" / "profile.json")
-    results["intel_dir"] = check_file_exists(home / ".stag intelligence", "Intel dir")
 
     print(f"\n{Colors.BOLD}Network:{Colors.RESET}")
     results["internet"] = check_internet()

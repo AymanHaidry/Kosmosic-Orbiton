@@ -8,7 +8,8 @@
 
 | Workflow | File | Purpose |
 |----------|------|---------|
-| Intelligence | `.github/workflows/intelligence.yml` | Wikipedia client and knowledge routing tests |\n| Core Logic | `.github/workflows/core-logic.yml` | Intent parsing, command patterns, NLP |
+| Intelligence | `.github/workflows/intelligence.yml` | Wikipedia client and knowledge routing tests |
+| Core Logic | `.github/workflows/core-logic.yml` | Intent parsing, command patterns, NLP |
 | URL Engine | `.github/workflows/url-engine.yml` | URL generation |
 | Compute | `.github/workflows/compute.yml` | Arithmetic and math safety |
 | Launch | `.github/workflows/launch.yml` | File, project, and script operations |
@@ -20,7 +21,7 @@
 | Python Tests | `.github/workflows/python-tests.yml` | Aggregate test workflow |
 | Python Tests per File | `.github/workflows/python-tests-per-file.yml` | Per-file test matrix |
 | FileDiff | `.github/workflows/filediff.yml` | Repository diff automation |
-| Static | `.github/workflows/static.yml` | Static repository checks |
+| GitHub Pages | `.github/workflows/deploy-pages.yml` | Optional static-site deployment |
 
 ---
 

@@ -1439,7 +1439,7 @@ class CommandEngine:
         self.speak("Rebooting Orbiton. See you in a moment.")
         self.ui.show_info("🔄 Rebooting...")
         time.sleep(1)
-        subprocess.Popen([sys.executable, str(Path(__file__).resolve().with_name("stag.py"))], 
+        subprocess.Popen([sys.executable, "-m", "stag"], 
                         creationflags=subprocess.CREATE_NEW_CONSOLE if sys.platform == "win32" else 0)
         sys.exit(0)
 

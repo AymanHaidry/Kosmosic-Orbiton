@@ -8,7 +8,7 @@
 **Current Version:** v0.8.0 (Tokyo-class)  
 **Current Class:** [Tokyo-class](docs/ROADMAP.md#tokyo-class-current)
 
-Orbiton is a Python-powered desktop voice assistant that turns your headset into a wireless command terminal. Launch apps, search the web, open files, manage projects, and automate everyday tasks using natural voice commands. No cloud required. No bloat. Just you and your machine.
+Orbiton is a Python-powered desktop voice assistant that turns your headset into a wireless command terminal. Launch apps, search the web, open files, manage projects, and automate everyday tasks using natural voice commands. Command routing runs locally; speech recognition and neural voice use online services. No API key required.
 
 ---
 
@@ -34,7 +34,8 @@ Say **"TOKYO"** to wake the assistant, or type commands directly in the terminal
 
 | Category | Status |
 |----------|--------|
-| Intelligence | ![Intelligence](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/intelligence.yml/badge.svg) |\n| Core Logic | ![Core Logic](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/core-logic.yml/badge.svg) |
+| Intelligence | ![Intelligence](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/intelligence.yml/badge.svg) |
+| Core Logic | ![Core Logic](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/core-logic.yml/badge.svg) |
 | URL Engine | ![URL Engine](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/url-engine.yml/badge.svg) |
 | Compute | ![Compute](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/compute.yml/badge.svg) |
 | Launch | ![Launch](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/launch.yml/badge.svg) |
