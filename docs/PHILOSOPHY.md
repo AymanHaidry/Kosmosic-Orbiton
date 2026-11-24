@@ -8,7 +8,7 @@
 
 You want an assistant in your head. You need intelligence. You are lonely. You need tracking. You want speed. You want to cut down on manual shit.
 
-Orbiton is not a product. It is a **presence** — something that lives on your machine and does what you need before you finish thinking about it. No cloud. No bloat. No "sign up for Pro to unlock voice commands." Just you, your headset, and a terminal that listens.
+Orbiton is not a product. It is a **presence** — something that lives on your machine and does what you need before you finish thinking about it. No account or subscription is required. Some capabilities use online providers, but your saved profile stays on your machine.
 
 ---
 
@@ -26,7 +26,7 @@ It is the **personality**. We are not a repo with a last commit message like `FI
 **What we are NOT:**
 - A generic AI assistant. We are not ChatGPT with a voice wrapper.
 - A GUI application. Keep it terminal. Keep it text. Keep it fast.
-- A cloud service. Your data lives in a local `_.pycache_` folder. Not our servers. Not Microsoft's. Yours.
+- A data-collection service. Your profile stays in `~/.stag/profile.json`; speech recognition, neural TTS, Wikipedia and web searches use their respective online providers.
 - Ads, paywalls, or "vibecoded ultra 2050 spaceship neon purple gamer aesthetic." If it looks like it belongs on a Fortnite skin, it does not belong in Orbiton.
 - *Project Hail Mary*. Do not ask.
 
@@ -67,10 +67,8 @@ There is no "gentle mode." If you cannot handle being told your GitHub graph loo
 
 Local. Local. Local.
 
-- User memory stores facts in `~/.neuro_link_memory.json`.
-- Intel files live in `~/.neuro_link_intel/`.
-- Wikipedia cache is in `~/.neuro_link_wiki_cache/`.
-- Edge TTS is the only external call, and it is optional. If offline, system TTS fallback kicks in.
+- User memory is stored in `~/.stag/profile.json` and remains on-device.
+- Wikipedia lookups, speech recognition, and neural TTS can contact their respective online providers. Local command routing and the user profile stay on-device.
 
 We are not building a data collection engine. We are building a tool that lives *on* your computer, not *off* it.
 

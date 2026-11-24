@@ -8,6 +8,7 @@
 
 | Workflow | File | Purpose |
 |----------|------|---------|
+| Intelligence | `.github/workflows/intelligence.yml` | Wikipedia client and knowledge routing tests |
 | Core Logic | `.github/workflows/core-logic.yml` | Intent parsing, command patterns, NLP |
 | URL Engine | `.github/workflows/url-engine.yml` | URL generation |
 | Compute | `.github/workflows/compute.yml` | Arithmetic and math safety |
@@ -20,7 +21,7 @@
 | Python Tests | `.github/workflows/python-tests.yml` | Aggregate test workflow |
 | Python Tests per File | `.github/workflows/python-tests-per-file.yml` | Per-file test matrix |
 | FileDiff | `.github/workflows/filediff.yml` | Repository diff automation |
-| Static | `.github/workflows/static.yml` | Static repository checks |
+| GitHub Pages | `.github/workflows/deploy-pages.yml` | Optional static-site deployment |
 
 ---
 
@@ -51,8 +52,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-      - run: pip install pytest speechrecognition rich
-      - run: pytest tests/<category>/ -v --tb=short
+      - run: pip install -r requirements-dev.txt
+      - run: pytest tests/unit/<category>/ -v --tb=short
 ```
 
 ---
@@ -97,7 +98,7 @@ Badge to add:
 
 ## Pylint Workflow
 
-The pylint workflow is special — it doesn't run tests, it checks code quality:
+The pylint workflow is special — it doesn't run tests, it checks code quality across the application package and diagnostic tool:
 
 ```yaml
 name: Pylint
@@ -112,8 +113,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-      - run: pip install pylint
-      - run: pylint kosmosic_orbiton.py neuro_link_intel.py
+      - run: pip install -r requirements-dev.txt
+      - run: pylint stag/ troubleshooter.py
 ```
 
 ---
@@ -126,7 +127,7 @@ jobs:
 | `subprocess` patch fails on Windows | Wrong patch target | See `tests/launch/` for `_patch_open_explorer()` pattern |
 | `Path.exists()` returns False | CI doesn't have real folders | Mock `Path.exists` and `Path.is_dir` in tests |
 | Tests pass locally but fail in CI | OS difference | Ensure tests work on both Windows and Ubuntu |
-| Pylint fails | Code style issues | Run `pylint kosmosic_orbiton.py neuro_link_intel.py` locally |
+| Pylint fails | Code style issues | Run `pylint stag/ troubleshooter.py` locally |
 
 ---
 

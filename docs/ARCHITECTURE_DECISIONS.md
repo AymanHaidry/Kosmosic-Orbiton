@@ -121,10 +121,10 @@ Orbiton needed a distinctive wake word that is unlikely to appear in normal conv
 
 ---
 
-## ADR-005: Separation of Intelligence Module (`neuro_link_intel.py`)
+## ADR-005: Single-file Intelligence Module (Superseded)
 
 **Date:** 2026-06-07  
-**Status:** Accepted  
+**Status:** Superseded by ADR-011  
 **Version:** v0.4.0
 
 ### Decision
@@ -293,3 +293,38 @@ City/concept names are memorable, internationally recognizable, and convey a sen
 
 *Last updated: 2026-11-24 by Orbiton Workflow Agent (scheduled health scan)*  
 *For the full roadmap, see [ROADMAP.md](ROADMAP.md)*
+
+
+---
+
+## ADR-011: Focused Stag Package Modules
+
+**Date:** 2026-11-24  
+**Status:** Accepted  
+**Version:** Cleanup Drive
+
+### Decision
+Split NLP, safe arithmetic, and online knowledge routing into separately testable modules under `stag/`. Remove the old `neuro_link_intel.py` module and its local static/custom knowledge database.
+
+### Rationale
+The former file combined unrelated concerns and created a misleading impression that general knowledge was preloaded. Focused modules improve testability and make the live-research provider easier to replace.
+
+
+---
+
+## ADR-012: Modular Application Package
+
+**Date:** 2026-11-24  
+**Status:** Accepted  
+**Version:** Cleanup Drive
+
+### Decision
+Move application responsibilities into focused modules under `stag/`: app lifecycle, commands, configuration, device integrations, intelligence, memory, NLP, parsing, terminal UI, and voice output. Keep `kosmosic_orbiton.py` as a compatibility launcher and expose an installable `orbiton` console command.
+
+### Rationale
+The previous entry point mixed nearly every concern in one file. A package makes responsibilities visible, lets contributors locate code without searching a monolith, and provides a stable public launch command without forcing a breaking change on existing scripts.
+
+### Consequences
+- New code should import from `stag.*`.
+- The recommended launch commands are `orbiton` or `python -m stag`.
+- The compatibility launcher remains until the separate rebrand work decides its final public name.

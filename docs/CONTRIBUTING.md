@@ -1,4 +1,4 @@
-# Contributing to Kosmosic Orbiton
+# Contributing to Orbiton
 
 Thanks for checking out Orbiton. Whether you are fixing a bug, adding a command, or just cleaning up code, this guide will get you started.
 
@@ -34,7 +34,7 @@ Orbiton is a **voice-first command terminal** built for people who want the worl
 **What we are NOT:**
 - A general-purpose chatbot (use ChatGPT for that).
 - A GUI application (keep it terminal + voice).
-- A cloud service. Your data lives in a local `_.pycache_` folder. Not our servers. Not Microsoft's. Yours.
+- A data-collection service. The user profile stays on-device; speech recognition, neural TTS, Wikipedia and web searches use their respective online providers.
 - Ads, paywalls, or "vibecoded ultra 2050 spaceship neon purple gamer aesthetic." If it looks like it belongs on a Fortnite skin, it does not belong in Orbiton.
 - *Project Hail Mary*. Do not ask.
 
@@ -55,13 +55,15 @@ Orbiton is a **voice-first command terminal** built for people who want the worl
 ```bash
 git clone https://github.com/AymanHaidry/Kosmosic-Orbiton.git
 cd Kosmosic-Orbiton
-pip install -r requirements.txt   # or: pip install speechrecognition rich edge-tts
+python -m pip install -e .
+# For contributor tools:
+python -m pip install -r requirements-dev.txt
 ```
 
 ### Run it locally
 
 ```bash
-python kosmosic_orbiton.py
+python -m stag
 ```
 
 Say **"Tokyo"** to wake it up, then try any command.
@@ -107,18 +109,18 @@ Before you open a PR, make sure you can check every box:
 Run the full test suite:
 
 ```bash
-pytest tests/ -v
+python -m pytest tests/ -v
 ```
 
 All tests must pass. If you added a new command, add tests for it:
 
 | What you added | Test file to create/modify |
 |---|---|
-| New URL-opening command | `tests/url_engine/test_<command>_urls.py` |
-| New intent/parser pattern | `tests/core_logic/test_intent_parser.py` |
-| New file/folder behavior | `tests/launch/test_<feature>.py` |
-| New math/utility | `tests/compute/test_<feature>.py` (test `MathNormalizer` directly where applicable) |
-| New system feature | `tests/system/test_<feature>.py` |
+| New URL-opening command | `tests/unit/url_engine/test_<command>_urls.py` |
+| New intent/parser pattern | `tests/unit/core_logic/test_intent_parser.py` |
+| New file/folder behavior | `tests/unit/launch/test_<feature>.py` |
+| New math/utility | `tests/unit/compute/test_<feature>.py` (test `MathNormalizer` directly where applicable) |
+| New system feature | `tests/unit/system/test_<feature>.py` |
 | End-to-end flow | `tests/integration/test_<feature>_flow.py` |
 
 ### For voice commands
@@ -144,7 +146,7 @@ If you fixed a bug:
 
 Want to add "translate hello to French" or "set a timer for 5 minutes"? Here is the checklist:
 
-### 1. Add the handler in `kosmosic_orbiton.py`
+### 1. Add the handler in `stag/commands.py`
 
 ```python
 def handle_translate(self, query: str):
@@ -155,13 +157,13 @@ def handle_translate(self, query: str):
     self.speak(msg)
 ```
 
-### 2. Add the intent pattern in `IntentParser.PATTERNS`
+### 2. Add the intent pattern in `stag/parser.py` (`IntentParser.PATTERNS`)
 
 ```python
 (r"^(?:translate|translation|what does)\s+(.+)", "translate"),
 ```
 
-### 3. Add NLP support in `neuro_link_intel.py` (optional but recommended)
+### 3. Add NLP support in `stag/nlp.py` (optional but recommended)
 
 If the command is commonly misheard, add homophones:
 
@@ -172,7 +174,7 @@ If the command is commonly misheard, add homophones:
 
 ### 4. Add it to the help table
 
-In `ALL_COMMANDS`:
+In `stag/config.py`, update `ALL_COMMANDS`:
 
 ```python
 ("Translate", "translate <text>", "Google Translate anything"),
@@ -180,8 +182,8 @@ In `ALL_COMMANDS`:
 
 ### 5. Add tests
 
-- `tests/url_engine/test_translate_urls.py` — verify URL generation.
-- `tests/core_logic/test_intent_parser.py` — verify intent recognition.
+- `tests/unit/url_engine/test_translate_urls.py` — verify URL generation.
+- `tests/unit/core_logic/test_intent_parser.py` — verify intent recognition.
 - `tests/integration/test_translate_flow.py` — verify end-to-end flow.
 
 ### 6. Update this doc if needed
@@ -203,7 +205,7 @@ We do not enforce a formatter, but keep it consistent with what is already there
 If you are unsure, run:
 
 ```bash
-python -m py_compile kosmosic_orbiton.py neuro_link_intel.py
+python -m compileall -q stag/
 ```
 
 If it compiles, you are probably fine.
@@ -237,7 +239,7 @@ The self-listening cooldown was added in v0.7.3. Remaining known work includes:
 ## Need Help?
 
 - **Open an issue:** For bugs, feature requests, or "how do I..." questions.
-- **Check the code:** The docstrings are actually decent. Start with `kosmosic_orbiton.py` -> `CommandEngine`.
+- **Check the code:** The docstrings are actually decent. Start with `stag/commands.py` -> `CommandEngine`.
 - **Read the roadmap:** If you want to know where the project is headed.
 
 ---

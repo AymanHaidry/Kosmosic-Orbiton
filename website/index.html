@@ -474,7 +474,7 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
       <div class="scene-visual"><div class="scene-icon">&#128218;</div></div>
       <div class="scene-text">
         <h3>Live Knowledge Lookup</h3>
-        <p>Wikimedia scraping with local caching. Ask <code>"tell me about constellations"</code> or <code>"what is the capital of Mongolia"</code> &mdash; Orbiton queries Wikipedia and Wiktionary live, caches results, and reads them back to you.</p>
+        <p>Live Wikipedia page summaries with a source link. Ask <code>"tell me about constellations"</code> or <code>"what is the capital of Mongolia"</code> &mdash; Orbiton looks it up when you ask. If no useful summary is available, it falls back to web search.</p>
       </div>
     </div>
 
@@ -524,7 +524,6 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
           <tr><td><span class="cat c-sys">&#128260; Control</span></td><td><code>reboot</code></td><td>Restart Orbiton session</td></tr>
           <tr><td><span class="cat c-sys">&#128164; Control</span></td><td><code>sleep</code></td><td>Put Orbiton to sleep</td></tr>
           <tr><td><span class="cat c-sys">&#9728; Control</span></td><td><code>wake / wake up / TOKYO</code></td><td>Wake Orbiton from sleep</td></tr>
-          <tr><td><span class="cat c-sys">&#127891; Control</span></td><td><code>kosmosic</code></td><td>Open the study dashboard</td></tr>
           <tr><td><span class="cat c-device">&#128267; Device</span></td><td><code>battery</code></td><td>Show battery level &amp; status</td></tr>
           <tr><td><span class="cat c-device">&#128266; Device</span></td><td><code>volume [up/down/mute]</code></td><td>Get/set/mute system volume</td></tr>
           <tr><td><span class="cat c-device">&#128161; Device</span></td><td><code>brightness [level]</code></td><td>Get/set screen brightness</td></tr>
@@ -542,43 +541,38 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
     <div class="section-head reveal">
       <div class="kicker">Architecture</div>
       <h2>Built to be understood.</h2>
-      <p>Orbiton&rsquo;s architecture is intentionally flat. Two core files. One purpose. Zero indirection.</p>
+      <p>Orbiton&rsquo;s application is organized into focused modules. Each part has a clear job, without making the user deal with the internal wiring.</p>
     </div>
     <div class="arch-tree reveal">
-<span class="d">Kosmosic-Orbiton/</span>
-&#9500;&#9472;&#9472; <span class="f">kosmosic_orbiton.py</span>          <span class="c"># Main entry point — voice loop, routing, OS integration</span>
-&#9500;&#9472;&#9472; <span class="f">neuro_link_intel.py</span>          <span class="c"># NLP, spoken math, knowledge lookup</span>
-&#9500;&#9472;&#9472; <span class="f">requirements.txt</span>             <span class="c"># Python dependencies</span>
-&#9500;&#9472;&#9472; <span class="f">README.md</span>                    <span class="c"># Project overview</span>
-&#9500;&#9472;&#9472; <span class="f">MANUAL.md</span>                    <span class="c"># User guide</span>
-&#9500;&#9472;&#9472; <span class="f">TROUBLESHOOT.md</span>              <span class="c"># Troubleshooting reference</span>
-&#9500;&#9472;&#9472; <span class="d">website/</span>
-&#9474;   &#9492;&#9472;&#9472; <span class="f">index.html</span>                 <span class="c"># Project website</span>
-&#9500;&#9472;&#9472; <span class="d">docs/</span>
-&#9474;   &#9500;&#9472;&#9472; <span class="f">PROJECT_CONTEXT.md</span>         <span class="c"># Current architecture and status</span>
-&#9474;   &#9500;&#9472;&#9472; <span class="f">CHANGELOG.md</span>               <span class="c"># Release history</span>
-&#9474;   &#9500;&#9472;&#9472; <span class="f">TESTS.md / TEST_STATUS.md</span>  <span class="c"># Test architecture and CI status</span>
-&#9474;   &#9492;&#9472;&#9472; <span class="f">WORKFLOWS.md</span>               <span class="c"># GitHub Actions inventory</span>
-&#9500;&#9472;&#9472; <span class="d">tests/</span>                         <span class="c"># pytest suite</span>
-&#9474;   &#9500;&#9472;&#9472; <span class="d">core_logic/</span>                <span class="c"># Intent and command patterns</span>
-&#9474;   &#9500;&#9472;&#9472; <span class="d">url_engine/</span>                <span class="c"># URL generation</span>
-&#9474;   &#9500;&#9472;&#9472; <span class="d">compute/</span>                   <span class="c"># Arithmetic and safety</span>
-&#9474;   &#9500;&#9472;&#9472; <span class="d">launch/</span>                    <span class="c"># File and project launching</span>
-&#9474;   &#9500;&#9472;&#9472; <span class="d">system/</span>                    <span class="c"># TTS cooldown and system behavior</span>
-&#9474;   &#9500;&#9472;&#9472; <span class="d">integration/</span>               <span class="c"># End-to-end flows</span>
-&#9474;   &#9492;&#9472;&#9472; <span class="d">troubleshooter/</span>            <span class="c"># Diagnostic tool tests</span>
-&#9492;&#9472;&#9472; <span class="d">.github/workflows/</span>             <span class="c"># Test, lint, security CI</span>
-    </div>
+<span class="d">Orbiton/</span>
+&#9500;&#9472;&#9472; <span class="d">stag/</span>                       <span class="c"># Application package</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="f">app.py</span>                    <span class="c"># Startup and input loop</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="f">commands.py</span>               <span class="c"># Command handlers</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="f">config.py</span>                 <span class="c"># Settings and command catalogue</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="f">device.py</span>                 <span class="c"># System integrations</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="f">intelligence.py</span>           <span class="c"># Live knowledge lookup</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="f">math_engine.py</span>            <span class="c"># Safe arithmetic</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="f">memory.py</span>                 <span class="c"># Local user profile</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="f">nlp.py</span>                    <span class="c"># Speech normalization</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="f">parser.py</span>                 <span class="c"># Command matching</span>
+&#9474;   &#9500;&#9472;&#9472; <span class="f">ui.py</span>                     <span class="c"># Terminal presentation</span>
+&#9474;   &#9492;&#9472;&#9472; <span class="f">voice.py</span>                  <span class="c"># Speech output</span>
+&#9500;&#9472;&#9472; <span class="d">docs/</span>                       <span class="c"># User and developer docs</span>
+&#9500;&#9472;&#9472; <span class="d">tests/</span>                      <span class="c"># Automated checks</span>
+&#9500;&#9472;&#9472; <span class="d">website/</span>                    <span class="c"># Public website</span>
+&#9500;&#9472;&#9472; <span class="f">troubleshooter.py</span>           <span class="c"># Diagnostics</span>
+&#9500;&#9472;&#9472; <span class="f">pyproject.toml</span>              <span class="c"># Install metadata</span>
+&#9492;&#9472;&#9472; <span class="f">kosmosic_orbiton.py</span>         <span class="c"># Legacy compatibility launcher</span></div>
     <div class="arch-cards">
       <div class="arch-card reveal">
         <h4>&#127919; Core Logic</h4>
-        <p>The voice recognition loop, wake word detection, and command routing. Handles audio timeout, phrase limits, and error recovery with automatic reset after 50 consecutive failures.</p>
-        <span class="tag">kosmosic_orbiton.py</span>
+        <p>The startup and input lifecycle, wake/sleep state, and shared typed/voice command processing.</p>
+        <span class="tag">stag/app.py</span>
       </div>
       <div class="arch-card reveal">
         <h4>&#129504; Neuro-Link</h4>
-        <p>NLP normalization, homophone correction, math expression parsing, Wikimedia scraping with local caching, and contextual routing to decide whether to search, calculate, or answer directly.</p>
-        <span class="tag">neuro_link_intel.py</span>
+        <p>Speech normalization, safe maths, command routing, and live Wikipedia summaries. No bundled fact database or persistent Wikipedia cache.</p>
+        <span class="tag">stag/</span>
       </div>
       <div class="arch-card reveal">
         <h4>&#129514; Test Suite</h4>
@@ -645,7 +639,7 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
     <div class="intel-scene scene-reverse reveal">
       <div class="scene-text">
         <h4>&#128190; Persistent Memory</h4>
-        <p>User information stored in <code>~/.neuro_link_memory.json</code>. Orbiton remembers who you are, your preferences, and your session history across reboots.</p>
+        <p>User information stored in <code>~/.stag/profile.json</code>. Orbiton can retain selected profile facts locally between sessions.</p>
       </div>
       <div class="scene-visual"><div class="scene-icon">&#128190;</div></div>
     </div>
@@ -829,10 +823,10 @@ footer { padding:64px 48px 48px; border-top:1px solid rgba(26,26,26,0.05); backg
 <span class="cm2">cd</span> Kosmosic-Orbiton
 
 <span class="cm"># 2. Install dependencies</span>
-<span class="cm2">pip</span> <span class="cm3">install</span> -r requirements.txt
+<span class="cm2">pip</span> <span class="cm3">install</span> -e .
 
 <span class="cm"># 3. Run Orbiton</span>
-<span class="cm2">python</span> kosmosic_orbiton.py
+<span class="cm2">orbiton</span>
       </div>
       <div class="build-actions">
         <a href="https://github.com/AymanHaidry/Kosmosic-Orbiton" target="_blank" class="btn btn-fill">

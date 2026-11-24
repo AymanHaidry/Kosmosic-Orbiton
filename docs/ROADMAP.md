@@ -37,8 +37,7 @@ See [VERSIONS.md](VERSIONS.md) for the full versioning system and release rules.
 - Toxic motivation engine
 - Session status and time
 - User memory (learns facts about you)
-- Local knowledge base (moon phases, aviation facts, space facts)
-- Wikimedia scraping with caching
+- Live Wikipedia page-summary lookups (no bundled fact database or persistent cache)
 - Cross-platform: Windows, macOS, Linux
 - **Device control suite** — battery, volume, brightness, WiFi, Bluetooth, system info
 
@@ -78,7 +77,7 @@ Agentic behavior and true automation.
 ### Agentic Tasks
 - **Long-running tasks** — "remind me in 2 hours," "download this when WiFi is back"
 - **Predictive execution** — suggest commands based on time of day, habits, calendar
-- **Multi-step workflows** — "study mode" opens Kosmosic, sets timer, enables Do Not Disturb
+- **Multi-step workflows** — "focus mode" starts a timer and enables Do Not Disturb
 - **Talk to others** — share commands or intel files between Orbiton instances
 
 ### PC Management

@@ -1,0 +1,27 @@
+name: Compile Application
+
+on:
+  push:
+    branches: ['*']
+  pull_request:
+    branches: ['*']
+
+permissions:
+  contents: read
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install the application package
+        run: python -m pip install -e .
+      - name: Compile application modules
+        run: python -m compileall -q stag troubleshooter.py kosmosic_orbiton.py
+      - name: Import the application entry point
+        run: python -c "from stag.app import main; print('Orbiton entry point imported successfully')"
+      - name: Verify the console command was installed
+        run: python -c "import shutil; assert shutil.which('orbiton'), 'console command was not installed'"

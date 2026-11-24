@@ -2,11 +2,11 @@
 import sys
 import os
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
-# Add repo root to path regardless of where tests are run from
 _repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, _repo_root)
+if _repo_root not in sys.path:
+    sys.path.insert(0, _repo_root)
 
 
 @pytest.fixture
@@ -45,11 +45,11 @@ def mock_intel():
 
 @pytest.fixture
 def engine(mock_ui, mock_voice, mock_memory, mock_intel):
-    from kosmosic_orbiton import CommandEngine
+    from stag.commands import CommandEngine
     return CommandEngine(mock_ui, mock_voice, mock_memory, mock_intel)
 
 
 @pytest.fixture
 def parser():
-    from kosmosic_orbiton import IntentParser
+    from stag.parser import IntentParser
     return IntentParser()

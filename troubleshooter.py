@@ -583,17 +583,19 @@ def flow_wont_start():
                 pip_name = "speechrecognition" if mod == "speech_recognition" else mod
                 install_module(mod, pip_name)
 
-    # Check 4: neuro_link_intel.py exists and imports
+    # Check 4: stag/intelligence.py exists and imports
     print(f"\n{Colors.BOLD}Checking intelligence module...{Colors.RESET}")
-    results["neuro_link_intel"] = check_file_exists("neuro_link_intel.py")
-    if results["neuro_link_intel"]:
+    results["stag_intelligence"] = check_file_exists("stag/intelligence.py")
+    if results["stag_intelligence"]:
         try:
-            from neuro_link_intel import get_intelligence, NaturalLanguageProcessor, MathNormalizer
-            print(f"  {Colors.ok('neuro_link_intel')} imports successfully")
-            results["neuro_link_intel_import"] = True
+            from stag.intelligence import get_intelligence
+            from stag.nlp import NaturalLanguageProcessor
+            from stag.math_engine import MathNormalizer
+            print(f"  {Colors.ok('stag intelligence')} imports successfully")
+            results["stag_intelligence_import"] = True
         except Exception as e:
-            print(f"  {Colors.fail('neuro_link_intel')} import FAILED: {e}")
-            results["neuro_link_intel_import"] = False
+            print(f"  {Colors.fail('stag intelligence')} import FAILED: {e}")
+            results["stag_intelligence_import"] = False
             print(f"\n  {Colors.RED}FATAL:{Colors.RESET} The intelligence module is corrupted.")
             print(f"  {Colors.CYAN}→{Colors.RESET} Re-clone the repo:")
             print(f"     cd ..")
@@ -820,7 +822,7 @@ def flow_commands_wrong():
     elif choice == "3":
         print(f"\n{Colors.BOLD}Checking calculate command...{Colors.RESET}")
         try:
-            from neuro_link_intel import MathNormalizer
+            from stag.math_engine import MathNormalizer
             test_cases = [
                 ("two times two", "4"),
                 ("twenty five divided by five", "5.0"),
@@ -987,13 +989,11 @@ def flow_other():
 
     print(f"\n{Colors.BOLD}Files:{Colors.RESET}")
     results["main_file"] = check_file_exists("kosmosic_orbiton.py")
-    results["intel_file"] = check_file_exists("neuro_link_intel.py")
+    results["intelligence_module"] = check_file_exists("stag/intelligence.py")
 
     print(f"\n{Colors.BOLD}Data Files:{Colors.RESET}")
     home = Path.home()
-    results["memory_json"] = check_json_file(home / ".neuro_link_memory.json")
-    results["wiki_cache"] = check_file_exists(home / ".neuro_link_wiki_cache", "Wiki cache dir")
-    results["intel_dir"] = check_file_exists(home / ".neuro_link_intel", "Intel dir")
+    results["memory_json"] = check_json_file(home / ".stag" / "profile.json")
 
     print(f"\n{Colors.BOLD}Network:{Colors.RESET}")
     results["internet"] = check_internet()

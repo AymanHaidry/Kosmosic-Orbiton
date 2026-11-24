@@ -35,7 +35,7 @@
 
 ## 1. What Is Orbiton?
 
-Orbiton is a **Python-powered desktop voice assistant** that turns your computer (and ideally your headset) into a wireless command terminal. You speak, it acts. No cloud. No bloat. No subscriptions.
+Orbiton is a **Python-powered desktop voice assistant** that turns your computer (and ideally your headset) into a wireless command terminal. You speak, it acts. No account or subscription is required. Speech recognition, neural speech, Wikipedia and web searches use their respective online services.
 
 ### The One-Sentence Pitch
 > *"We put the world around your head."*
@@ -63,7 +63,7 @@ It is built for:
 - People who want to multitask (voice command while hands stay on keyboard)
 - People who are tired of slopware and bloatware
 
-**Privacy stance:** Local. Local. Local. Your data lives in `~/.neuro_link_memory.json`, `~/.neuro_link_intel/`, and `~/.neuro_link_wiki_cache/`. Nothing phones home.
+**Privacy stance:** The user profile stays on this device. Knowledge lookups contact Wikipedia online, while speech recognition and neural TTS use their configured online providers.
 
 ---
 
@@ -101,11 +101,11 @@ It is built for:
 Open your terminal and type exactly this:
 
 ```bash
-git clone https://github.com/AymanHaidry/Kosmosic-Orbiton.git
-cd Kosmosic-Orbiton
+git clone https://github.com/AymanHaidry/Stag.git
+cd Stag
 ```
 
-**What this does:** Downloads the code to a folder named `Kosmosic-Orbiton` on your machine and moves you into that folder.
+**What this does:** Downloads the code to a folder named `Stag` on your machine and moves you into that folder.
 
 ### Step 2: Install Dependencies
 ```bash
@@ -125,7 +125,7 @@ pip install speechrecognition edge-tts rich
 
 ### Step 3: Verify It Works
 ```bash
-python kosmosic_orbiton.py
+python -m stag
 ```
 
 You should see a minimalist boot sequence:
@@ -139,11 +139,11 @@ If you see this, Orbiton is alive. If you see a wall of red errors, jump to [Tro
 
 ## 4. Your First Run: The Boot Sequence
 
-When you run `python kosmosic_orbiton.py`, here is exactly what happens:
+When you run `python -m stag`, here is exactly what happens:
 
 1. **Python starts** and imports the code.
 2. **Optional imports load** — it tries to load `rich` (for pretty UI) and `edge-tts` (for voice). If they are missing, it degrades gracefully.
-3. **The intelligence module loads** — `neuro_link_intel.py` is imported. NLP, math, and knowledge engines wake up.
+3. **The intelligence module loads** — `stag/` is imported. NLP, math, and knowledge engines wake up.
 4. **The Apple-style boot sequence prints** — `● → Loading → ✓ Ready`
 5. **Orbiton begins listening** — it waits for the wake word or typed input.
 
@@ -405,10 +405,10 @@ This section documents **every single command** Orbiton understands. Each entry 
 - `"tell me about black holes"`
 
 **What it does:**
-1. Checks local knowledge bases (moon phases, aviation facts, space facts).
-2. If not found locally, queries Wikipedia REST API.
-3. Caches the result in `~/.neuro_link_wiki_cache/`.
-4. Speaks the first ~500 characters of the answer.
+1. Queries Wikipedia for a live page summary.
+2. Displays the returned extract and its source URL.
+3. Falls back to a normal web search when Wikipedia has no suitable summary or is unavailable.
+4. Does not load a bundled facts database or write a persistent Wikipedia cache.
 
 ---
 
@@ -466,7 +466,7 @@ This section documents **every single command** Orbiton understands. Each entry 
 | runway objects | `C:\\Projects\\runway-objects` |
 | udestini | `C:\\Projects\\udestini` |
 
-**How to add your own:** Edit the `PROJECTS` dictionary in `kosmosic_orbiton.py` or wait for the config file system (Genesis-class).
+**How to add your own:** Edit the `PROJECTS` dictionary in `stag/config.py` or wait for the config file system (Genesis-class).
 
 ---
 
@@ -544,19 +544,12 @@ This section documents **every single command** Orbiton understands. Each entry 
 
 ---
 
-#### `kosmosic`
-**Example:** `"kosmosic"`
 
-**What it does:** Opens the Kosmosic study dashboard at `https://kosmosic.vercel.app/app`.
-
-**NLP support:** Also recognizes `"kosmic"`, `"cosmic"`, `"cosmosic"`, `"kozmosic"`.
-
----
 
 #### `who am i`
 **Example:** `"who am i"`
 
-**What it does:** Recalls stored user information from `~/.neuro_link_memory.json`.
+**What it does:** Recalls stored user information from `~/.stag/profile.json`.
 
 **How memory works:** Orbiton can learn facts about you over time (e.g., your name, your favorite editor). This command retrieves them.
 
@@ -613,7 +606,7 @@ This section documents **every single command** Orbiton understands. Each entry 
 If your microphone is broken, missing, or you are in a library, you can type commands directly into the terminal.
 
 ### How to Type
-1. Run `python kosmosic_orbiton.py`
+1. Run `python -m stag`
 2. When you see the prompt, type your command and press **Enter**.
 3. Orbiton processes it exactly as if you had spoken it.
 
@@ -629,7 +622,7 @@ Many power users type complex commands (like `open project hex link`) but use vo
 
 ## 8. The Neuro-Link Intelligence System
 
-Orbiton's brain is `neuro_link_intel.py`. It is not magic. It is a collection of Python classes that clean up your messy speech and figure out what you actually want.
+Orbiton's brain is `stag/`. It is not magic. It is a collection of Python classes that clean up your messy speech and figure out what you actually want.
 
 ### The Three Brains
 
@@ -724,44 +717,21 @@ Output: "9.0"
 
 ---
 
-#### 3. KnowledgeEngine + WikimediaScraper
-**Job:** Answer questions by looking things up.
+#### 3. Online Knowledge Lookup
+**Job:** Retrieve general knowledge when you ask a question.
 
-**Local Knowledge:**
-Orbiton has built-in mini-databases for:
-- **Moon Phases** — New Moon, Waxing Crescent, First Quarter, Waxing Gibbous, Full Moon, Waning Gibbous, Last Quarter, Waning Crescent.
-- **Aviation Facts** — V1, V2, Mach, ICAO, Squawk, METAR, TAF, etc.
-- **Space Facts** — ISS orbit altitude, Mars distance, black hole definitions, light year definition, Big Bang summary.
+The previous bundled/custom fact database has been removed. Stag currently queries Wikipedia for a page summary and falls back to a browser search when no usable summary is returned. The next Functional Intelligence update expands this to the MediaWiki Action API and DuckDuckGo.
 
-*(Note: Constellations were removed in v0.5.0 to reduce bundle size. They now route to Wikipedia.)*
+No custom JSON intel files or local Wikipedia dump are loaded. There is no persistent Wikipedia cache.
 
-**Wikipedia Lookup:**
-If local knowledge does not have the answer, Orbiton:
-1. Queries `https://en.wikipedia.org/api/rest_v1/page/summary/<topic>`
-2. Saves the result to `~/.neuro_link_wiki_cache/<topic>.txt`
-3. Returns the first 500 characters
-4. Speaks the summary
+---
 
-**Custom Intel:**
-You can add your own knowledge bases by creating JSON files in `~/.neuro_link_intel/`:
-```bash
-mkdir -p ~/.neuro_link_intel
-```
-
-```json
-// ~/.neuro_link_intel/intel_chemistry.json
-{
-  "water": "H2O is the chemical formula for water.",
-  "oxygen": "Oxygen is a chemical element with symbol O and atomic number 8."
-}
-```
-Orbiton will automatically load these on startup.
 
 ---
 
 ## 9. Configuration: Making Orbiton Yours
 
-All configuration lives in the `CONFIG` dictionary at the top of `kosmosic_orbiton.py`. In the future (Genesis-class), this will move to an external JSON/YAML file.
+Runtime defaults live in the `CONFIG` dictionary in `stag/config.py`. In the future (Genesis-class), this will move to an external JSON/YAML file.
 
 ### The CONFIG Dictionary
 
@@ -777,7 +747,7 @@ CONFIG = {
     "phrase_limit": 6,
     "max_errors_before_reset": 50,
     "wake_word": "tokyo",
-    "memory_file": str(Path.home() / ".neuro_link_memory.json"),
+    "memory_file": str(Path.home() / ".stag" / "profile.json"),
     "voice": "en-US-AriaNeural",
 }
 ```
@@ -792,11 +762,11 @@ CONFIG = {
 | `phrase_limit` | `6` | Maximum phrase duration in seconds. Prevents Orbiton from listening forever if you start rambling. |
 | `max_errors_before_reset` | `50` | If 50 consecutive errors occur (e.g., microphone disconnects), Orbiton automatically resets the audio listener to recover. |
 | `wake_word` | `"tokyo"` | The word that wakes Orbiton. Must be lowercase. |
-| `memory_file` | `~/.neuro_link_memory.json` | Where your personal facts are stored. |
+| `memory_file` | `~/.stag/profile.json` | Where your personal facts are stored. |
 | `voice` | `"en-US-AriaNeural"` | The Edge TTS voice profile. Change this to any Edge TTS voice (e.g., `"en-US-JennyNeural"`, `"en-GB-SoniaNeural"`). |
 
 ### How to Change the Wake Word
-1. Open `kosmosic_orbiton.py` in a text editor.
+1. Open `stag/config.py` in a text editor.
 2. Find the `CONFIG` dictionary.
 3. Change `"wake_word": "tokyo"` to `"wake_word": "computer"` (or whatever you want).
 4. Save the file.
@@ -805,7 +775,7 @@ CONFIG = {
 **Important:** The wake word must be a single word. Multi-word wake words (like "hey orbiton") are not supported in Tokyo-class.
 
 ### How to Change the Voice
-1. Open `kosmosic_orbiton.py`.
+1. Open `stag/config.py` for settings, or the relevant module under `stag/` for code.
 2. Find `"voice": "en-US-AriaNeural"`.
 3. Replace with any valid Edge TTS voice. Popular options:
    - `en-US-AriaNeural` (default, friendly)
@@ -818,7 +788,7 @@ CONFIG = {
 **Full list of Edge TTS voices:** Visit `https://speech.microsoft.com/portal/voicegallery` or run `edge-tts --list-voices` in your terminal.
 
 ### How to Add Project Shortcuts
-1. Open `kosmosic_orbiton.py`.
+1. Open `stag/config.py` for settings, or the relevant module under `stag/` for code.
 2. Find the `PROJECTS` dictionary:
 ```python
 PROJECTS = {
@@ -883,7 +853,7 @@ When you say `"open project <name>"`, Orbiton:
 Orbiton can remember facts about you. This is not AI memory. It is a simple JSON file that stores key-value pairs.
 
 ### The Memory File
-Location: `~/.neuro_link_memory.json`
+Location: `~/.stag/profile.json`
 
 Example contents:
 ```json
@@ -899,7 +869,7 @@ Example contents:
 Currently, memory is updated through code paths (e.g., if you tell Orbiton your name during a specific interaction). In future versions (Odyssey-class), this will be more conversational.
 
 ### How to Edit Memory Manually
-1. Open `~/.neuro_link_memory.json` in any text editor.
+1. Open `~/.stag/profile.json` in any text editor.
 2. Add, edit, or delete key-value pairs.
 3. Save the file.
 4. Orbiton reads this file on startup and when `who am i` is called.
@@ -919,37 +889,17 @@ This command reads the memory file and speaks back what it knows about you. If t
 
 ## 12. Knowledge & Wikipedia Lookup
 
-### Built-In Knowledge Bases
-Orbiton ships with three built-in knowledge categories:
+Stag does not ship a prewritten fact database. For a request such as "tell me about Jupiter", it retrieves a current Wikipedia summary over HTTPS. If the lookup is unavailable or has no suitable result, it opens a web search instead.
 
-1. **Moon Phases** — New Moon, Waxing Crescent, First Quarter, Waxing Gibbous, Full Moon, Waning Gibbous, Last Quarter, Waning Crescent.
-2. **Aviation Facts** — V1, V2, Mach, ICAO, Squawk, METAR, TAF, etc.
-3. **Space Facts** — ISS orbit altitude, Mars distance, black hole definitions, light year definition, Big Bang summary.
+- **Provider:** Wikipedia public page-summary endpoint (temporary implementation)
+- **Timeout:** 6 seconds
+- **Cache:** None; no local fact dump or custom intel folder
+- **Offline behavior:** General knowledge lookup is unavailable, but local commands still work
 
-### Wikipedia Integration
-For topics not in the built-in database, Orbiton queries Wikipedia's REST API:
-- **Endpoint:** `https://en.wikipedia.org/api/rest_v1/page/summary/<topic>`
-- **Timeout:** 5 seconds
-- **Cache:** Results are saved to `~/.neuro_link_wiki_cache/<topic>.txt`
-- **Return limit:** First 500 characters
-
-### Adding Custom Intel
-Create a JSON file in `~/.neuro_link_intel/` with the naming pattern `intel_<name>.json`:
-
-```bash
-mkdir -p ~/.neuro_link_intel
-```
-
-```json
-// ~/.neuro_link_intel/intel_chemistry.json
-{
-  "water": "H2O is the chemical formula for water.",
-  "oxygen": "Oxygen is a chemical element with symbol O and atomic number 8."
-}
-```
-Restart Orbiton. Now you can say `"tell me about oxygen"` and it will use your custom intel.
+The Functional Intelligence release will add MediaWiki Action API search and DuckDuckGo result retrieval, with source links shown alongside answers.
 
 ---
+
 
 ## 13. Platform-Specific Deep Dive
 
@@ -1014,7 +964,7 @@ Every command has three parts:
 ### Step-by-Step: Adding a "Translate" Command
 
 #### Step 1: Add the Handler
-Open `kosmosic_orbiton.py` and add a method to the `CommandEngine` class:
+Open `stag/commands.py` and add a method to the `CommandEngine` class:
 
 ```python
 def handle_translate(self, query: str):
@@ -1034,7 +984,7 @@ Find the `IntentParser.PATTERNS` list and add:
 ```
 
 #### Step 3: Add NLP Support (Optional)
-Open `neuro_link_intel.py` and add to `NaturalLanguageProcessor.HOMOPHONES`:
+Open `stag/nlp.py` and add to `NaturalLanguageProcessor.HOMOPHONES`:
 
 ```python
 "translait": "translate",
@@ -1043,7 +993,7 @@ Open `neuro_link_intel.py` and add to `NaturalLanguageProcessor.HOMOPHONES`:
 ```
 
 #### Step 4: Add to Help Table
-Find `ALL_COMMANDS` in `kosmosic_orbiton.py` and add:
+Find `ALL_COMMANDS` in `stag/config.py` and add:
 
 ```python
 ("🌍 Translate", "translate <text>", "Google Translate anything"),
@@ -1188,11 +1138,11 @@ pip install rich
 pip install edge-tts
 ```
 
-#### `ImportError: cannot import name 'get_intelligence' from 'neuro_link_intel'`
-**Fix:** Make sure you are running Orbiton from the `Kosmosic-Orbiton` directory. The import is relative to the current directory.
+#### `ImportError: cannot import name 'get_intelligence' from 'Stag intelligence package'`
+**Fix:** Make sure you are running Orbiton from the `Stag` directory. The import is relative to the current directory.
 ```bash
-cd Kosmosic-Orbiton
-python kosmosic_orbiton.py
+cd Stag
+python -m stag
 ```
 
 ### Voice / Microphone Issues
@@ -1278,7 +1228,7 @@ pip uninstall edge-tts
 ### File / Project Issues
 
 #### `"open project X"` says project not found
-**Fix:** Edit the `PROJECTS` dictionary in `kosmosic_orbiton.py` to point to your actual project paths. The default paths are `C:\\Projects\\...` which probably do not exist on your machine.
+**Fix:** Edit the `PROJECTS` dictionary in `stag/config.py` to point to your actual project paths. The default paths are `C:\\Projects\\...` which probably do not exist on your machine.
 
 #### `code` command not found
 **Fix:** Add VS Code to your system PATH. See [Platform-Specific Deep Dive](#13-platform-specific-deep-dive).
@@ -1311,61 +1261,47 @@ pip uninstall edge-tts
 ## 17. Architecture Reference
 
 ### File Structure
+
+```text
+Orbiton/
+├── stag/
+│   ├── app.py            # Startup, text input, microphone loop
+│   ├── commands.py       # Command handlers
+│   ├── config.py         # Defaults, shortcuts, help metadata
+│   ├── device.py         # OS and hardware integrations
+│   ├── intelligence.py   # Wikipedia lookup and routing
+│   ├── math_engine.py    # Safe arithmetic
+│   ├── memory.py         # Local profile
+│   ├── nlp.py            # Speech normalization
+│   ├── parser.py         # Command patterns
+│   ├── ui.py             # Terminal display
+│   └── voice.py          # Text-to-speech
+├── docs/                 # Project and contributor documentation
+├── tests/                # Automated checks
+├── website/              # Public website
+├── troubleshooter.py     # Interactive diagnostics
+├── requirements.txt      # Runtime and current CI dependencies
+├── requirements-dev.txt  # Additional development tools
+└── pyproject.toml        # Install metadata and `orbiton` command
 ```
-Kosmosic-Orbiton/
-├── kosmosic_orbiton.py          # Main entry point. CommandEngine, UI, voice loop.
-├── neuro_link_intel.py          # Intelligence module. NLP, math, knowledge.
-├── requirements.txt             # Python dependencies.
-├── CHANGELOG.md                 # Version history.
-├── PHILOSOPHY.md                # Why Orbiton exists.
-├── ROADMAP.md                   # Future generations.
-├── CONTRIBUTING.md              # How to contribute.
-├── CONTRIBUTORS.md              # Who built this.
-├── TEST_STATUS.md               # Per-test CI status.
-├── TESTS.md                     # Test architecture docs.
-├── WORKFLOWS.md                 # CI/CD configuration.
-├── tests/                       # Full pytest suite.
-│   ├── conftest.py              # Shared fixtures.
-│   ├── core_logic/              # Intent & pattern tests.
-│   ├── url_engine/              # URL generation tests.
-│   ├── compute/                 # Math & security tests.
-│   ├── launch/                  # File & project tests.
-│   ├── system/                  # Status & time tests.
-│   └── integration/             # End-to-end flow tests.
-└── .github/workflows/           # CI/CD definitions.
-    ├── core-logic.yml
-    ├── url-engine.yml
-    ├── compute.yml
-    ├── launch.yml
-    ├── system.yml
-    ├── integration.yml
-    ├── pylint.yml
-    ├── filediff.yml
-    └── python-tests.yml
-```
+
+The recommended launch command is `orbiton` after installation, or `python -m stag` from the repository root. `kosmosic_orbiton.py` remains only as a compatibility launcher.
 
 ### Class Breakdown
 
-#### `kosmosic_orbiton.py`
-
-| Class | Responsibility |
-|-------|---------------|
-| `CommandEngine` | The heart. Routes commands, manages state, handles execution. |
-| `IntentParser` | Regex-based command recognition. Maps text to intent + argument. |
-| `NeuroInterface` | Terminal UI using `rich`. Shows success/error/status panels. |
-| `VoiceManager` | Text-to-speech. Handles Edge TTS and system fallbacks. |
-| `UserMemory` | Reads/writes `~/.neuro_link_memory.json`. |
-| `AudioListener` | Speech recognition loop. Wake word detection, audio timeout. |
-
-#### `neuro_link_intel.py`
-
-| Class | Responsibility |
-|-------|---------------|
-| `NaturalLanguageProcessor` | Cleans speech: contractions, fillers, homophones. |
-| `MathNormalizer` | Converts spoken math to safe Python expressions. |
-| `KnowledgeEngine` | Local knowledge base lookup. |
-| `WikimediaScraper` | Wikipedia REST API queries with local caching. |
-| `IntelligenceOrchestrator` | Combines all intelligence modules. Decides: command? knowledge? search? |
+| Module | Main responsibility |
+|---|---|
+| `stag/app.py` | Application startup, input loop, wake/sleep state |
+| `stag/commands.py` | `CommandEngine` and command execution |
+| `stag/parser.py` | `IntentParser` and regex command matching |
+| `stag/ui.py` | `NeuroInterface` terminal presentation |
+| `stag/voice.py` | `VoiceManager`, queued speech output |
+| `stag/memory.py` | `UserMemory`, local profile persistence |
+| `stag/device.py` | `DeviceController` and headphone detection |
+| `stag/nlp.py` | `NaturalLanguageProcessor` |
+| `stag/math_engine.py` | `MathNormalizer` and restricted AST evaluation |
+| `stag/intelligence.py` | `IntelligenceOrchestrator` and Wikipedia client |
+| `stag/config.py` | Runtime defaults and command catalogue |
 
 ### Data Flow (Voice Command)
 
@@ -1399,25 +1335,20 @@ You speak -> Microphone -> AudioListener
 
 ```
 You speak -> "tell me about black holes"
-                                    |
-                         NLP normalize -> "tell me about black holes"
-                                    |
-                         IntelligenceOrchestrator.process()
-                                    |
-                         Is it a time query? No.
-                         Is it a weather query? No.
-                         Is it a general knowledge question? Yes.
-                                    |
-                         KnowledgeEngine.lookup("black holes")
-                                    |
-                         Found in local Space Facts? Yes -> Return fact.
-                         Not found? -> WikimediaScraper.search_topic("black holes")
-                                    |
-                         Cache result to ~/.neuro_link_wiki_cache/black_holes.txt
-                                    |
-                         Return first 500 chars
-                                    |
-                         VoiceManager.speak("A black hole is a region of spacetime...")
+                                     |
+                          IntelligenceOrchestrator.process()
+                                     |
+                          WikipediaClient.search_topic("black holes")
+                                     |
+                          Summary found? -> Return extract + source URL.
+                          No summary or network unavailable? -> Open web search.
+                                     |
+                          No bundled fact database or persistent cache.
+                                     |
+                          VoiceManager.speak(summary)
+```
+
+
 ```
 
 ---
@@ -1569,7 +1500,7 @@ Upload the video to the PR description or link it (YouTube unlisted, Google Driv
 |------|------------|
 | **Wake Word** | The word that activates Orbiton from sleep. Default: `"tokyo"`. |
 | **Tokyo-class** | The current generation of Orbiton (v0.x). Basic reasoning and voice commands. |
-| **Neuro-Link** | Orbiton's intelligence module (`neuro_link_intel.py`). NLP, math, knowledge. |
+| **Neuro-Link** | Orbiton's intelligence module (`stag/`). NLP, math, knowledge. |
 | **TTS** | Text-to-Speech. The technology that makes Orbiton talk back to you. |
 | **Edge TTS** | Microsoft's neural text-to-speech engine. Requires internet. |
 | **NLP** | Natural Language Processing. The system that cleans up your messy speech. |
@@ -1580,8 +1511,8 @@ Upload the video to the PR description or link it (YouTube unlisted, Google Driv
 | **ICAO** | International Civil Aviation Organization. The four-letter airport codes (e.g., `KJFK`, `EGLL`). |
 | **Toxic Motivation** | Orbiton's roast engine. Harsh accountability statements designed to make you work. |
 | **Self-Listening Bug** | When Orbiton hears its own TTS output and triggers unintended commands. |
-| **CONFIG** | The configuration dictionary in `kosmosic_orbiton.py`. Controls timeouts, voice, wake word, etc. |
-| **Intel** | Knowledge base files. Built-in or custom JSON files in `~/.neuro_link_intel/`. |
+| **CONFIG** | The configuration dictionary in `stag/config.py`. Controls timeouts, voice, wake word, etc. |
+
 | **Session** | One continuous run of Orbiton from start to exit. |
 | **CI/CD** | Continuous Integration / Continuous Deployment. The GitHub Actions that run tests automatically. |
 | **Pytest** | The Python testing framework used by Orbiton. |
@@ -1589,7 +1520,7 @@ Upload the video to the PR description or link it (YouTube unlisted, Google Driv
 | **Odyssey-class** | Planned Generation 2. Local LLM, long-term memory, personalization. |
 | **Genesis-class** | Planned Generation 3. Agentic behavior, predictive execution. |
 | **Singularity-class** | Vision Generation 6. Full autonomy, multi-device ecosystem. |
-| **Kosmosic** | The company behind Orbiton. Also the name of the study dashboard. |
+
 | **Slopware** | A term used in the philosophy to describe bloated, low-quality software. Orbiton is the opposite. |
 
 ---
@@ -1619,11 +1550,11 @@ Upload the video to the PR description or link it (YouTube unlisted, Google Driv
 
 | File | Path | What It Stores |
 |------|------|----------------|
-| User Memory | `~/.neuro_link_memory.json` | Facts about you |
-| Wiki Cache | `~/.neuro_link_wiki_cache/` | Wikipedia lookups |
-| Custom Intel | `~/.neuro_link_intel/` | Your knowledge bases |
-| Source Code | `Kosmosic-Orbiton/kosmosic_orbiton.py` | Main application |
-| Intelligence | `Kosmosic-Orbiton/neuro_link_intel.py` | NLP & knowledge |
+| User Memory | `~/.stag/profile.json` | Facts about you |
+
+
+| Source Code |  `stag/app.py` | Main application |
+| Intelligence | `stag/` | NLP, safe math, and online lookup |
 
 ### Keyboard Shortcuts (Terminal)
 
@@ -1641,5 +1572,5 @@ Upload the video to the PR description or link it (YouTube unlisted, Google Driv
 
 **© 2026 Kosmosic**  
 **License:** GNU General Public License v3.0  
-**Repo:** https://github.com/AymanHaidry/Kosmosic-Orbiton  
+**Repo:** https://github.com/AymanHaidry/Stag  
 **Website:** https://theorbiton.vercel.app

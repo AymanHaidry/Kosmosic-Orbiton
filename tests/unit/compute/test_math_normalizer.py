@@ -1,7 +1,7 @@
 """Regression tests for spoken math normalization and safe evaluation."""
 import math
 import pytest
-from neuro_link_intel import MathNormalizer
+from stag.math_engine import MathNormalizer
 
 @pytest.mark.parametrize(("spoken","expected"),[
  ("two times two","2*2"),("twenty five divided by five","25/5"),

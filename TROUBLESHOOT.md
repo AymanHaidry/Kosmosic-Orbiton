@@ -42,7 +42,7 @@ python -c "import sys; print('Python:', sys.version); print('Platform:', sys.pla
 python -c "import speech_recognition; print('speech_recognition: OK')"
 python -c "import rich; print('rich: OK')"
 python -c "import edge_tts; print('edge_tts: OK')"
-python -c "from neuro_link_intel import get_intelligence; print('neuro_link_intel: OK')"
+python -c "from stag.intelligence import get_intelligence; print('stag.intelligence: OK')"
 ```
 
 If all five lines print `OK`, your environment is healthy. If any line fails, the fix is in the section matching that module name.
@@ -119,7 +119,7 @@ pip install speechrecognition
 ```bash
 # Verify you are in the right directory
 ls
-# You should see: kosmosic_orbiton.py, neuro_link_intel.py, requirements.txt
+# You should see: stag/app.py, stag/commands.py, requirements.txt
 
 # If requirements.txt is truly missing, create it:
 cat > requirements.txt << 'EOF'
@@ -134,18 +134,18 @@ pip install -r requirements.txt
 
 ## 3. Python Environment Issues
 
-### Symptom: `python kosmosic_orbiton.py` opens in Notepad or another app instead of running
+### Symptom: `python -m stag` opens in Notepad or another app instead of running
 **Cause:** On Windows, `python` might not be associated with the Python interpreter. You might have typed the command in PowerShell but Windows thinks it is a file to open.  
 **Fix:**
 ```bash
 # Use the full python command
-py kosmosic_orbiton.py
+py -m stag
 
 # Or explicitly call python3
-python3 kosmosic_orbiton.py
+python3 -m stag
 
 # Or use the full path
-C:\Users\You\AppData\Local\Programs\Python\Python311\python.exe kosmosic_orbiton.py
+C:\Users\You\AppData\Local\Programs\Python\Python311\python.exe -m stag
 ```
 
 ### Symptom: `python` command not found
@@ -160,14 +160,14 @@ C:\Users\You\AppData\Local\Programs\Python\Python311\python.exe kosmosic_orbiton
 **Fix:**
 ```bash
 python --version
-# Must say 3.10+ or 3.11+. If it says 2.7, you are using the wrong Python.
+# Must say 3.11 or newer.
 
 # Use python3 explicitly
-python3 kosmosic_orbiton.py
+python3 -m stag
 ```
 
-### Symptom: `SyntaxError` on the first line of `kosmosic_orbiton.py`
-**Cause:** The file was saved with wrong encoding, or line endings were corrupted (e.g., downloaded as a web page instead of raw code).  
+### Symptom: `SyntaxError` in a module under `stag/`
+**Cause:** A source file may be incomplete, corrupted, or downloaded as a web page instead of raw code.  
 **Fix:**
 ```bash
 # Re-clone the repo fresh
@@ -175,15 +175,15 @@ cd ..
 rm -rf Kosmosic-Orbiton
 git clone https://github.com/AymanHaidry/Kosmosic-Orbiton.git
 cd Kosmosic-Orbiton
-python kosmosic_orbiton.py
+python -m stag
 ```
 
 ---
 
 ## 4. Import & Module Errors
 
-### Symptom: `ImportError: cannot import name 'get_intelligence' from 'neuro_link_intel'`
-**Cause:** You are running Orbiton from the wrong directory, or `neuro_link_intel.py` is missing/corrupted.  
+### Symptom: `ImportError: cannot import name 'get_intelligence' from 'stag.intelligence'`
+**Cause:** You are running Orbiton from the wrong directory, or `stag/intelligence.py` is missing/corrupted.  
 **Fix:**
 ```bash
 # Verify you are in the repo root
@@ -191,8 +191,8 @@ pwd
 # Should end with /Kosmosic-Orbiton (or \Kosmosic-Orbiton on Windows)
 
 # Verify the file exists
-ls neuro_link_intel.py
-# or on Windows: dir neuro_link_intel.py
+ls stag/intelligence.py
+# or on Windows: dir stag/intelligence.py
 
 # If missing, re-clone the repo
 ```
@@ -239,11 +239,11 @@ pip install pyaudio
 ```
 
 ### Symptom: `ImportError: cannot import name 'NaturalLanguageProcessor'`
-**Cause:** `neuro_link_intel.py` is an old version or was modified incorrectly.  
+**Cause:** `stag/intelligence.py` is an old version or was modified incorrectly.  
 **Fix:**
 ```bash
 # Check if the class exists in the file
-grep -n "class NaturalLanguageProcessor" neuro_link_intel.py
+grep -n "class NaturalLanguageProcessor" stag/intelligence.py
 # If no output, your file is corrupted. Re-clone.
 ```
 
@@ -342,7 +342,7 @@ pacmd set-default-source <your-mic-name>
 3. The speech recognizer hears the TTS words and interprets them as a new command.
 4. Orbiton executes that phantom command.
 
-**This is the #1 most reported bug in Tokyo-class.**
+This is a known microphone/TTS interaction to diagnose on the affected system.
 
 ### Immediate Fixes (Do These Now)
 
@@ -366,7 +366,7 @@ Cardioid mics (most headset mics) only pick up sound from one direction. Point t
 **Workaround 5: Mute the mic during TTS playback**
 There is no built-in mute-during-TTS feature yet, but you can simulate it by adding a sleep delay after TTS:
 
-Edit `kosmosic_orbiton.py` and find the `speak()` method. Add a small delay after speech:
+Edit `stag/voice.py` and find the `VoiceManager` playback methods. Add a small delay after speech:
 ```python
 def speak(self, text: str):
     # ... existing TTS code ...
@@ -376,7 +376,7 @@ def speak(self, text: str):
 **Workaround 6: Disable TTS temporarily**
 If you only need visual feedback and not voice feedback:
 ```python
-# In kosmosic_orbiton.py, find the VoiceManager class
+# In stag/voice.py, find the VoiceManager class
 # and make speak() return early:
 def speak(self, text: str):
     return  # TTS disabled
@@ -486,7 +486,7 @@ pip install edge-tts
 ### Symptom: TTS is too fast / too slow / wrong accent
 **Fix:** Change the voice in CONFIG:
 ```python
-# In kosmosic_orbiton.py
+# In the relevant module under stag/
 CONFIG = {
     # ... other keys ...
     "voice": "en-US-JennyNeural",  # Slower, more professional
@@ -521,7 +521,7 @@ edge-tts --list-voices
 **Fix:**
 ```bash
 # Type the wake word to test if the logic works
-python kosmosic_orbiton.py
+python -m stag
 # Then type: tokyo
 # If this works, the issue is speech recognition accuracy
 ```
@@ -532,14 +532,14 @@ python kosmosic_orbiton.py
 1. Type `help` instead of saying it.
 2. Say it twice.
 3. Say `"hell"`, `"halp"`, `"helf"`, or `"elpe"` — these are mapped to help via NLP.
-4. If typing `help` also does nothing, check if the `handle_help` method exists in `kosmosic_orbiton.py`.
+4. If typing `help` also does nothing, check if the `handle_help` method exists in `stag/commands.py`.
 
-**Permanent fix:** Edit `neuro_link_intel.py` and add more homophones for help, or increase the regex priority of the help pattern in `IntentParser.PATTERNS`.
+**Permanent fix:** Edit `stag/intelligence.py` and add more homophones for help, or increase the regex priority of the help pattern in `IntentParser.PATTERNS`.
 
 ### Symptom: `"exam board"` opens Google instead of exam mode
 **Status:** Known bug. The NLP catches `"exambored"` (one word) but `"exam board"` (two words) falls through to the general search intent.  
 **Workaround:** Say `"exam mode"` clearly, or say `"exambored"`.  
-**Fix:** Edit `neuro_link_intel.py` and add to `HOMOPHONES`:
+**Fix:** Edit `stag/intelligence.py` and add to `HOMOPHONES`:
 ```python
 "exam board": "exam mode",
 ```
@@ -552,9 +552,9 @@ git pull origin main
 ```
 
 If you are already on v0.6.2+ and it still fails:
-1. Check that `MathNormalizer` is imported in `kosmosic_orbiton.py`:
+1. Check that `MathNormalizer` is imported in `stag/commands.py`:
    ```python
-   from neuro_link_intel import get_intelligence, NaturalLanguageProcessor, MathNormalizer
+   from stag get_intelligence, NaturalLanguageProcessor, MathNormalizer
    ```
 2. Check that `handle_calculate` uses `MathNormalizer`:
    ```python
@@ -621,12 +621,12 @@ Orbiton resolves paths in this order:
 Say: `"open C:\Users\YourName\Downloads"` (Windows) or `"open /Users/YourName/Downloads"` (macOS).
 
 **Step 4: Check if the alias is correct**
-The alias mapping is hardcoded in `kosmosic_orbiton.py`. If your OS language is not English, the folder names might be different (e.g., `Téléchargements` on French Windows).  
+The alias mapping is in `stag/commands.py`. If your OS language is not English, the folder names might be different (e.g., `Téléchargements` on French Windows).  
 **Fix:** Use the absolute path, or edit the alias mapping in the source code.
 
 ### Symptom: `"open project hex link"` says "Project not found"
 **Cause:** The `PROJECTS` dictionary points to `C:\Projects\hex-link`, which probably does not exist on your machine.  
-**Fix:** Edit `kosmosic_orbiton.py`:
+**Fix:** Edit the relevant module under `stag/` (for command routing, use `stag/commands.py`):
 ```python
 PROJECTS = {
     "hex link": r"C:\\Users\\You\\Projects\\hex-link",  # Change this
@@ -706,7 +706,7 @@ except Exception as e:
 
 **Fix for developers:** Add constants to `MathNormalizer`:
 ```python
-# In neuro_link_intel.py, add to WORD_NUMBERS or create a CONSTANTS dict
+# In stag/intelligence.py, add to WORD_NUMBERS or create a CONSTANTS dict
 CONSTANTS = {
     "pi": "3.14159",
     "e": "2.71828",
@@ -729,60 +729,29 @@ This must run BEFORE `eval()`.
 
 ---
 
-## 11. Knowledge & Wikipedia Lookup Failures
+## 11. Knowledge Lookup Failures
 
-### Symptom: `"tell me about black holes"` says "I don't know anything about that"
-**Diagnosis:**
-1. **Local knowledge miss:** "black holes" is not in the built-in Space Facts database (it might be under "black hole" singular).
-2. **Wikipedia miss:** The Wikipedia REST API might not have a page for that exact term, or the network timed out.
+### Symptom: A "tell me about" request falls back to web search
+**Cause:** Wikipedia has no suitable summary for that query, the network is unavailable, or the request timed out.
 
 **Fixes:**
-1. Try singular form: `"tell me about black hole"`
-2. Check your internet connection.
-3. Try a different topic: `"tell me about the moon"` (this is in built-in knowledge).
-4. Add custom intel:
-   ```bash
-   mkdir -p ~/.neuro_link_intel
-   cat > ~/.neuro_link_intel/intel_astro.json << 'EOF'
-   {
-     "black holes": "A black hole is a region of spacetime where gravity is so strong that nothing can escape."
-   }
-   EOF
-   ```
-   Restart Orbiton.
+1. Check your internet connection.
+2. Try a shorter, more specific topic.
+3. Open the returned browser search result if Wikipedia has no summary.
 
-### Symptom: Wikipedia lookup is very slow
-**Cause:** Network latency to `en.wikipedia.org` or DNS resolution issues.  
-**Fix:**
-```bash
-# Test Wikipedia API speed
-curl -w "@curl-format.txt" -o /dev/null -s "https://en.wikipedia.org/api/rest_v1/page/summary/Python"
-# If it takes >5 seconds, Orbiton will timeout.
-```
-**Workaround:** Use local intel files for topics you query frequently. They load instantly.
-
-### Symptom: Wikipedia lookup returns gibberish or HTML
-**Cause:** Wikipedia changed their API response format, or the page does not exist and returns an error page.  
-**Fix:** Update to the latest version of Orbiton. If the API format changed, the `WikimediaScraper` class needs updating.
-
-### Symptom: Cache files grow huge over time
-**Cause:** Every Wikipedia query creates a `.txt` file in `~/.neuro_link_wiki_cache/`. There is no automatic cleanup.  
-**Fix:** Manually clean the cache:
-```bash
-rm -rf ~/.neuro_link_wiki_cache/*
-```
-Or add a cron job to clean it monthly.
+Stag no longer loads bundled facts, custom `intel_*.json` files, Wikipedia dumps, or a persistent local cache. There is no cache directory to clean.
 
 ---
+
 
 ## 12. Memory System Issues
 
 ### Symptom: `"who am i"` says "I don't know you yet"
-**Cause:** The memory file `~/.neuro_link_memory.json` is empty or missing.  
+**Cause:** The local profile `~/.stag/profile.json` is empty or missing.  
 **Fix:**
 ```bash
 # Create the memory file manually
-cat > ~/.neuro_link_memory.json << 'EOF'
+cat > ~/.stag/profile.json << 'EOF'
 {
   "name": "Your Name",
   "favorite_language": "Python",
@@ -797,16 +766,16 @@ Restart Orbiton.
 **Fix:**
 ```bash
 # Validate the JSON
-python -m json.tool ~/.neuro_link_memory.json
+python -m json.tool ~/.stag/profile.json
 # If it says "Expecting property name enclosed in double quotes", fix the JSON.
 
 # Or reset it completely:
-echo '{}' > ~/.neuro_link_memory.json
+echo '{}' > ~/.stag/profile.json
 ```
 
 ### Symptom: Orbiton remembers wrong information
 **Cause:** The memory file was edited incorrectly, or multiple users share the same file.  
-**Fix:** Edit `~/.neuro_link_memory.json` directly and correct the facts. There is no "forget" command in Tokyo-class.
+**Fix:** Edit `~/.stag/profile.json` directly and correct the facts. Profile editing and memory controls will be expanded in the Functional Intelligence release.
 
 ---
 
@@ -818,7 +787,7 @@ echo '{}' > ~/.neuro_link_memory.json
 **Cause:** Chrome is not at the expected path, or Chrome is not installed.  
 **Fix:**
 ```python
-# In kosmosic_orbiton.py, update CONFIG:
+# In stag/config.py, update CONFIG:
 CONFIG = {
     "chrome_path": {
         "Windows": r"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
@@ -921,14 +890,14 @@ aplay -l
 pactl info
 ```
 
-#### Symptom: Permission denied when writing to `~/.neuro_link_memory.json`
+#### Symptom: Permission denied when writing to `~/.stag/profile.json`
 **Cause:** Your home directory permissions are wrong, or the file was created as root.  
 **Fix:**
 ```bash
-ls -la ~/.neuro_link_memory.json
+ls -la ~/.stag/profile.json
 # If it shows root as owner:
-sudo chown $USER:$USER ~/.neuro_link_memory.json
-chmod 644 ~/.neuro_link_memory.json
+sudo chown $USER:$USER ~/.stag/profile.json
+chmod 644 ~/.stag/profile.json
 ```
 
 ---
@@ -979,7 +948,7 @@ Ctrl+C
 ## 15. CI/CD & Testing Failures
 
 ### Symptom: `pytest tests/ -v` fails with `ModuleNotFoundError`
-**Cause:** The tests cannot find `kosmosic_orbiton.py` because it is not in the Python path.  
+**Cause:** The tests cannot find the application package because the command was run outside the repository root.  
 **Fix:**
 ```bash
 # Ensure you are in the repo root
@@ -1007,7 +976,7 @@ pytest tests/ -v
 **Fix:**
 ```bash
 # Run pylint locally first
-pylint kosmosic_orbiton.py neuro_link_intel.py
+pylint stag/
 
 # Fix the reported issues. Common ones:
 # - Trailing whitespace: remove spaces at end of lines
@@ -1043,7 +1012,7 @@ pattern = r"^calculate\s+(.+)"
 1. Add the misheard variant to `NaturalLanguageProcessor.HOMOPHONES`.
 2. Test what the speech recognizer actually hears by adding debug output:
    ```python
-   # In kosmosic_orbiton.py, temporarily add:
+   # In the relevant module under stag/, temporarily add:
    print(f"DEBUG: Recognized text: {recognized_text}")
    ```
 3. Map whatever it hears to your command.
@@ -1104,9 +1073,8 @@ pip install -r requirements.txt
 ### Procedure 3: All data files are corrupted
 ```bash
 # Reset all user data
-rm -f ~/.neuro_link_memory.json
-rm -rf ~/.neuro_link_wiki_cache/
-rm -rf ~/.neuro_link_intel/
+rm -f ~/.stag/profile.json
+# Legacy backup files are not deleted automatically.
 # Orbiton will recreate these on next run
 ```
 
@@ -1123,7 +1091,7 @@ source fresh_env/bin/activate
 
 # Reinstall everything
 pip install speechrecognition edge-tts rich
-python kosmosic_orbiton.py
+python -m stag
 ```
 
 ### Procedure 5: Microphone permissions are irrevocably broken (macOS)
@@ -1150,7 +1118,7 @@ Run this checklist in order. Stop when you find the issue.
 - [ ] **Internet works** (for Edge TTS and Wikipedia; not required for core commands)
 - [ ] **Typing commands works** (if typing fails, it is not a mic issue)
 - [ ] **TTS works when tested directly** (`edge-tts` command from Section 7)
-- [ ] **No corrupted data files** (`python -m json.tool ~/.neuro_link_memory.json`)
+- [ ] **No corrupted data files** (`python -m json.tool ~/.stag/profile.json`)
 - [ ] **Tests pass** (`pytest tests/ -v`)
 
 ---
@@ -1159,7 +1127,7 @@ Run this checklist in order. Stop when you find the issue.
 
 ### If This Document Did Not Solve Your Problem
 
-1. **Check the source code.** The docstrings are decent. Start with `kosmosic_orbiton.py` -> `CommandEngine`.
+1. **Check the source code.** The docstrings are decent. Start with `stag/commands.py` -> `CommandEngine`.
 2. **Run the tests.** `pytest tests/ -v` will tell you exactly what is broken.
 3. **Open an issue** on GitHub: https://github.com/AymanHaidry/Kosmosic-Orbiton/issues
    - Include your OS, Python version, and the exact error message.

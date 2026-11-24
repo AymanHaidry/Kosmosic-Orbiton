@@ -33,8 +33,8 @@ pip install pyinstaller
 ### Project Structure Assumptions
 ```
 Kosmosic-Orbiton/
-├── kosmosic_orbiton.py          # Main entry point
-├── neuro_link_intel.py          # Intelligence module
+├── stag/                    # Application package (app, commands, UI, voice, NLP, etc.)
+├── kosmosic_orbiton.py          # Backward-compatible launcher
 ├── requirements.txt             # Dependencies
 ├── assets/
 │   ├── icon.ico                 # Windows icon (256x256)

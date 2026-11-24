@@ -15,14 +15,14 @@ tests/
 ├── launch/                  # File operations, projects, scripts
 ├── system/                  # Status, time, motivation, hardware
 ├── integration/             # End-to-end command flows
-└── troubleshooter/          # Diagnostic tool tests
+├── troubleshooter/          # Diagnostic tool tests\n└── intelligence/            # Online knowledge provider tests
 ```
 
 * * *
 
 ## Categories
 
-### Core Logic (`tests/core_logic/`)
+### Intelligence (`tests/intelligence/`)\n\nTests for live Wikipedia retrieval, request headers, and offline fallback.\n\n### Core Logic (`tests/core_logic/`)
 
 Tests for `IntentParser`, `NaturalLanguageProcessor`, and command routing.
 
@@ -262,7 +262,7 @@ Each category has its own workflow in `.github/workflows/`. See WORKFLOWS.md for
 | `system.yml` | `tests/system/` | Ubuntu |
 | `integration.yml` | `tests/integration/` | Ubuntu |
 | `troubleshooter.yml` | `tests/troubleshooter/` | Ubuntu |
-| `pylint.yml` | `kosmosic_orbiton.py` + `neuro_link_intel.py` + `troubleshooter.py` | Ubuntu |
+| `pylint.yml` | `kosmosic_orbiton.py` + `stag/` + `troubleshooter.py` | Ubuntu |
 
 * * *
 

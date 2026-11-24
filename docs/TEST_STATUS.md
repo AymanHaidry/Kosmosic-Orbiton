@@ -8,6 +8,7 @@
 
 | Category | Live status |
 |----------|-------------|
+| Intelligence | ![Intelligence](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/intelligence.yml/badge.svg) |
 | Core Logic | ![Core Logic](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/core-logic.yml/badge.svg) |
 | URL Engine | ![URL Engine](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/url-engine.yml/badge.svg) |
 | Compute | ![Compute](https://github.com/AymanHaidry/Kosmosic-Orbiton/actions/workflows/compute.yml/badge.svg) |
