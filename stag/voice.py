@@ -19,12 +19,12 @@ except ImportError:
 
 class VoiceManager:
     """Natural text-to-speech using edge-tts or system fallback."""
-    def __init__(self, voice: str = "en-US-AriaNeural"):
+    def __init__(self, voice: str = "en-US-AriaNeural", post_tts_silence: float = 1.5):
         self.voice = voice
         self.tts_queue = queue.Queue()
         self.tts_active = threading.Event()
         self.post_tts_until = 0.0
-        self.post_tts_silence = 1.5
+        self.post_tts_silence = max(0.0, float(post_tts_silence))
         self._lock = threading.Lock()
         self._thread = threading.Thread(target=self._tts_worker, daemon=True)
         self._thread.start()
@@ -43,9 +43,9 @@ class VoiceManager:
                 # A failed audio backend must not kill the worker thread.
                 pass
             finally:
-                self.tts_active.clear()
                 with self._lock:
                     self.post_tts_until = time.time() + self.post_tts_silence
+                self.tts_active.clear()
                 self.tts_queue.task_done()
 
     def is_listening_blocked(self) -> bool:
@@ -74,9 +74,8 @@ class VoiceManager:
                             pygame.mixer.music.play()
                             while pygame.mixer.music.get_busy():
                                 time.sleep(0.05)
-                        except ImportError:
-                            os.startfile(mp3_path)
-                            time.sleep(2)
+                        except ImportError as exc:
+                            raise RuntimeError("pygame is required for Edge TTS playback on Windows") from exc
                     elif sys.platform == "darwin":
                         subprocess.run(["afplay", mp3_path], capture_output=True, timeout=120)
                     else:

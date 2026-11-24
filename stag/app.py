@@ -98,7 +98,7 @@ def main():
 
     # Initialize intelligence, voice and memory
     intel = get_intelligence()
-    voice = VoiceManager(voice=CONFIG["voice"])
+    voice = VoiceManager(voice=CONFIG["voice"], post_tts_silence=CONFIG["post_tts_silence"])
     memory = UserMemory(CONFIG["memory_file"])
     engine = CommandEngine(ui, voice, memory, intel)
     parser = IntentParser()
@@ -132,16 +132,20 @@ def main():
                 if typed.strip():
                     text_queue.put(typed.strip())
             except EOFError:
+                text_queue.put(None)
                 break
 
-    text_thread = threading.Thread(target=text_input_loop, daemon=True)
-    text_thread.start()
+    threading.Thread(target=text_input_loop, daemon=True).start()
 
     while True:
         try:
             # ─── 1. TEXT INPUT (never blocked by TTS) ─────────────────
             try:
                 typed_cmd = text_queue.get_nowait()
+                if typed_cmd is None:
+                    if microphone is None:
+                        break
+                    continue
                 ui.show_heard(f"[typed] {typed_cmd}")
                 if asleep:
                     if CONFIG["wake_word"] in typed_cmd.lower() or typed_cmd.lower() in ("wake", "wake up", "start"):
@@ -155,7 +159,7 @@ def main():
                     else:
                         ui.show_info("💤 Sleeping. Say TOKYO or WAKE to wake.")
                 else:
-                    success, action = process_text(typed_cmd, engine, parser, memory, voice, ui, intel)
+                    _, action = process_text(typed_cmd, engine, parser, memory, voice, ui, intel)
                     if action == "sleep":
                         asleep = True
                 continue
@@ -202,10 +206,14 @@ def main():
                 continue
 
             # Awake: process command
-            success, action = process_text(text, engine, parser, memory, voice, ui, intel)
+            _, action = process_text(text, engine, parser, memory, voice, ui, intel)
             if action == "sleep":
                 asleep = True
 
+        except KeyboardInterrupt:
+            ui.show_info("Shutting down Orbiton.")
+            voice.stop()
+            return
         except sr.WaitTimeoutError:
             consecutive_errors += 1
             if consecutive_errors > 3:
@@ -227,6 +235,8 @@ def main():
             ui.show_info("Resetting audio engine...")
             consecutive_errors = 0
             time.sleep(1)
+
+    voice.stop()
 
 
 if __name__ == "__main__":
