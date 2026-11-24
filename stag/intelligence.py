@@ -35,7 +35,7 @@ class WikipediaClient:
             return None
         title = data.get("title") or topic
         page_url = data.get("content_urls", {}).get("desktop", {}).get("page", url)
-        return f"{title}: {extract.strip()}\\nSource: {page_url}"
+        return f"{title}: {extract.strip()}\nSource: {page_url}"
 
 
 class IntelligenceOrchestrator:

@@ -8,7 +8,7 @@
 
 | Workflow | File | Purpose |
 |----------|------|---------|
-| Core Logic | `.github/workflows/core-logic.yml` | Intent parsing, command patterns, NLP |
+| Intelligence | `.github/workflows/intelligence.yml` | Wikipedia client and knowledge routing tests |\n| Core Logic | `.github/workflows/core-logic.yml` | Intent parsing, command patterns, NLP |
 | URL Engine | `.github/workflows/url-engine.yml` | URL generation |
 | Compute | `.github/workflows/compute.yml` | Arithmetic and math safety |
 | Launch | `.github/workflows/launch.yml` | File, project, and script operations |

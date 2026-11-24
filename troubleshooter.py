@@ -585,17 +585,17 @@ def flow_wont_start():
 
     # Check 4: stag/intelligence.py exists and imports
     print(f"\n{Colors.BOLD}Checking intelligence module...{Colors.RESET}")
-    results["stag intelligence"] = check_file_exists("neuro_link_intel.py")
-    if results["neuro_link_intel"]:
+    results["stag_intelligence"] = check_file_exists("stag/intelligence.py")
+    if results["stag_intelligence"]:
         try:
             from stag.intelligence import get_intelligence
             from stag.nlp import NaturalLanguageProcessor
             from stag.math_engine import MathNormalizer
-            print(f"  {Colors.ok('neuro_link_intel')} imports successfully")
-            results["neuro_link_intel_import"] = True
+            print(f"  {Colors.ok('stag intelligence')} imports successfully")
+            results["stag_intelligence_import"] = True
         except Exception as e:
-            print(f"  {Colors.fail('neuro_link_intel')} import FAILED: {e}")
-            results["neuro_link_intel_import"] = False
+            print(f"  {Colors.fail('stag intelligence')} import FAILED: {e}")
+            results["stag_intelligence_import"] = False
             print(f"\n  {Colors.RED}FATAL:{Colors.RESET} The intelligence module is corrupted.")
             print(f"  {Colors.CYAN}→{Colors.RESET} Re-clone the repo:")
             print(f"     cd ..")
@@ -989,13 +989,12 @@ def flow_other():
 
     print(f"\n{Colors.BOLD}Files:{Colors.RESET}")
     results["main_file"] = check_file_exists("kosmosic_orbiton.py")
-    results["intel_file"] = check_file_exists("neuro_link_intel.py")
+    results["intel_file"] = check_file_exists("stag/intelligence.py")
 
     print(f"\n{Colors.BOLD}Data Files:{Colors.RESET}")
     home = Path.home()
-    results["memory_json"] = check_json_file(home / ".neuro_link_memory.json")
-    results["wiki_cache"] = check_file_exists(home / ".neuro_link_wiki_cache", "Wiki cache dir")
-    results["intel_dir"] = check_file_exists(home / ".neuro_link_intel", "Intel dir")
+    results["memory_json"] = check_json_file(home / ".stag" / "profile.json")
+    results["intel_dir"] = check_file_exists(home / ".stag intelligence", "Intel dir")
 
     print(f"\n{Colors.BOLD}Network:{Colors.RESET}")
     results["internet"] = check_internet()
