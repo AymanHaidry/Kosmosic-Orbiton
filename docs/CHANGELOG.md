@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Documentation
 - Reconciled workflow and test documentation with the actual repository layout.
 - Removed references to the nonexistent `tests/device/` directory and `device.yml` workflow.
+- Added the Troubleshooter category to the README architecture tree and CI badge, and documented its category-specific test command.
 
 
 ### Planned
