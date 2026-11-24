@@ -6,14 +6,16 @@ import time
 
 import speech_recognition as sr
 
-from .config import CONFIG
+from .config import ALL_COMMANDS, CONFIG, PROJECTS, STREETVIEW_LOCATIONS, TOXIC_ROASTS
 from .commands import CommandEngine
-from .device import get_connected_headphones
+from .device import DeviceController, PSUTIL_AVAILABLE, get_connected_headphones
 from .intelligence import get_intelligence
+from .math_engine import MathNormalizer
 from .memory import UserMemory
+from .nlp import NaturalLanguageProcessor
 from .parser import IntentParser
-from .ui import NeuroInterface
-from .voice import VoiceManager
+from .ui import NeuroInterface, RICH_AVAILABLE
+from .voice import EDGE_TTS_AVAILABLE, VoiceManager
 
 def process_text(text: str, engine: CommandEngine, parser: IntentParser,
                  memory: UserMemory, voice: VoiceManager, ui: NeuroInterface, intel) -> tuple:

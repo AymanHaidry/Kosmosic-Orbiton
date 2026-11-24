@@ -1,0 +1,21 @@
+name: Compile Application
+
+on:
+  push:
+    branches: ['*']
+  pull_request:
+    branches: ['*']
+
+permissions:
+  contents: read
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Compile application modules
+        run: python -m compileall -q stag troubleshooter.py kosmosic_orbiton.py
